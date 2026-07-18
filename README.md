@@ -32,3 +32,22 @@ npm run dev              # http://localhost:5173
 ```bash
 /opt/homebrew/opt/postgresql@17/bin/createdb schoolbus
 ```
+
+## Testing
+
+Backend (PHPUnit, uses an in-memory SQLite DB — no setup needed):
+
+```bash
+cd backend
+php artisan test
+```
+
+Frontend (Playwright end-to-end tests — starts the Vite dev server and
+`php artisan serve` automatically, and resets the *dev* Postgres DB via
+`migrate:fresh --seed` before running):
+
+```bash
+cd frontend
+npx playwright install chromium   # first time only
+npm run test:e2e
+```

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Route as RouteModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class RouteController extends Controller
 {
@@ -60,14 +61,19 @@ class RouteController extends Controller
     private function validated(Request $request, bool $sometimes = false): array
     {
         $prefix = $sometimes ? 'sometimes|' : '';
+        $tenantId = $request->user()->tenant_id;
 
         return $request->validate([
             'name' => $prefix.'required|string|max:255',
             'zone' => 'nullable|string|max:255',
             'school_destination' => 'nullable|string|max:255',
-            'bus_id' => 'nullable|exists:buses,id',
-            'driver_id' => 'nullable|exists:staff,id',
-            'conductor_id' => 'nullable|exists:staff,id',
+            // Rule::exists (not the plain 'exists:buses,id' string) — the
+            // string form runs a raw, tenant-unscoped query, which would let
+            // an operator assign another tenant's bus/driver/conductor to
+            // their route by ID.
+            'bus_id' => ['nullable', Rule::exists('buses', 'id')->where('tenant_id', $tenantId)],
+            'driver_id' => ['nullable', Rule::exists('staff', 'id')->where('tenant_id', $tenantId)],
+            'conductor_id' => ['nullable', Rule::exists('staff', 'id')->where('tenant_id', $tenantId)],
             'base_monthly_fee' => 'nullable|numeric|min:0',
             'stops' => 'sometimes|array',
             'stops.*.name' => 'required_with:stops|string|max:255',

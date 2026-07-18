@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Route;
 use App\Services\FeeCalculator;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class QuoteController extends Controller
 {
@@ -17,7 +18,9 @@ class QuoteController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'route_id' => 'required|exists:routes,id',
+            // Tenant-scoped (see ParentPortal\StudentController for why the
+            // plain 'exists:routes,id' string is unsafe here).
+            'route_id' => ['required', Rule::exists('routes', 'id')->where('tenant_id', $request->user()->tenant_id)],
             'billing_period' => 'required|in:monthly,quarterly,half_year,yearly',
         ]);
 

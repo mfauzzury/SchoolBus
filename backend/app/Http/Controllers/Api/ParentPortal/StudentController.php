@@ -26,12 +26,17 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
+        $tenantId = $request->user()->tenant_id;
+
         $data = $request->validate([
             'full_name' => 'required|string|max:255',
             'date_of_birth' => 'required|date|before:today',
             'school_name' => 'required|string|max:255',
-            'route_id' => 'required|exists:routes,id',
-            'pickup_stop_id' => 'nullable|exists:route_stops,id',
+            // Rule::exists, tenant-scoped — the plain 'exists:routes,id' string
+            // runs an unscoped query and would let a parent enroll a child on
+            // another tenant's route by ID.
+            'route_id' => ['required', Rule::exists('routes', 'id')->where('tenant_id', $tenantId)],
+            'pickup_stop_id' => ['nullable', Rule::exists('route_stops', 'id')->where('tenant_id', $tenantId)],
             'package_type' => ['required', Rule::in(['one_way', 'return'])],
             'billing_period' => ['required', Rule::in(['monthly', 'quarterly', 'half_year', 'yearly'])],
         ]);

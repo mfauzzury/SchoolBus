@@ -24,10 +24,12 @@ trait FiltersInvoices
         if ($request->filled('status')) {
             // 'overdue' is never stored — it's an issued invoice past its due date,
             // computed at query time rather than flipped by a scheduled job.
-            if ($request->string('status') === 'overdue') {
+            // Note: $request->string() returns a Stringable, not a plain string —
+            // comparing it with === against a string literal is always false.
+            if ($request->input('status') === 'overdue') {
                 $query->where('status', InvoiceStatus::Issued)->whereDate('due_date', '<', now());
             } else {
-                $query->where('status', $request->string('status'));
+                $query->where('status', $request->input('status'));
             }
         }
 
