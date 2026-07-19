@@ -8,10 +8,18 @@ export interface TenantInfo {
 
 export interface RegisterInput {
   full_name: string
+  relationship?: 'father' | 'mother' | 'guardian'
+  gender?: 'male' | 'female'
   ic_number: string
   phone: string
   email: string
-  address?: string
+  address_line1?: string
+  address_line2?: string
+  city?: string
+  postcode?: string
+  emergency_contact_name?: string
+  emergency_contact_relationship?: string
+  emergency_contact_phone?: string
   password: string
 }
 

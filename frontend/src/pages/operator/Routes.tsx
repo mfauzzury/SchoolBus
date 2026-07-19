@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -37,23 +39,26 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { Pagination } from '@/components/ui/pagination'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useBuses } from '@/hooks/useBuses'
 import { useStaff } from '@/hooks/useStaff'
 import { useCreateRoute, useDeleteRoute, useRoutes, useUpdateRoute } from '@/hooks/useRoutes'
+import { usePagination } from '@/hooks/usePagination'
 import type { Route } from '@/api/routes'
+import { formatMoney } from '@/lib/utils'
 
 const UNASSIGNED = 'none'
 
 const routeSchema = z.object({
-  name: z.string().min(1, 'Required'),
+  name: z.string().min(1),
   zone: z.string().optional(),
   school_destination: z.string().optional(),
   base_monthly_fee: z.string().optional(),
   bus_id: z.string(),
   driver_id: z.string(),
   conductor_id: z.string(),
-  stops: z.array(z.object({ name: z.string().min(1, 'Required') })),
+  stops: z.array(z.object({ name: z.string().min(1) })),
 })
 
 type RouteForm = z.infer<typeof routeSchema>
@@ -82,6 +87,7 @@ function RouteFormDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: buses } = useBuses()
   const { data: drivers } = useStaff('driver')
   const { data: conductors } = useStaff('conductor')
@@ -135,39 +141,39 @@ function RouteFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{route ? 'Edit route' : 'Add route'}</DialogTitle>
+          <DialogTitle>{route ? t('operator.routes.editRoute') : t('operator.routes.addRoute')}</DialogTitle>
         </DialogHeader>
         <form className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="name">Route name</Label>
+            <Label htmlFor="name">{t('operator.routes.routeName')}</Label>
             <Input id="name" {...register('name')} />
             {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="zone">Zone</Label>
+            <Label htmlFor="zone">{t('operator.routes.zone')}</Label>
             <Input id="zone" {...register('zone')} />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="school_destination">School destination</Label>
+            <Label htmlFor="school_destination">{t('operator.routes.schoolDestination')}</Label>
             <Input id="school_destination" {...register('school_destination')} />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="base_monthly_fee">Base monthly fee (RM)</Label>
+            <Label htmlFor="base_monthly_fee">{t('operator.routes.baseMonthlyFee')}</Label>
             <Input id="base_monthly_fee" type="number" step="0.01" {...register('base_monthly_fee')} />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Bus</Label>
+            <Label>{t('operator.routes.bus')}</Label>
             <Select
-              items={{ [UNASSIGNED]: 'Unassigned', ...Object.fromEntries((buses ?? []).map((b) => [String(b.id), b.plate_number])) }}
+              items={{ [UNASSIGNED]: t('common.unassigned'), ...Object.fromEntries((buses ?? []).map((b) => [String(b.id), b.plate_number])) }}
               value={busId}
               onValueChange={(v) => setValue('bus_id', v ?? UNASSIGNED)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Unassigned" />
+                <SelectValue placeholder={t('common.unassigned')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={UNASSIGNED}>Unassigned</SelectItem>
+                <SelectItem value={UNASSIGNED}>{t('common.unassigned')}</SelectItem>
                 {buses?.map((bus) => (
                   <SelectItem key={bus.id} value={String(bus.id)}>
                     {bus.plate_number}
@@ -178,17 +184,17 @@ function RouteFormDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Driver</Label>
+            <Label>{t('operator.routes.driver')}</Label>
             <Select
-              items={{ [UNASSIGNED]: 'Unassigned', ...Object.fromEntries((drivers ?? []).map((d) => [String(d.id), d.full_name])) }}
+              items={{ [UNASSIGNED]: t('common.unassigned'), ...Object.fromEntries((drivers ?? []).map((d) => [String(d.id), d.full_name])) }}
               value={driverId}
               onValueChange={(v) => setValue('driver_id', v ?? UNASSIGNED)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Unassigned" />
+                <SelectValue placeholder={t('common.unassigned')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={UNASSIGNED}>Unassigned</SelectItem>
+                <SelectItem value={UNASSIGNED}>{t('common.unassigned')}</SelectItem>
                 {drivers?.map((driver) => (
                   <SelectItem key={driver.id} value={String(driver.id)}>
                     {driver.full_name}
@@ -199,17 +205,17 @@ function RouteFormDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Conductor</Label>
+            <Label>{t('operator.routes.conductor')}</Label>
             <Select
-              items={{ [UNASSIGNED]: 'Unassigned', ...Object.fromEntries((conductors ?? []).map((c) => [String(c.id), c.full_name])) }}
+              items={{ [UNASSIGNED]: t('common.unassigned'), ...Object.fromEntries((conductors ?? []).map((c) => [String(c.id), c.full_name])) }}
               value={conductorId}
               onValueChange={(v) => setValue('conductor_id', v ?? UNASSIGNED)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Unassigned" />
+                <SelectValue placeholder={t('common.unassigned')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={UNASSIGNED}>Unassigned</SelectItem>
+                <SelectItem value={UNASSIGNED}>{t('common.unassigned')}</SelectItem>
                 {conductors?.map((conductor) => (
                   <SelectItem key={conductor.id} value={String(conductor.id)}>
                     {conductor.full_name}
@@ -221,17 +227,20 @@ function RouteFormDialog({
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <Label>Stops</Label>
+              <Label>{t('operator.routes.stops')}</Label>
               <Button type="button" variant="outline" size="sm" onClick={() => append({ name: '' })}>
-                Add stop
+                {t('operator.routes.addStop')}
               </Button>
             </div>
             {fields.map((field, index) => (
               <div key={field.id} className="flex items-center gap-2">
                 <span className="w-5 text-sm text-muted-foreground">{index + 1}.</span>
-                <Input {...register(`stops.${index}.name` as const)} placeholder="Stop name" />
+                <Input
+                  {...register(`stops.${index}.name` as const)}
+                  placeholder={t('operator.routes.stopNamePlaceholder')}
+                />
                 <Button type="button" variant="ghost" size="sm" onClick={() => remove(index)}>
-                  Remove
+                  {t('operator.routes.remove')}
                 </Button>
               </div>
             ))}
@@ -239,7 +248,7 @@ function RouteFormDialog({
 
           <DialogFooter>
             <Button type="submit" disabled={pending}>
-              {pending ? 'Saving…' : 'Save'}
+              {pending ? t('common.saving') : t('common.save')}
             </Button>
           </DialogFooter>
         </form>
@@ -249,11 +258,13 @@ function RouteFormDialog({
 }
 
 export function Routes() {
+  const { t } = useTranslation()
   const { data: routes, isLoading } = useRoutes()
   const deleteRoute = useDeleteRoute()
   const isAdmin = useIsOperatorAdmin()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingRoute, setEditingRoute] = useState<Route | undefined>(undefined)
+  const { page, setPage, pageCount, pageItems: pagedRoutes } = usePagination(routes ?? [])
 
   const openCreate = () => {
     setEditingRoute(undefined)
@@ -266,72 +277,78 @@ export function Routes() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-medium">Routes</h1>
-        {isAdmin && <Button onClick={openCreate}>Add route</Button>}
-      </div>
-
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading…</p>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Bus</TableHead>
-              <TableHead>Driver</TableHead>
-              <TableHead>Conductor</TableHead>
-              <TableHead>Stops</TableHead>
-              <TableHead>Base fee</TableHead>
-              {isAdmin && <TableHead className="text-right">Actions</TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {routes?.map((route) => (
-              <TableRow key={route.id}>
-                <TableCell>{route.name}</TableCell>
-                <TableCell>{route.bus?.plate_number ?? '—'}</TableCell>
-                <TableCell>{route.driver?.full_name ?? '—'}</TableCell>
-                <TableCell>{route.conductor?.full_name ?? '—'}</TableCell>
-                <TableCell>{route.stops.length}</TableCell>
-                <TableCell>
-                  {route.base_monthly_fee ? `RM ${Number(route.base_monthly_fee).toFixed(2)}` : '—'}
-                </TableCell>
-                {isAdmin && (
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" onClick={() => openEdit(route)}>
-                        Edit
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger
-                          render={
-                            <Button variant="destructive" size="sm">
-                              Delete
-                            </Button>
-                          }
-                        />
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete {route.name}?</AlertDialogTitle>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteRoute.mutate(route.id)}>
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+    <div className="flex flex-col gap-6">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>{t('operator.routes.title')}</CardTitle>
+          {isAdmin && <Button onClick={openCreate}>{t('operator.routes.addRoute')}</Button>}
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('operator.routes.name')}</TableHead>
+                  <TableHead>{t('operator.routes.bus')}</TableHead>
+                  <TableHead>{t('operator.routes.driver')}</TableHead>
+                  <TableHead>{t('operator.routes.conductor')}</TableHead>
+                  <TableHead>{t('operator.routes.stops')}</TableHead>
+                  <TableHead>{t('operator.routes.baseFee')}</TableHead>
+                  {isAdmin && <TableHead className="text-right">{t('operator.routes.actions')}</TableHead>}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pagedRoutes.map((route) => (
+                  <TableRow key={route.id}>
+                    <TableCell>{route.name}</TableCell>
+                    <TableCell>{route.bus?.plate_number ?? '—'}</TableCell>
+                    <TableCell>{route.driver?.full_name ?? '—'}</TableCell>
+                    <TableCell>{route.conductor?.full_name ?? '—'}</TableCell>
+                    <TableCell>{route.stops.length}</TableCell>
+                    <TableCell>
+                      {route.base_monthly_fee ? `RM ${formatMoney(route.base_monthly_fee)}` : '—'}
+                    </TableCell>
+                    {isAdmin && (
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" size="sm" onClick={() => openEdit(route)}>
+                            {t('common.edit')}
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger
+                              render={
+                                <Button variant="destructive" size="sm">
+                                  {t('common.delete')}
+                                </Button>
+                              }
+                            />
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  {t('operator.routes.deleteConfirm', { name: route.name })}
+                                </AlertDialogTitle>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deleteRoute.mutate(route.id)}>
+                                  {t('common.delete')}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+          <Pagination page={page} pageCount={pageCount} onPageChange={setPage} />
+        </CardContent>
+      </Card>
 
       <RouteFormDialog route={editingRoute} open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>

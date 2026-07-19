@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class RegistrationController extends Controller
 {
@@ -28,10 +29,18 @@ class RegistrationController extends Controller
 
         $data = $request->validate([
             'full_name' => 'required|string|max:255',
+            'relationship' => ['nullable', Rule::in(['father', 'mother', 'guardian'])],
+            'gender' => ['nullable', Rule::in(['male', 'female'])],
             'ic_number' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'address' => 'nullable|string',
+            'address_line1' => 'nullable|string|max:255',
+            'address_line2' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'postcode' => 'nullable|string|max:20',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_relationship' => 'nullable|string|max:255',
+            'emergency_contact_phone' => 'nullable|string|max:255',
             'password' => 'required|string|min:8',
         ]);
 
@@ -48,10 +57,18 @@ class RegistrationController extends Controller
                 'tenant_id' => $tenant->id,
                 'user_id' => $user->id,
                 'full_name' => $data['full_name'],
+                'relationship' => $data['relationship'] ?? null,
+                'gender' => $data['gender'] ?? null,
                 'ic_number' => $data['ic_number'],
                 'phone' => $data['phone'],
                 'email' => $data['email'],
-                'address' => $data['address'] ?? null,
+                'address_line1' => $data['address_line1'] ?? null,
+                'address_line2' => $data['address_line2'] ?? null,
+                'city' => $data['city'] ?? null,
+                'postcode' => $data['postcode'] ?? null,
+                'emergency_contact_name' => $data['emergency_contact_name'] ?? null,
+                'emergency_contact_relationship' => $data['emergency_contact_relationship'] ?? null,
+                'emergency_contact_phone' => $data['emergency_contact_phone'] ?? null,
             ]);
 
             return $user;

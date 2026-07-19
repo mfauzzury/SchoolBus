@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Api\Operator;
 
 use App\Http\Controllers\Concerns\FiltersInvoices;
+use App\Http\Controllers\Concerns\GeneratesReceipts;
 use App\Http\Controllers\Controller;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
 class InvoiceController extends Controller
 {
-    use FiltersInvoices;
+    use FiltersInvoices, GeneratesReceipts;
 
     public function index(Request $request)
     {
@@ -53,5 +55,10 @@ class InvoiceController extends Controller
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="invoices.csv"',
         ]);
+    }
+
+    public function receipt(Invoice $invoice)
+    {
+        return $this->receiptResponse($invoice);
     }
 }

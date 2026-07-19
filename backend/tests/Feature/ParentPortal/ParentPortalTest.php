@@ -57,88 +57,43 @@ class ParentPortalTest extends TestCase
         ])->assertStatus(422)->assertJsonValidationErrors(['route_id']);
     }
 
-    public function test_enrolling_a_child_creates_the_student_and_an_issued_invoice(): void
+    public function test_submitting_an_application_creates_a_pending_application(): void
     {
         $tenant = $this->createTenant();
         [$parentUser] = $this->createParent($tenant);
-        $route = Route::factory()->create(['tenant_id' => $tenant->id, 'base_monthly_fee' => 150]);
 
-        $response = $this->actingAs($parentUser)->postJson('/api/parent/students', [
+        $response = $this->actingAs($parentUser)->postJson('/api/parent/student-applications', [
             'full_name' => 'Child One',
             'date_of_birth' => '2015-01-01',
             'school_name' => 'SK Demo',
-            'route_id' => $route->id,
             'package_type' => 'return',
             'billing_period' => 'monthly',
         ]);
 
         $response->assertCreated()
             ->assertJsonPath('full_name', 'Child One')
-            ->assertJsonPath('invoices.0.status', 'issued');
-        $this->assertEquals(150.0, $response->json('invoices.0.final_amount'));
-    }
-
-    public function test_enrolling_a_second_child_applies_the_sibling_discount(): void
-    {
-        $tenant = $this->createTenant();
-        [$parentUser] = $this->createParent($tenant);
-        $route = Route::factory()->create(['tenant_id' => $tenant->id, 'base_monthly_fee' => 100]);
-
-        $enroll = fn (string $name) => $this->actingAs($parentUser)->postJson('/api/parent/students', [
-            'full_name' => $name,
-            'date_of_birth' => '2015-01-01',
-            'school_name' => 'SK Demo',
-            'route_id' => $route->id,
-            'package_type' => 'return',
-            'billing_period' => 'monthly',
-        ]);
-
-        $first = $enroll('Child One');
-        $second = $enroll('Child Two');
-
-        $this->assertEquals(100.0, $first->json('invoices.0.final_amount'));
-        $this->assertEquals(90.0, $second->json('invoices.0.final_amount')); // 10% sibling discount
-    }
-
-    public function test_cannot_enroll_a_child_on_another_tenants_route(): void
-    {
-        $tenantA = $this->createTenant();
-        $tenantB = $this->createTenant();
-        [$parentUser] = $this->createParent($tenantA);
-        $otherRoute = Route::factory()->create(['tenant_id' => $tenantB->id]);
-
-        $response = $this->actingAs($parentUser)->postJson('/api/parent/students', [
+            ->assertJsonPath('status', 'pending');
+        $this->assertDatabaseHas('student_applications', [
             'full_name' => 'Child One',
-            'date_of_birth' => '2015-01-01',
-            'school_name' => 'SK Demo',
-            'route_id' => $otherRoute->id,
-            'package_type' => 'return',
-            'billing_period' => 'monthly',
+            'status' => 'pending',
+            'route_id' => null,
         ]);
-
-        $response->assertStatus(422)->assertJsonValidationErrors(['route_id']);
         $this->assertDatabaseMissing('students', ['full_name' => 'Child One']);
     }
 
-    public function test_pickup_stop_must_belong_to_the_selected_route(): void
+    public function test_parent_can_list_their_applications(): void
     {
         $tenant = $this->createTenant();
-        [$parentUser] = $this->createParent($tenant);
-        $route = Route::factory()->create(['tenant_id' => $tenant->id, 'base_monthly_fee' => 100]);
-        $otherRoute = Route::factory()->create(['tenant_id' => $tenant->id]);
-        $stopOnOtherRoute = $otherRoute->stops()->create(['tenant_id' => $tenant->id, 'name' => 'Stop X', 'sequence' => 1]);
-
-        $response = $this->actingAs($parentUser)->postJson('/api/parent/students', [
-            'full_name' => 'Child One',
-            'date_of_birth' => '2015-01-01',
-            'school_name' => 'SK Demo',
-            'route_id' => $route->id,
-            'pickup_stop_id' => $stopOnOtherRoute->id,
-            'package_type' => 'return',
-            'billing_period' => 'monthly',
+        [$parentUser, $parent] = $this->createParent($tenant);
+        \App\Models\StudentApplication::factory()->create([
+            'tenant_id' => $tenant->id,
+            'parent_id' => $parent->id,
+            'full_name' => 'Applicant One',
         ]);
 
-        $response->assertStatus(422)->assertJsonValidationErrors(['pickup_stop_id']);
+        $response = $this->actingAs($parentUser)->getJson('/api/parent/student-applications');
+
+        $response->assertOk()->assertJsonCount(1)->assertJsonPath('0.full_name', 'Applicant One');
     }
 
     public function test_parent_can_list_their_invoices(): void

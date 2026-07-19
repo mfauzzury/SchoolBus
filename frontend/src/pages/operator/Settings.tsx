@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,9 +15,9 @@ import type { BusOperator } from '@/api/auth'
 import type { DiscountConfig } from '@/api/discountConfig'
 
 const profileSchema = z.object({
-  company_name: z.string().min(1, 'Required'),
-  contact_person: z.string().min(1, 'Required'),
-  contact_phone: z.string().min(1, 'Required'),
+  company_name: z.string().min(1),
+  contact_person: z.string().min(1),
+  contact_phone: z.string().min(1),
   email: z.string().email(),
   bank_name: z.string().optional(),
   account_number: z.string().optional(),
@@ -37,9 +38,7 @@ function toFormValues(tenant?: BusOperator): ProfileForm {
   }
 }
 
-const percentField = z
-  .string()
-  .refine((v) => v !== '' && Number(v) >= 0 && Number(v) <= 100, 'Must be 0–100')
+const percentField = z.string().refine((v) => v !== '' && Number(v) >= 0 && Number(v) <= 100)
 
 const discountSchema = z.object({
   monthly: percentField,
@@ -66,6 +65,7 @@ function toDiscountFormValues(config?: DiscountConfig): DiscountForm {
 }
 
 function DiscountConfigCard() {
+  const { t } = useTranslation()
   const isAdmin = useIsOperatorAdmin()
   const { data: config, isLoading } = useDiscountConfig()
   const updateConfig = useUpdateDiscountConfig()
@@ -103,79 +103,81 @@ function DiscountConfigCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Discount rates</CardTitle>
+        <CardTitle className="text-base">{t('operator.settings.discountRates')}</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Percentage off the base fee, applied at invoicing (spec §3.2–3.4).
+          {t('operator.settings.discountRatesDescription')}
         </p>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Loading…</p>
+          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
         ) : (
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <p className="mb-3 text-sm font-medium">Billing period</p>
+              <p className="mb-3 text-sm font-medium">{t('operator.settings.billingPeriod')}</p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="monthly">Monthly (%)</Label>
+                  <Label htmlFor="monthly">{t('operator.settings.monthly')}</Label>
                   <Input id="monthly" type="number" disabled={!isAdmin} {...register('monthly')} />
                   {errors.monthly && (
-                    <p className="text-sm text-destructive">{errors.monthly.message}</p>
+                    <p className="text-sm text-destructive">{t('operator.settings.rateRangeError')}</p>
                   )}
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="quarterly">Quarterly (%)</Label>
+                  <Label htmlFor="quarterly">{t('operator.settings.quarterly')}</Label>
                   <Input id="quarterly" type="number" disabled={!isAdmin} {...register('quarterly')} />
                   {errors.quarterly && (
-                    <p className="text-sm text-destructive">{errors.quarterly.message}</p>
+                    <p className="text-sm text-destructive">{t('operator.settings.rateRangeError')}</p>
                   )}
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="half_year">Half-Year (%)</Label>
+                  <Label htmlFor="half_year">{t('operator.settings.halfYear')}</Label>
                   <Input id="half_year" type="number" disabled={!isAdmin} {...register('half_year')} />
                   {errors.half_year && (
-                    <p className="text-sm text-destructive">{errors.half_year.message}</p>
+                    <p className="text-sm text-destructive">{t('operator.settings.rateRangeError')}</p>
                   )}
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="yearly">Yearly (%)</Label>
+                  <Label htmlFor="yearly">{t('operator.settings.yearly')}</Label>
                   <Input id="yearly" type="number" disabled={!isAdmin} {...register('yearly')} />
                   {errors.yearly && (
-                    <p className="text-sm text-destructive">{errors.yearly.message}</p>
+                    <p className="text-sm text-destructive">{t('operator.settings.rateRangeError')}</p>
                   )}
                 </div>
               </div>
             </div>
 
             <div className="border-t pt-4">
-              <p className="mb-3 text-sm font-medium">Sibling discount</p>
+              <p className="mb-3 text-sm font-medium">{t('operator.settings.siblingDiscount')}</p>
               <div className="grid grid-cols-3 gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="sibling_1">1st child (%)</Label>
+                  <Label htmlFor="sibling_1">{t('operator.settings.firstChild')}</Label>
                   <Input id="sibling_1" type="number" disabled={!isAdmin} {...register('sibling_1')} />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="sibling_2">2nd child (%)</Label>
+                  <Label htmlFor="sibling_2">{t('operator.settings.secondChild')}</Label>
                   <Input id="sibling_2" type="number" disabled={!isAdmin} {...register('sibling_2')} />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="sibling_3">3rd+ child (%)</Label>
+                  <Label htmlFor="sibling_3">{t('operator.settings.thirdChild')}</Label>
                   <Input id="sibling_3" type="number" disabled={!isAdmin} {...register('sibling_3')} />
                 </div>
               </div>
               {(errors.sibling_1 || errors.sibling_2 || errors.sibling_3) && (
-                <p className="mt-1.5 text-sm text-destructive">Each must be 0–100</p>
+                <p className="mt-1.5 text-sm text-destructive">{t('operator.settings.rateRangeError')}</p>
               )}
             </div>
 
             {updateConfig.isError && (
-              <p className="text-sm text-destructive">Could not save changes. Try again.</p>
+              <p className="text-sm text-destructive">{t('operator.settings.saveError')}</p>
             )}
-            {updateConfig.isSuccess && <p className="text-sm text-muted-foreground">Saved.</p>}
+            {updateConfig.isSuccess && (
+              <p className="text-sm text-muted-foreground">{t('common.saved')}</p>
+            )}
 
             {isAdmin && (
               <Button type="submit" disabled={updateConfig.isPending}>
-                {updateConfig.isPending ? 'Saving…' : 'Save changes'}
+                {updateConfig.isPending ? t('common.saving') : t('operator.settings.saveChanges')}
               </Button>
             )}
           </form>
@@ -186,6 +188,7 @@ function DiscountConfigCard() {
 }
 
 export function Settings() {
+  const { t } = useTranslation()
   useMe()
   const { tenant } = useTenant()
   const updateProfile = useUpdateProfile()
@@ -226,11 +229,11 @@ export function Settings() {
 
   return (
     <div className="flex max-w-lg flex-col gap-6">
-      <h1 className="text-xl font-medium">Settings</h1>
+      <h1 className="text-xl font-medium">{t('operator.settings.title')}</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Logo</CardTitle>
+          <CardTitle className="text-base">{t('operator.settings.logo')}</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center gap-4">
           {tenant?.logo_url ? (
@@ -241,7 +244,7 @@ export function Settings() {
             />
           ) : (
             <div className="flex size-16 items-center justify-center rounded-lg border text-xs text-muted-foreground">
-              No logo
+              {t('operator.settings.noLogo')}
             </div>
           )}
           <input
@@ -257,70 +260,70 @@ export function Settings() {
             disabled={uploadLogo.isPending}
             onClick={() => fileInputRef.current?.click()}
           >
-            {uploadLogo.isPending ? 'Uploading…' : 'Upload logo'}
+            {uploadLogo.isPending ? t('operator.settings.uploading') : t('operator.settings.uploadLogo')}
           </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Company profile</CardTitle>
+          <CardTitle className="text-base">{t('operator.settings.companyProfile')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="company_name">Company name</Label>
+              <Label htmlFor="company_name">{t('operator.settings.companyName')}</Label>
               <Input id="company_name" {...register('company_name')} />
               {errors.company_name && (
                 <p className="text-sm text-destructive">{errors.company_name.message}</p>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="contact_person">Contact person</Label>
+              <Label htmlFor="contact_person">{t('operator.settings.contactPerson')}</Label>
               <Input id="contact_person" {...register('contact_person')} />
               {errors.contact_person && (
                 <p className="text-sm text-destructive">{errors.contact_person.message}</p>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="contact_phone">Contact phone</Label>
+              <Label htmlFor="contact_phone">{t('operator.settings.contactPhone')}</Label>
               <Input id="contact_phone" {...register('contact_phone')} />
               {errors.contact_phone && (
                 <p className="text-sm text-destructive">{errors.contact_phone.message}</p>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('operator.settings.email')}</Label>
               <Input id="email" type="email" {...register('email')} />
               {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="mt-2 border-t pt-4">
-              <p className="mb-3 text-sm font-medium">Bank details</p>
+              <p className="mb-3 text-sm font-medium">{t('operator.settings.bankDetails')}</p>
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="bank_name">Bank name</Label>
+                  <Label htmlFor="bank_name">{t('operator.settings.bankName')}</Label>
                   <Input id="bank_name" {...register('bank_name')} />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="account_number">Account number</Label>
+                  <Label htmlFor="account_number">{t('operator.settings.accountNumber')}</Label>
                   <Input id="account_number" {...register('account_number')} />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="account_holder">Account holder</Label>
+                  <Label htmlFor="account_holder">{t('operator.settings.accountHolder')}</Label>
                   <Input id="account_holder" {...register('account_holder')} />
                 </div>
               </div>
             </div>
 
             {updateProfile.isError && (
-              <p className="text-sm text-destructive">Could not save changes. Try again.</p>
+              <p className="text-sm text-destructive">{t('operator.settings.saveError')}</p>
             )}
             {updateProfile.isSuccess && (
-              <p className="text-sm text-muted-foreground">Saved.</p>
+              <p className="text-sm text-muted-foreground">{t('common.saved')}</p>
             )}
             <Button type="submit" disabled={updateProfile.isPending}>
-              {updateProfile.isPending ? 'Saving…' : 'Save changes'}
+              {updateProfile.isPending ? t('common.saving') : t('operator.settings.saveChanges')}
             </Button>
           </form>
         </CardContent>

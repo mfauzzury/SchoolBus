@@ -33,9 +33,14 @@ trait FiltersInvoices
             }
         }
 
-        if ($request->filled('month')) {
-            [$year, $month] = explode('-', $request->string('month'));
-            $query->whereYear('issued_at', $year)->whereMonth('issued_at', $month);
+        if ($request->filled('year')) {
+            // Filters by the period a bill *covers*, not the day it happened to be
+            // issued — matters once recurring generation can lag a day or two.
+            $query->whereYear('period_start', $request->integer('year'));
+
+            if ($request->filled('month')) {
+                $query->whereMonth('period_start', $request->integer('month'));
+            }
         }
 
         if ($request->filled('date_from')) {

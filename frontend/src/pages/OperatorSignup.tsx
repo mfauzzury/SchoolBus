@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,16 +16,17 @@ import {
 import { useRegisterOperator } from '@/hooks/useOperatorRegistration'
 
 const signupSchema = z.object({
-  company_name: z.string().min(1, 'Required'),
-  contact_person: z.string().min(1, 'Required'),
-  contact_phone: z.string().min(1, 'Required'),
+  company_name: z.string().min(1),
+  contact_person: z.string().min(1),
+  contact_phone: z.string().min(1),
   email: z.string().email(),
-  password: z.string().min(8, 'At least 8 characters'),
+  password: z.string().min(8),
 })
 
 type SignupForm = z.infer<typeof signupSchema>
 
 export function OperatorSignup() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const register = useRegisterOperator()
   const {
@@ -42,51 +44,49 @@ export function OperatorSignup() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Set up your workspace</CardTitle>
-        <CardDescription>Start managing your fleet and collections</CardDescription>
+        <CardTitle>{t('auth.operatorSignup.title')}</CardTitle>
+        <CardDescription>{t('auth.operatorSignup.description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="company_name">Company name</Label>
+            <Label htmlFor="company_name">{t('auth.operatorSignup.companyName')}</Label>
             <Input id="company_name" {...registerField('company_name')} />
             {errors.company_name && (
               <p className="text-sm text-destructive">{errors.company_name.message}</p>
             )}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="contact_person">Your name</Label>
+            <Label htmlFor="contact_person">{t('auth.operatorSignup.contactPerson')}</Label>
             <Input id="contact_person" {...registerField('contact_person')} />
             {errors.contact_person && (
               <p className="text-sm text-destructive">{errors.contact_person.message}</p>
             )}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="contact_phone">Phone</Label>
+            <Label htmlFor="contact_phone">{t('auth.operatorSignup.contactPhone')}</Label>
             <Input id="contact_phone" {...registerField('contact_phone')} />
             {errors.contact_phone && (
               <p className="text-sm text-destructive">{errors.contact_phone.message}</p>
             )}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.operatorSignup.email')}</Label>
             <Input id="email" type="email" {...registerField('email')} />
             {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.operatorSignup.password')}</Label>
             <Input id="password" type="password" {...registerField('password')} />
             {errors.password && (
               <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
           </div>
           {register.isError && (
-            <p className="text-sm text-destructive">
-              Could not create your workspace. Check your details and try again.
-            </p>
+            <p className="text-sm text-destructive">{t('auth.operatorSignup.failed')}</p>
           )}
           <Button type="submit" disabled={register.isPending}>
-            {register.isPending ? 'Creating workspace…' : 'Start free'}
+            {register.isPending ? t('auth.operatorSignup.submitting') : t('auth.operatorSignup.submit')}
           </Button>
         </form>
       </CardContent>

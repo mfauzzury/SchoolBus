@@ -14,6 +14,8 @@ export interface LedgerInvoice {
   route_id: number | null
   package_type: string
   billing_period: string
+  period_start: string
+  period_end: string
   amount_before_discount: string
   discount_amount: string
   final_amount: string
@@ -36,7 +38,8 @@ export interface DashboardSummary {
 export interface InvoiceFilters {
   route_id?: number
   status?: string
-  month?: string
+  year?: number
+  month?: number
   date_from?: string
   date_to?: string
 }
@@ -82,4 +85,8 @@ export function invoicesExportUrl(filters: InvoiceFilters): string {
   })
   const query = params.toString()
   return `${import.meta.env.VITE_API_URL}/api/operator/invoices/export${query ? `?${query}` : ''}`
+}
+
+export function receiptUrl(invoiceId: number): string {
+  return `${import.meta.env.VITE_API_URL}/api/operator/invoices/${invoiceId}/receipt`
 }

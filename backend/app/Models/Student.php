@@ -25,12 +25,14 @@ class Student extends Model
         'package_type',
         'billing_period',
         'enrollment_status',
+        'fee_override',
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
         'package_type' => PackageType::class,
         'billing_period' => BillingPeriod::class,
+        'fee_override' => 'decimal:2',
     ];
 
     public function parentProfile(): BelongsTo

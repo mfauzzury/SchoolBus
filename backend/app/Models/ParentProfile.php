@@ -21,10 +21,18 @@ class ParentProfile extends Model
         'tenant_id',
         'user_id',
         'full_name',
+        'relationship',
+        'gender',
         'ic_number',
         'phone',
         'email',
-        'address',
+        'address_line1',
+        'address_line2',
+        'city',
+        'postcode',
+        'emergency_contact_name',
+        'emergency_contact_relationship',
+        'emergency_contact_phone',
     ];
 
     public function user(): BelongsTo
@@ -35,5 +43,10 @@ class ParentProfile extends Model
     public function students(): HasMany
     {
         return $this->hasMany(Student::class, 'parent_id');
+    }
+
+    public function studentApplications(): HasMany
+    {
+        return $this->hasMany(StudentApplication::class, 'parent_id');
     }
 }
