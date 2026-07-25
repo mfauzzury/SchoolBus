@@ -25,6 +25,15 @@ trait CreatesTestData
         return Role::firstOrCreate(['name' => $name, 'guard_name' => 'web']);
     }
 
+    protected function createSaasAdmin(array $attributes = []): User
+    {
+        $this->ensureRole('saas_admin');
+        $user = User::factory()->create([...$attributes, 'tenant_id' => null]);
+        $user->assignRole('saas_admin');
+
+        return $user;
+    }
+
     protected function createOperatorAdmin(BusOperator $tenant, array $attributes = []): User
     {
         $this->ensureRole('operator_admin');

@@ -21,6 +21,9 @@
     "allYears": "Semua tahun",
     "allMonths": "Semua bulan",
     "downloadReceipt": "Muat turun resit",
+    "uploadPhoto": "Muat naik foto",
+    "changePhoto": "Tukar foto",
+    "uploading": "Memuat naik…",
     "previous": "Sebelumnya",
     "next": "Seterusnya",
     "pageOf": "Halaman {{page}} daripada {{pageCount}}",
@@ -62,29 +65,148 @@
     "invoices": "Invois",
     "profile": "Profil"
   },
+  "marketingNav": {
+    "parents": "Untuk Ibu Bapa",
+    "operators": "Untuk Pengendali",
+    "about": "Tentang Kami",
+    "contact": "Hubungi Kami"
+  },
+  "footer": {
+    "copyright": "© {{year}} BasSekolah.my. Hak cipta terpelihara.",
+    "terms": "Terma Perkhidmatan",
+    "privacy": "Dasar Privasi"
+  },
+  "legal": {
+    "lastUpdated": "Terakhir dikemas kini: 25 Julai 2026"
+  },
+  "terms": {
+    "title": "Terma Perkhidmatan",
+    "sections": {
+      "acceptance": {
+        "title": "1. Penerimaan terma",
+        "body": "Dengan mencipta akaun atau menggunakan BasSekolah.my (\"Platform\"), anda bersetuju dengan Terma Perkhidmatan ini. Jika anda tidak bersetuju, sila jangan gunakan Platform ini."
+      },
+      "service": {
+        "title": "2. Penerangan perkhidmatan",
+        "body": "BasSekolah.my menyediakan pengurusan armada, pendaftaran pelajar, dan alat pengebilan untuk pengendali bas sekolah Malaysia, serta portal pendamping untuk ibu bapa menjejaki permohonan, laluan, dan bayaran."
+      },
+      "accounts": {
+        "title": "3. Akaun",
+        "body": "Pengendali bas bertanggungjawab terhadap ketepatan maklumat armada, kakitangan, dan laluan yang mereka masukkan, serta meluluskan permohonan pelajar. Ibu bapa bertanggungjawab terhadap ketepatan maklumat yang mereka hantar mengenai anak mereka. Setiap akaun hanya boleh digunakan oleh individu atau organisasi yang mencipta akaun tersebut."
+      },
+      "fees": {
+        "title": "4. Yuran dan bayaran",
+        "body": "Pelan Percuma tidak mempunyai yuran langganan bulanan. BasSekolah.my mengenakan RM1 setiap pelajar aktif dan RM1 setiap transaksi yang dikutip, kedua-duanya ditolak secara automatik daripada bayaran ibu bapa pada ketika kutipan melalui gerbang pembayaran kami, ToyyibPay. Pengendali tidak akan dibilkan secara berasingan untuk yuran ini. Harga untuk pelan tambahan akan diumumkan sebelum ia tersedia."
+      },
+      "responsibilities": {
+        "title": "5. Tanggungjawab pengendali",
+        "body": "Pengendali bertanggungjawab sepenuhnya terhadap operasi selamat armada bas mereka, ketepatan jumlah bil, dan pematuhan kepada peraturan pengangkutan dan keselamatan yang berkaitan. BasSekolah.my hanyalah alat pengurusan dan pengebilan, dan tidak mengendalikan, memiliki, atau menyelia sebarang perkhidmatan bas."
+      },
+      "data": {
+        "title": "6. Data dan privasi",
+        "body": "Penggunaan Platform oleh anda juga tertakluk kepada Dasar Privasi kami, yang menerangkan bagaimana kami mengumpul, menggunakan, dan melindungi data peribadi, termasuk data milik pelajar."
+      },
+      "termination": {
+        "title": "7. Penamatan",
+        "body": "Anda boleh berhenti menggunakan Platform pada bila-bila masa. Kami boleh menggantung atau menamatkan akaun yang melanggar Terma ini, menyalahgunakan Platform, atau terlibat dalam aktiviti penipuan."
+      },
+      "liability": {
+        "title": "8. Had liabiliti",
+        "body": "Platform disediakan \"seadanya\". Setakat yang dibenarkan oleh undang-undang, BasSekolah.my tidak bertanggungjawab atas kerugian tidak langsung atau berbangkit yang timbul daripada penggunaan Platform, termasuk kelewatan, bayaran tertinggal, atau insiden pengangkutan."
+      },
+      "changes": {
+        "title": "9. Perubahan kepada terma ini",
+        "body": "Kami mungkin mengemas kini Terma ini dari semasa ke semasa. Penggunaan berterusan Platform selepas perubahan berkuat kuasa merupakan penerimaan Terma yang disemak."
+      },
+      "contact": {
+        "title": "10. Hubungi kami",
+        "body": "Ada soalan tentang Terma ini? Hubungi kami di hello@bassekolah.my atau melalui halaman Hubungi Kami."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Dasar Privasi",
+    "sections": {
+      "collect": {
+        "title": "1. Maklumat yang kami kumpul",
+        "body": "Kami mengumpul maklumat akaun (nama, e-mel, telefon) untuk pengendali dan ibu bapa; maklumat pelajar (nama, tarikh lahir, sekolah, laluan) yang dihantar oleh ibu bapa atau pengendali; dan rekod bayaran (jumlah, kaedah, tarikh) yang diproses melalui ToyyibPay. Kami tidak pernah menyimpan nombor kad atau akaun bank penuh sendiri."
+      },
+      "use": {
+        "title": "2. Bagaimana kami menggunakan maklumat",
+        "body": "Kami menggunakan maklumat ini untuk mengendalikan Platform: menguruskan pendaftaran, menjana invois, mengira diskaun, memproses bayaran, dan menyediakan sokongan pelanggan."
+      },
+      "sharing": {
+        "title": "3. Perkongsian data",
+        "body": "BasSekolah.my adalah multi-tenant — data setiap pengendali bas diasingkan dan tidak pernah kelihatan kepada pengendali lain. Data ibu bapa dan pelajar hanya boleh dilihat oleh pengendali bas ibu bapa itu sendiri dan oleh pentadbir platform BasSekolah.my untuk tujuan sokongan dan pengebilan."
+      },
+      "security": {
+        "title": "4. Keselamatan data",
+        "body": "Data disulitkan semasa penghantaran, dan akses kepada data setiap pengendali dikuatkuasakan pada peringkat pangkalan data. Akses pentadbir platform terhad kepada apa yang diperlukan untuk sokongan dan pengebilan."
+      },
+      "retention": {
+        "title": "5. Penyimpanan data",
+        "body": "Kami menyimpan rekod akaun, pendaftaran, dan pengebilan selagi akaun aktif, dan seperti yang dikehendaki oleh peraturan cukai dan penyimpanan rekod Malaysia."
+      },
+      "rights": {
+        "title": "6. Hak anda",
+        "body": "Di bawah Akta Perlindungan Data Peribadi 2010 (PDPA) Malaysia, anda boleh meminta akses kepada, pembetulan, atau pemadaman data peribadi anda dengan menghubungi kami. Ibu bapa juga boleh mengemaskini butiran mereka sendiri dan anak mereka terus dari portal mereka."
+      },
+      "cookies": {
+        "title": "7. Kuki",
+        "body": "Kami menggunakan kuki penting untuk memastikan anda log masuk dengan selamat. Kami tidak menggunakan penjejak pengiklanan pihak ketiga."
+      },
+      "children": {
+        "title": "8. Data kanak-kanak",
+        "body": "Data pelajar dihantar dan diuruskan oleh ibu bapa atau penjaga, atau oleh pengendali bas bagi pihak mereka. Kami tidak mengumpul data secara langsung daripada kanak-kanak dengan sengaja."
+      },
+      "changes": {
+        "title": "9. Perubahan kepada dasar ini",
+        "body": "Kami mungkin mengemas kini Dasar Privasi ini dari semasa ke semasa. Perubahan penting akan dicerminkan dengan tarikh \"terakhir dikemas kini\" yang baharu."
+      },
+      "contact": {
+        "title": "10. Hubungi kami",
+        "body": "Ada soalan tentang Dasar Privasi ini? Hubungi kami di hello@bassekolah.my atau melalui halaman Hubungi Kami."
+      }
+    }
+  },
   "landing": {
-    "badge": "Untuk pengendali bas sekolah & ibu bapa",
-    "headline": "Pengurusan armada dan kutipan yuran, tanpa hamparan data",
-    "subheadline": "Pengendali menguruskan laluan, kakitangan, dan bil dalam satu ruang kerja. Ibu bapa mendaftarkan anak dan membayar dalam talian dalam beberapa minit.",
-    "features": {
-      "fleet": { "title": "Armada & laluan", "description": "Urus bas, pemandu, konduktor, perhentian, dan kad kadar dalam satu tempat." },
-      "invoicing": { "title": "Invois automatik", "description": "Diskaun tempoh bil dan adik-beradik dikira dan digunakan secara automatik." },
-      "selfService": { "title": "Layan diri ibu bapa", "description": "Ibu bapa mendaftar, mendaftarkan anak, dan melihat yuran sebelum mengesahkan." },
-      "ledger": { "title": "Lejar kutipan langsung", "description": "Jejaki apa yang dijangka, dikutip, dan tertunggak — eksport ke CSV bila-bila masa." }
+    "eyebrow": "Untuk ibu bapa pelajar sekolah di Malaysia",
+    "headline": "Tahu dengan tepat bas mana anak anda naiki.",
+    "subheadline": "Mohon kepada pengendali bas anak anda dalam beberapa minit, kemudian lihat dengan tepat bas, pemandu, dan perhentian yang ditetapkan. Bayar dalam talian dan dapatkan resit setiap bulan.",
+    "seeHowItWorks": "Lihat cara ia berfungsi",
+    "capabilities": {
+      "bilingual": "Antara muka EN / BM",
+      "transparency": "Lihat bas, pemandu & perhentian anak anda",
+      "discounts": "Diskaun adik-beradik & tempoh automatik",
+      "receipts": "Resit PDF segera"
     },
-    "getStarted": { "title": "Mulakan", "subtitle": "Pilih yang sesuai dengan anda." },
-    "operatorCard": {
-      "title": "Saya pengendali",
-      "description": "Urus armada, laluan, kakitangan, dan kutipan anda dari satu papan pemuka.",
-      "freeUpTo30": "Percuma sehingga 30 pelajar",
-      "noSetupFees": "Tiada yuran persediaan",
-      "startFree": "Mula percuma",
-      "alreadyHaveWorkspace": "Sudah mempunyai ruang kerja? Log masuk"
+    "journeyTag": "Perjalanannya",
+    "journeyTitle": "Empat langkah, dari mula hingga akhir",
+    "journeySubtitle": "Daripada mencari pengendali anda hingga membayar yuran bulanan — inilah yang sebenarnya berlaku dalam aplikasi.",
+    "journey": {
+      "find": {
+        "title": "Cari pengendali anda",
+        "body": "Masukkan ID 4-digit yang diberikan oleh pengendali bas anda untuk mencari ruang kerja mereka."
+      },
+      "apply": {
+        "title": "Mohon dalam beberapa minit",
+        "body": "Nama anak, tarikh lahir, sekolah, dan pakej. Itu sahaja — tiada laluan atau yuran perlu difikirkan sendiri."
+      },
+      "approved": {
+        "title": "Diluluskan, dan anda akan lihat semuanya",
+        "body": "Sebaik sahaja pengendali anda meluluskan permohonan, anda akan lihat dengan tepat bas, pemandu, konduktor, dan perhentian jemputan yang ditetapkan untuk anak anda."
+      },
+      "pay": {
+        "title": "Bayar bulanan, selesai",
+        "body": "Yuran dikira semula secara automatik setiap bulan dengan diskaun adik-beradik dan tempoh. Bayar dalam talian dan muat turun resit PDF."
+      }
     },
+    "getStarted": { "title": "Mula sekarang", "subtitle": "Cari pengendali bas anda untuk mendaftar atau log masuk." },
+    "operatorNudge": "Menjalankan perkhidmatan bas sekolah?",
     "parentCard": {
-      "title": "Saya ibu bapa",
+      "kicker": "Saya ibu bapa",
+      "title": "Cari pengendali anda",
       "description": "Masukkan ID 4-digit pengendali bas anda untuk mendaftar atau log masuk.",
-      "operatorId": "ID Pengendali",
       "checking": "Menyemak…",
       "notFound": "Tiada pengendali dijumpai dengan ID tersebut",
       "alreadyRegistered": "Sudah berdaftar? Log masuk"
@@ -94,7 +216,222 @@
       "pickUpWhereYouLeftOff": "Sambung semula dari tempat anda berhenti.",
       "goToDashboard": "Pergi ke papan pemuka anda"
     },
-    "footer": "BasSekolah.my"
+    "footer": "Pengurusan armada dan kutipan yuran untuk pengendali bas sekolah Malaysia.",
+    "faqTag": "Soalan Lazim",
+    "faqTitle": "Soalan lazim",
+    "faqSubtitle": "Semua yang ibu bapa biasa tanya sebelum mendaftar.",
+    "faq": {
+      "findOperator": {
+        "question": "Bagaimana saya cari pengendali bas anak saya?",
+        "answer": "Minta kod 4-digit pengendali daripada pengendali bas sekolah anda, kemudian masukkannya di halaman utama untuk mencari ruang kerja mereka dan mendaftar serta-merta."
+      },
+      "billing": {
+        "question": "Bagaimana bil saya dikira?",
+        "answer": "Pengendali anda menetapkan yuran bulanan asas bagi setiap laluan. Diskaun untuk kitaran bil yang lebih panjang dan anak yang ramai dikira secara automatik dan disenaraikan pada setiap invois."
+      },
+      "payment": {
+        "question": "Bagaimana saya bayar?",
+        "answer": "Dari papan pemuka anda, tekan Bayar sekarang untuk menyelesaikan bil semasa atau keseluruhan baki tertunggak sekali gus. Bayaran yang direkodkan oleh pengendali anda dipaparkan serta-merta."
+      },
+      "changeDetails": {
+        "question": "Bolehkah saya kemaskini laluan atau butiran anak saya?",
+        "answer": "Ya — hubungi pengendali bas anda terus. Mereka menguruskan penetapan laluan dan boleh mengemaskini pendaftaran anak anda dari pihak mereka."
+      },
+      "receipts": {
+        "question": "Bolehkah saya dapat resit untuk bayaran saya?",
+        "answer": "Setiap invois yang dibayar mempunyai resit PDF yang boleh dimuat turun dari papan pemuka anda, disenaraikan dengan butiran pengendali anda untuk rekod anda."
+      },
+      "security": {
+        "question": "Adakah data saya selamat?",
+        "answer": "Data setiap pengendali diasingkan sepenuhnya di BasSekolah.my — maklumat anda hanya boleh dilihat oleh pengendali bas anda sendiri dan pentadbir platform."
+      }
+    }
+  },
+  "operatorsPage": {
+    "eyebrow": "Untuk pengendali bas sekolah Malaysia",
+    "headline": "Urus laluan. Lupakan helaian Excel.",
+    "subheadline": "Armada, pendaftaran, dan bil bulanan dalam satu ruang kerja — luluskan permohonan, tetapkan laluan, dan biarkan bil berjalan sendiri.",
+    "seeHowItWorks": "Lihat cara ia berfungsi",
+    "capabilities": {
+      "fleet": "Pengurusan armada & laluan",
+      "applications": "Aliran kerja kelulusan permohonan",
+      "discounts": "Diskaun automatik, bil bulanan",
+      "free": "Tiada langganan bulanan"
+    },
+    "whySwitch": {
+      "tag": "Kenapa beralih",
+      "title": "Dibina untuk perjalanan sekolah, bukan helaian Excel",
+      "subtitle": "Semua yang anda buat secara manual sekarang, berjalan dengan sendirinya.",
+      "oldWay": "Cara lama",
+      "newWay": "Dengan BasSekolah.my",
+      "payments": {
+        "old": "Menjejaki siapa yang telah membayar dalam helaian Excel, berharap ia tidak lapuk",
+        "new": "Papan pemuka langsung menunjukkan siapa yang telah bayar, siapa tertunggak, dan berapa banyak dikutip"
+      },
+      "applications": {
+        "old": "Permohonan baharu melalui mesej WhatsApp yang anda salin ke daftar secara manual",
+        "new": "Ibu bapa memohon dalam talian dengan kod 4-digit anda — luluskan dengan satu klik"
+      },
+      "discounts": {
+        "old": "Mengira diskaun adik-beradik dan tempoh secara manual, berbeza setiap kali",
+        "new": "Diskaun dikira secara automatik, dengan cara yang sama setiap bulan"
+      },
+      "visibility": {
+        "old": "Tiada rekod bas, pemandu, atau perhentian yang ditetapkan untuk seorang anak selain nota anda sendiri",
+        "new": "Setiap penetapan laluan, bas, dan pemandu direkod dan boleh dilihat serta-merta"
+      }
+    },
+    "journeyTag": "Perjalanannya",
+    "journeyTitle": "Empat langkah, dari mula hingga akhir",
+    "journeySubtitle": "Daripada menyediakan armada hingga mengutip yuran — inilah yang sebenarnya berlaku dalam aplikasi.",
+    "journey": {
+      "setup": {
+        "who": "Pengendali",
+        "title": "Sediakan armada anda",
+        "body": "Tambah bas, laluan, perhentian, pemandu dan konduktor. Tetapkan kadar bulanan bagi setiap laluan — tiada konfigurasi harga setiap perhentian diperlukan."
+      },
+      "apply": {
+        "who": "Ibu bapa",
+        "title": "Ibu bapa mohon dengan kod anda",
+        "body": "Ibu bapa cari anda dengan kod 4-digit pengendali dan hantar permohonan ringkas — nama anak, tarikh lahir, sekolah, dan pakej."
+      },
+      "approve": {
+        "who": "Pengendali",
+        "title": "Semak dan luluskan",
+        "body": "Tetapkan laluan dan bas, sahkan yuran. Satu klik mencipta rekod pelajar dan mengeluarkan invois pertama."
+      },
+      "bill": {
+        "who": "Kedua-dua",
+        "title": "Bil berjalan sendiri",
+        "body": "Setiap bulan, yuran dikira semula secara automatik dengan diskaun adik-beradik dan tempoh. Jejaki kutipan secara langsung, eksport ke CSV bila-bila masa."
+      }
+    },
+    "getStarted": { "title": "Mula sekarang", "subtitle": "Sediakan ruang kerja anda dalam beberapa minit." },
+    "parentNudge": "Mendaftarkan anak anda?",
+    "operatorCard": {
+      "kicker": "Saya pengendali",
+      "title": "Urus armada anda",
+      "description": "Urus laluan, kakitangan, permohonan, dan kutipan dari satu papan pemuka.",
+      "freeUpTo30": "Tiada yuran langganan bulanan",
+      "noSetupFees": "Tiada yuran persediaan",
+      "startFree": "Mula percuma",
+      "alreadyHaveWorkspace": "Sudah mempunyai ruang kerja? Log masuk"
+    },
+    "screenshots": {
+      "tag": "Lawatan produk",
+      "title": "Lihat ke dalam papan pemuka",
+      "subtitle": "Tangkapan skrin akan datang tidak lama lagi — inilah yang anda akan jumpa di dalamnya.",
+      "dashboard": {
+        "title": "Gambaran papan pemuka",
+        "description": "Statistik armada, pelajar, dan hasil sekali imbas"
+      },
+      "fleet": {
+        "title": "Pengurusan armada & laluan",
+        "description": "Bas, pemandu, konduktor, dan perhentian dalam satu tempat"
+      },
+      "billing": {
+        "title": "Pengebilan & kutipan",
+        "description": "Jejaki siapa yang telah bayar, siapa tertunggak, dan eksport bila-bila masa"
+      }
+    },
+    "pricing": {
+      "tag": "Harga",
+      "title": "Harga mudah, bayar apabila kutip",
+      "subtitle": "Tiada langganan bulanan — hanya yuran berdasarkan penggunaan, dan ia tidak pernah dibilkan kepada anda secara langsung.",
+      "priceSuffix": "/bulan",
+      "priceTbd": "Harga akan diumumkan",
+      "comingSoon": "Akan datang",
+      "gatewayNote": "Semua bayaran diproses dengan selamat melalui ToyyibPay.",
+      "free": {
+        "planName": "Pelan Percuma",
+        "tagline": "Tiada yuran persediaan. Tiada kad kredit diperlukan.",
+        "features": {
+          "perStudent": "RM1 setiap pelajar aktif, dibilkan bulanan",
+          "perTransaction": "RM1 setiap transaksi yang dikutip",
+          "deducted": "Yuran ditolak secara automatik daripada setiap bayaran ibu bapa — anda tidak akan menerima bil berasingan."
+        }
+      },
+      "pro": {
+        "planName": "Pelan Pro",
+        "tagline": "Untuk pengendali yang bersedia mengautomasikan kutipan dan menggunakan GPS.",
+        "features": {
+          "perTransaction": "RM1 setiap transaksi sahaja — tiada yuran setiap pelajar",
+          "reminders": "Peringatan bil automatik melalui WhatsApp & e-mel",
+          "driverApp": "Aplikasi pemandu untuk penjejakan GPS langsung",
+          "liveTracking": "Lokasi bas langsung & anggaran masa tiba untuk ibu bapa",
+          "boardingAlerts": "Notifikasi menaiki & turun bas untuk ibu bapa"
+        }
+      }
+    },
+    "faqTag": "Soalan Lazim",
+    "faqTitle": "Soalan lazim",
+    "faqSubtitle": "Semua yang pengendali biasa tanya sebelum mendaftar.",
+    "faq": {
+      "free": {
+        "question": "Adakah BasSekolah.my benar-benar percuma?",
+        "answer": "Tiada langganan bulanan — anda hanya membayar RM1 setiap pelajar aktif dan RM1 setiap transaksi, kedua-duanya ditolak secara automatik daripada bayaran ibu bapa. Tiada yuran persediaan, tiada kad kredit diperlukan."
+      },
+      "setup": {
+        "question": "Berapa lama persediaan mengambil masa?",
+        "answer": "Kebanyakan pengendali beroperasi dalam masa sehari: tambah bas, pemandu, dan laluan anda, kemudian kongsi kod 4-digit pengendali anda dengan ibu bapa untuk mula menerima permohonan."
+      },
+      "billing": {
+        "question": "Bagaimana pengebilan dan kutipan berfungsi?",
+        "answer": "Konfigurasikan yuran asas dan peraturan diskaun anda sekali sahaja — BasSekolah.my mengira bil setiap keluarga secara automatik mengikut kitaran bil dan bilangan adik-beradik, serta menjejaki siapa yang telah membayar."
+      },
+      "dataIsolation": {
+        "question": "Adakah data armada dan pelajar saya peribadi?",
+        "answer": "Ya — BasSekolah.my adalah sepenuhnya multi-tenant. Bas, kakitangan, laluan, pelajar, dan kewangan anda tidak akan kelihatan kepada pengendali lain di platform."
+      },
+      "parentsRegister": {
+        "question": "Bagaimana ibu bapa mendaftar?",
+        "answer": "Kongsikan kod 4-digit pengendali anda. Ibu bapa memasukkannya di halaman utama, menghantar permohonan ringkas, dan anda meluluskan atau menolaknya dari papan pemuka anda."
+      },
+      "hiddenFees": {
+        "question": "Adakah terdapat sebarang yuran tersembunyi?",
+        "answer": "Tiada — RM1 setiap pelajar dan RM1 setiap transaksi, ditolak daripada bayaran ibu bapa, adalah satu-satunya yuran yang dikenakan oleh BasSekolah.my. Tiada yuran persediaan, tiada minimum bulanan, tiada kejutan."
+      }
+    }
+  },
+  "about": {
+    "eyebrow": "Tentang BasSekolah.my",
+    "headline": "Dibina untuk perjalanan ke sekolah.",
+    "paragraph1": "Kebanyakan pengendali bas sekolah di Malaysia masih menguruskan armada, pendaftaran, dan bil menggunakan hamparan data dan kumpulan WhatsApp — sukar untuk menjejaki siapa yang berhutang, anak mana di bas mana, dan lambat mendaftarkan keluarga baharu setiap penggal.",
+    "paragraph2": "BasSekolah.my menggabungkan pengurusan armada, aliran pendaftaran mohon-dan-luluskan, dan bil bulanan automatik dalam satu ruang kerja dwibahasa — dibina untuk mudah disediakan oleh pengendali, dan telus untuk digunakan oleh ibu bapa.",
+    "paragraph3": "Setiap permohonan disemak sebelum anak ditambah ke laluan, setiap invois dikira semula secara automatik dengan diskaun yang betul, dan setiap ibu bapa boleh lihat dengan tepat bas, pemandu, dan perhentian yang ditetapkan untuk anak mereka.",
+    "values": {
+      "transparency": {
+        "title": "Ketelusan",
+        "description": "Ibu bapa lihat bas, pemandu, dan perhentian sebenar — bukan sekadar nama laluan."
+      },
+      "simplicity": {
+        "title": "Kesederhanaan",
+        "description": "Tiada konfigurasi harga setiap lokasi atau hamparan data untuk diselenggara."
+      },
+      "fairBilling": {
+        "title": "Bil yang adil",
+        "description": "Diskaun adik-beradik dan tempoh dikira dengan cara yang sama, setiap bulan."
+      }
+    },
+    "ctaOperators": "Lihat platform pengendali",
+    "ctaParents": "Cari pengendali anda"
+  },
+  "contact": {
+    "eyebrow": "Hubungi Kami",
+    "headline": "Hubungi kami",
+    "description": "Ada soalan tentang menyediakan armada, permohonan, atau bil? Hantar e-mel kepada kami.",
+    "responseNote": "Kami biasanya membalas dalam masa satu hari bekerja.",
+    "form": {
+      "name": "Nama",
+      "email": "E-mel",
+      "phone": "Telefon (pilihan)",
+      "message": "Mesej",
+      "submit": "Hantar mesej",
+      "submitting": "Menghantar…",
+      "failed": "Sesuatu tidak kena. Sila cuba lagi.",
+      "successTitle": "Mesej dihantar",
+      "successDescription": "Terima kasih kerana menghubungi kami — kami akan membalas tidak lama lagi."
+    }
   },
   "auth": {
     "login": {
@@ -172,6 +509,46 @@
       "failed": "Tidak dapat mencipta ruang kerja anda. Semak butiran anda dan cuba lagi.",
       "submit": "Mula percuma",
       "submitting": "Mencipta ruang kerja…"
+    }
+  },
+  "admin": {
+    "nav": {
+      "platformAdmin": "Admin Platform",
+      "dashboard": "Papan Pemuka",
+      "operators": "Pengendali",
+      "transactions": "Transaksi"
+    },
+    "dashboard": {
+      "welcome": "Selamat datang, {{name}}",
+      "totalOperators": "Jumlah Pengendali",
+      "totalStudents": "Jumlah Pelajar",
+      "totalBuses": "Jumlah Bas",
+      "totalParents": "Jumlah Ibu Bapa"
+    },
+    "operators": {
+      "title": "Pengendali",
+      "company": "Syarikat",
+      "code": "Kod",
+      "contact": "Hubungi",
+      "plan": "Pelan",
+      "students": "Pelajar",
+      "buses": "Bas",
+      "noOperators": "Belum ada pengendali."
+    },
+    "transactions": {
+      "title": "Transaksi",
+      "totalCollected": "Jumlah Dikutip",
+      "transactionCount": "Transaksi",
+      "operator": "Pengendali",
+      "allOperators": "Semua pengendali",
+      "date": "Tarikh",
+      "dateFrom": "Dari",
+      "dateTo": "Hingga",
+      "noTransactions": "Belum ada transaksi."
+    },
+    "operatorDetail": {
+      "back": "Kembali ke Pengendali",
+      "empty": "Belum ada apa-apa di sini."
     }
   },
   "operator": {
@@ -309,6 +686,7 @@
     },
     "settings": {
       "title": "Tetapan",
+      "general": "Umum",
       "logo": "Logo",
       "noLogo": "Tiada logo",
       "uploadLogo": "Muat naik logo",
@@ -344,6 +722,9 @@
       "myChildren": "Anak-anak saya",
       "enrollAChild": "Daftarkan anak",
       "noChildren": "Belum ada anak didaftarkan. Klik \"Daftarkan anak\" untuk bermula.",
+      "yourOperator": "Pengendali Anda",
+      "phone": "Telefon",
+      "email": "E-mel",
       "name": "Nama",
       "school": "Sekolah",
       "route": "Laluan",
@@ -357,6 +738,7 @@
       "amount": "Jumlah",
       "dueDate": "Tarikh cukup tempoh",
       "payNow": "Bayar sekarang",
+      "viewInvoice": "Lihat invois",
       "applicationStatus": "Status permohonan",
       "applicationPending": "Menunggu semakan",
       "applicationRejected": "Ditolak",
@@ -371,16 +753,34 @@
       "noBusAssigned": "Belum ada bas ditetapkan untuk laluan ini."
     },
     "pay": {
-      "title": "Bayar invois",
-      "invoiceFor": "Invois untuk {{name}}",
+      "title": "Bayar bil anda",
+      "subtitle": "Pilih apa yang anda ingin bayar.",
+      "payTotalTitle": "Bayar jumlah tertunggak",
+      "payTotalDescription": "Termasuk semua invois belum dibayar dan tertunggak",
+      "payCurrentTitle": "Bayar bil semasa sahaja",
+      "payCurrentDescription": "Caj bulan ini sahaja",
+      "includedBills": "Termasuk dalam bayaran ini",
       "payWith": "Bayar dengan ToyyibPay",
       "poweredBy": "Dikuasakan oleh ToyyibPay",
       "previewNotice": "Ini adalah pratonton antara muka — bayaran belum diproses lagi. Tiada caj atau simpanan dibuat.",
       "redirecting": "Mengalihkan ke ToyyibPay…",
       "successTitle": "Bayaran berjaya",
-      "successDescription": "Ini adalah pengesahan simulasi untuk tujuan pratonton. Status invois sebenarnya tidak berubah.",
+      "successDescription": "Ini adalah pengesahan simulasi untuk tujuan pratonton. Status invois anda sebenarnya tidak berubah.",
       "backToDashboard": "Kembali ke invois",
-      "notFound": "Invois tidak dijumpai."
+      "allCaughtUpTitle": "Semuanya sudah selesai",
+      "allCaughtUpDescription": "Anda tiada invois tertunggak buat masa ini."
+    },
+    "invoice": {
+      "title": "Invois #{{id}}",
+      "operator": "Pengendali",
+      "contact": "Hubungi",
+      "route": "Laluan",
+      "billingCycle": "Kitaran bil",
+      "amountBeforeDiscount": "Jumlah sebelum diskaun",
+      "discount": "Diskaun",
+      "paidOn": "Dibayar pada {{date}}",
+      "dueOn": "Cukup tempoh {{date}}",
+      "overdueSince": "Tertunggak sejak {{date}}"
     },
     "enroll": {
       "title": "Mohon untuk anak",

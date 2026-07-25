@@ -17,9 +17,6 @@ export function OperatorLayout() {
 
   const navItems = [
     { to: '/operator/dashboard', label: t('nav.dashboard'), count: 0 },
-    { to: '/operator/routes', label: t('nav.routes'), count: 0 },
-    { to: '/operator/buses', label: t('nav.buses'), count: 0 },
-    { to: '/operator/staff', label: t('nav.staff'), count: 0 },
     { to: '/operator/students', label: t('nav.students'), count: 0 },
     { to: '/operator/applications', label: t('nav.applications'), count: pendingApplications?.length ?? 0 },
     { to: '/operator/finances', label: t('nav.finances'), count: 0 },
@@ -29,12 +26,12 @@ export function OperatorLayout() {
   return (
     <div className="min-h-screen">
       <header className="border-b">
-        <div className="flex items-center justify-between px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-2 hover:text-primary">
-            {data?.tenant.logo_url && (
+            {data?.tenant?.logo_url && (
               <img src={data.tenant.logo_url} alt="" className="size-6 shrink-0 rounded object-cover" />
             )}
-            <span className="truncate font-medium">{data?.tenant.company_name}</span>
+            <span className="truncate font-medium">{data?.tenant?.company_name}</span>
           </Link>
 
           <nav className="hidden items-center gap-4 lg:flex">
@@ -114,7 +111,7 @@ export function OperatorLayout() {
           </div>
         )}
       </header>
-      <main className="p-4 sm:p-6">
+      <main className="mx-auto max-w-5xl p-4 sm:p-6">
         <Outlet />
       </main>
     </div>

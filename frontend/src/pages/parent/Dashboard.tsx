@@ -115,6 +115,40 @@ export function ParentDashboard() {
         </CardContent>
       </Card>
 
+      {data?.tenant && (
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle className="text-base">{t('parent.dashboard.yourOperator')}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-1.5 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t('parent.invoice.operator')}</span>
+              <span>
+                {data.tenant.company_name} · {data.tenant.operator_code}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t('parent.dashboard.phone')}</span>
+              <a
+                href={`tel:${data.tenant.contact_phone}`}
+                className="underline underline-offset-2 hover:text-primary"
+              >
+                {data.tenant.contact_phone}
+              </a>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t('parent.dashboard.email')}</span>
+              <a
+                href={`mailto:${data.tenant.email}`}
+                className="underline underline-offset-2 hover:text-primary"
+              >
+                {data.tenant.email}
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {pendingOrRejected.length > 0 && (
         <Card>
           <CardHeader>
@@ -178,30 +212,56 @@ export function ParentDashboard() {
               {detailStudent.route.driver && (
                 <div className="flex flex-col gap-1">
                   <span className="font-medium">{t('parent.dashboard.driver')}</span>
-                  <span className="text-muted-foreground">
-                    {detailStudent.route.driver.full_name} ·{' '}
-                    <a
-                      href={`tel:${detailStudent.route.driver.phone}`}
-                      className="underline underline-offset-2 hover:text-foreground"
-                    >
-                      {detailStudent.route.driver.phone}
-                    </a>
-                  </span>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    {detailStudent.route.driver.avatar_url ? (
+                      <img
+                        src={detailStudent.route.driver.avatar_url}
+                        alt=""
+                        className="size-6 rounded-full border object-cover"
+                      />
+                    ) : (
+                      <div className="flex size-6 items-center justify-center rounded-full border bg-muted/50 text-[10px] text-muted-foreground">
+                        {detailStudent.route.driver.full_name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span>
+                      {detailStudent.route.driver.full_name} ·{' '}
+                      <a
+                        href={`tel:${detailStudent.route.driver.phone}`}
+                        className="underline underline-offset-2 hover:text-foreground"
+                      >
+                        {detailStudent.route.driver.phone}
+                      </a>
+                    </span>
+                  </div>
                 </div>
               )}
 
               {detailStudent.route.conductor && (
                 <div className="flex flex-col gap-1">
                   <span className="font-medium">{t('parent.dashboard.conductor')}</span>
-                  <span className="text-muted-foreground">
-                    {detailStudent.route.conductor.full_name} ·{' '}
-                    <a
-                      href={`tel:${detailStudent.route.conductor.phone}`}
-                      className="underline underline-offset-2 hover:text-foreground"
-                    >
-                      {detailStudent.route.conductor.phone}
-                    </a>
-                  </span>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    {detailStudent.route.conductor.avatar_url ? (
+                      <img
+                        src={detailStudent.route.conductor.avatar_url}
+                        alt=""
+                        className="size-6 rounded-full border object-cover"
+                      />
+                    ) : (
+                      <div className="flex size-6 items-center justify-center rounded-full border bg-muted/50 text-[10px] text-muted-foreground">
+                        {detailStudent.route.conductor.full_name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span>
+                      {detailStudent.route.conductor.full_name} ·{' '}
+                      <a
+                        href={`tel:${detailStudent.route.conductor.phone}`}
+                        className="underline underline-offset-2 hover:text-foreground"
+                      >
+                        {detailStudent.route.conductor.phone}
+                      </a>
+                    </span>
+                  </div>
                 </div>
               )}
 

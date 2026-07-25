@@ -31,6 +31,7 @@ export interface ParentProfile {
   full_name: string
   relationship: 'father' | 'mother' | 'guardian' | null
   gender: 'male' | 'female' | null
+  avatar_url: string | null
   ic_number: string
   phone: string
   email: string
@@ -45,7 +46,7 @@ export interface ParentProfile {
 
 export interface MeResponse {
   user: User
-  tenant: BusOperator
+  tenant: BusOperator | null
   parentProfile: ParentProfile | null
   roles: string[]
 }

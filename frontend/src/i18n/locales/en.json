@@ -21,6 +21,9 @@
     "allYears": "All years",
     "allMonths": "All months",
     "downloadReceipt": "Download receipt",
+    "uploadPhoto": "Upload photo",
+    "changePhoto": "Change photo",
+    "uploading": "Uploading…",
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {{page}} of {{pageCount}}",
@@ -62,29 +65,148 @@
     "invoices": "Invoices",
     "profile": "Profile"
   },
+  "marketingNav": {
+    "parents": "For Parents",
+    "operators": "For Operators",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "footer": {
+    "copyright": "© {{year}} BasSekolah.my. All rights reserved.",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy"
+  },
+  "legal": {
+    "lastUpdated": "Last updated: 25 July 2026"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "sections": {
+      "acceptance": {
+        "title": "1. Acceptance of terms",
+        "body": "By creating an account or using BasSekolah.my (\"the Platform\"), you agree to these Terms of Service. If you do not agree, please do not use the Platform."
+      },
+      "service": {
+        "title": "2. Description of service",
+        "body": "BasSekolah.my provides fleet management, student enrollment, and billing tools for Malaysian school bus operators, and a companion portal for parents to track applications, routes, and payments."
+      },
+      "accounts": {
+        "title": "3. Accounts",
+        "body": "Bus operators are responsible for the accuracy of the fleet, staff, and route information they enter, and for approving student applications. Parents are responsible for the accuracy of the information they submit about their children. Each account may only be used by the person or organisation it was created for."
+      },
+      "fees": {
+        "title": "4. Fees and payment",
+        "body": "The Free plan carries no monthly subscription fee. BasSekolah.my charges RM1 per active student and RM1 per transaction collected, both deducted automatically from the parent's payment at the point of collection via our payment gateway, ToyyibPay. Operators are never billed separately for these fees. Pricing for additional plans will be published before they become available."
+      },
+      "responsibilities": {
+        "title": "5. Operator responsibilities",
+        "body": "Operators are solely responsible for the safe operation of their bus fleet, the accuracy of billing amounts, and compliance with applicable transport and safety regulations. BasSekolah.my is a management and billing tool only, and does not operate, own, or supervise any bus service."
+      },
+      "data": {
+        "title": "6. Data and privacy",
+        "body": "Your use of the Platform is also governed by our Privacy Policy, which explains how we collect, use, and protect personal data, including data belonging to students."
+      },
+      "termination": {
+        "title": "7. Termination",
+        "body": "You may stop using the Platform at any time. We may suspend or terminate accounts that violate these Terms, misuse the Platform, or engage in fraudulent activity."
+      },
+      "liability": {
+        "title": "8. Limitation of liability",
+        "body": "The Platform is provided \"as is\". To the fullest extent permitted by law, BasSekolah.my is not liable for indirect or consequential losses arising from use of the Platform, including delays, missed payments, or transport incidents."
+      },
+      "changes": {
+        "title": "9. Changes to these terms",
+        "body": "We may update these Terms from time to time. Continued use of the Platform after changes take effect constitutes acceptance of the revised Terms."
+      },
+      "contact": {
+        "title": "10. Contact us",
+        "body": "Questions about these Terms? Reach us at hello@bassekolah.my or via our Contact page."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "sections": {
+      "collect": {
+        "title": "1. Information we collect",
+        "body": "We collect account information (name, email, phone) for operators and parents; student information (name, date of birth, school, route) submitted by parents or operators; and payment records (amount, method, date) processed through ToyyibPay. We never store full card or bank account numbers ourselves."
+      },
+      "use": {
+        "title": "2. How we use information",
+        "body": "We use this information to operate the Platform: managing enrollments, generating invoices, calculating discounts, processing payments, and providing customer support."
+      },
+      "sharing": {
+        "title": "3. Data sharing",
+        "body": "BasSekolah.my is multi-tenant — each bus operator's data is isolated and never visible to other operators. Parent and student data is only visible to the parent's own bus operator and to BasSekolah.my platform administrators for support and billing purposes."
+      },
+      "security": {
+        "title": "4. Data security",
+        "body": "Data is encrypted in transit, and access to each operator's data is enforced at the database level. Platform administrator access is limited to what's needed for support and billing."
+      },
+      "retention": {
+        "title": "5. Data retention",
+        "body": "We retain account, enrollment, and billing records for as long as the account is active, and as required by Malaysian tax and record-keeping regulations."
+      },
+      "rights": {
+        "title": "6. Your rights",
+        "body": "Under Malaysia's Personal Data Protection Act 2010 (PDPA), you may request access to, correction of, or deletion of your personal data by contacting us. Parents may also update their own and their child's details directly from their portal."
+      },
+      "cookies": {
+        "title": "7. Cookies",
+        "body": "We use essential cookies to keep you signed in securely. We do not use third-party advertising trackers."
+      },
+      "children": {
+        "title": "8. Children's data",
+        "body": "Student data is submitted and managed by a parent or guardian, or by the bus operator on their behalf. We do not knowingly collect data directly from children."
+      },
+      "changes": {
+        "title": "9. Changes to this policy",
+        "body": "We may update this Privacy Policy from time to time. Material changes will be reflected with a new \"last updated\" date."
+      },
+      "contact": {
+        "title": "10. Contact us",
+        "body": "Questions about this Privacy Policy? Reach us at hello@bassekolah.my or via our Contact page."
+      }
+    }
+  },
   "landing": {
-    "badge": "For school bus operators & parents",
-    "headline": "Fleet management and fee collection, without the spreadsheets",
-    "subheadline": "Operators run routes, staff, and billing in one workspace. Parents register their children and pay online in minutes.",
-    "features": {
-      "fleet": { "title": "Fleet & routes", "description": "Manage buses, drivers, conductors, stops, and rate cards in one place." },
-      "invoicing": { "title": "Automated invoicing", "description": "Billing-period and sibling discounts calculated and applied automatically." },
-      "selfService": { "title": "Parent self-service", "description": "Parents register, enroll their children, and see fees before they confirm." },
-      "ledger": { "title": "Live collections ledger", "description": "Track what's expected, collected, and overdue — export to CSV anytime." }
+    "eyebrow": "For parents of Malaysian schoolchildren",
+    "headline": "Know exactly which bus your child is on.",
+    "subheadline": "Apply to your child's bus operator in minutes, then see the exact bus, driver, and stop they're assigned to. Pay online and get a receipt every month.",
+    "seeHowItWorks": "See how it works",
+    "capabilities": {
+      "bilingual": "EN / BM interface",
+      "transparency": "See your child's bus, driver & stop",
+      "discounts": "Auto sibling & term discounts",
+      "receipts": "Instant PDF receipts"
     },
-    "getStarted": { "title": "Get started", "subtitle": "Pick the option that's you." },
-    "operatorCard": {
-      "title": "I'm an operator",
-      "description": "Manage your fleet, routes, staff, and collections from one dashboard.",
-      "freeUpTo30": "Free up to 30 students",
-      "noSetupFees": "No setup fees",
-      "startFree": "Start free",
-      "alreadyHaveWorkspace": "Already have a workspace? Log in"
+    "journeyTag": "The journey",
+    "journeyTitle": "Four steps, start to finish",
+    "journeySubtitle": "From finding your operator to paying the monthly fee — here's what actually happens in the app.",
+    "journey": {
+      "find": {
+        "title": "Find your operator",
+        "body": "Enter the 4-digit ID your bus operator gives you to find their workspace."
+      },
+      "apply": {
+        "title": "Apply in minutes",
+        "body": "Your child's name, date of birth, school, and package. That's it — no route or fee to figure out yourself."
+      },
+      "approved": {
+        "title": "Approved, and you'll see everything",
+        "body": "Once your operator approves your application, you'll see the exact bus, driver, conductor, and pickup stop assigned to your child."
+      },
+      "pay": {
+        "title": "Pay monthly, done",
+        "body": "Fees recalculate automatically each month with sibling and term discounts applied. Pay online and download a PDF receipt."
+      }
     },
+    "getStarted": { "title": "Get started", "subtitle": "Find your bus operator to register or sign in." },
+    "operatorNudge": "Running a school bus operation?",
     "parentCard": {
-      "title": "I'm a parent",
+      "kicker": "I'm a parent",
+      "title": "Find your operator",
       "description": "Enter your bus operator's 4-digit ID to register or sign in.",
-      "operatorId": "Operator ID",
       "checking": "Checking…",
       "notFound": "No operator found with that ID",
       "alreadyRegistered": "Already registered? Log in"
@@ -94,7 +216,222 @@
       "pickUpWhereYouLeftOff": "Pick up right where you left off.",
       "goToDashboard": "Go to your dashboard"
     },
-    "footer": "BasSekolah.my"
+    "footer": "Fleet management and fee collection for Malaysian school bus operators.",
+    "faqTag": "FAQ",
+    "faqTitle": "Common questions",
+    "faqSubtitle": "Everything parents usually ask before signing up.",
+    "faq": {
+      "findOperator": {
+        "question": "How do I find my child's bus operator?",
+        "answer": "Ask your school bus operator for their 4-digit operator code, then enter it on the homepage to find their workspace and register instantly."
+      },
+      "billing": {
+        "question": "How is my bill calculated?",
+        "answer": "Your operator sets a base monthly fee per route. Discounts for longer billing cycles and multiple children are applied automatically and itemized on every invoice."
+      },
+      "payment": {
+        "question": "How do I pay?",
+        "answer": "From your dashboard, tap Pay now to settle your current bill or your full outstanding balance in one go. Payments your operator records are reflected instantly."
+      },
+      "changeDetails": {
+        "question": "Can I update my child's route or details?",
+        "answer": "Yes — reach out to your bus operator directly. They manage route assignments and can update your child's enrollment from their side."
+      },
+      "receipts": {
+        "question": "Can I get a receipt for my payment?",
+        "answer": "Every paid invoice has a downloadable PDF receipt available from your dashboard, itemized with your operator's details for your records."
+      },
+      "security": {
+        "question": "Is my data secure?",
+        "answer": "Each operator's data is fully isolated on BasSekolah.my — your information is only ever visible to your own bus operator and platform administrators."
+      }
+    }
+  },
+  "operatorsPage": {
+    "eyebrow": "For Malaysian school bus operators",
+    "headline": "Run the route. Skip the spreadsheet.",
+    "subheadline": "Fleet, enrollment, and monthly billing in one workspace — approve applications, assign routes, and let billing run itself.",
+    "seeHowItWorks": "See how it works",
+    "capabilities": {
+      "fleet": "Fleet & route management",
+      "applications": "Application approval workflow",
+      "discounts": "Auto discounts, monthly billing",
+      "free": "No monthly subscription"
+    },
+    "whySwitch": {
+      "tag": "Why switch",
+      "title": "Built for the school run, not a spreadsheet",
+      "subtitle": "Everything you're doing by hand today, running itself instead.",
+      "oldWay": "The old way",
+      "newWay": "With BasSekolah.my",
+      "payments": {
+        "old": "Tracking who's paid in a spreadsheet, hoping it's not out of date",
+        "new": "A live dashboard shows exactly who's paid, who's overdue, and how much you've collected"
+      },
+      "applications": {
+        "old": "New applications via WhatsApp messages you copy into a register by hand",
+        "new": "Parents apply online with your 4-digit code — approve with one click"
+      },
+      "discounts": {
+        "old": "Calculating sibling and term discounts by hand, differently every time",
+        "new": "Discounts calculated automatically, the same way every month"
+      },
+      "visibility": {
+        "old": "No record of which bus, driver, or stop a child is assigned to besides your own notes",
+        "new": "Every route, bus, and driver assignment logged and visible instantly"
+      }
+    },
+    "journeyTag": "The journey",
+    "journeyTitle": "Four steps, start to finish",
+    "journeySubtitle": "From setting up a fleet to collecting the fee — here's what actually happens in the app.",
+    "journey": {
+      "setup": {
+        "who": "Operator",
+        "title": "Set up your fleet",
+        "body": "Add buses, routes, stops, drivers and conductors. Set your own monthly rate per route — no per-stop pricing config needed."
+      },
+      "apply": {
+        "who": "Parent",
+        "title": "Parents apply with your code",
+        "body": "Parents find you with your 4-digit operator code and submit a short application — child's name, date of birth, school, and package."
+      },
+      "approve": {
+        "who": "Operator",
+        "title": "Review and approve",
+        "body": "Assign the route and bus, confirm the fee. One click creates the student record and issues the first invoice."
+      },
+      "bill": {
+        "who": "Both",
+        "title": "Billing runs itself",
+        "body": "Every month, fees recalculate automatically with sibling and term discounts applied. Track collections live, export to CSV anytime."
+      }
+    },
+    "getStarted": { "title": "Get started", "subtitle": "Set up your workspace in minutes." },
+    "parentNudge": "Registering your child?",
+    "operatorCard": {
+      "kicker": "I'm an operator",
+      "title": "Run your fleet",
+      "description": "Manage routes, staff, applications, and collections from one dashboard.",
+      "freeUpTo30": "No monthly subscription fee",
+      "noSetupFees": "No setup fees",
+      "startFree": "Start free",
+      "alreadyHaveWorkspace": "Already have a workspace? Log in"
+    },
+    "screenshots": {
+      "tag": "Product tour",
+      "title": "A look inside the dashboard",
+      "subtitle": "Screenshots coming soon — here's what you'll find inside.",
+      "dashboard": {
+        "title": "Dashboard overview",
+        "description": "Fleet, student, and revenue stats at a glance"
+      },
+      "fleet": {
+        "title": "Fleet & route management",
+        "description": "Buses, drivers, conductors, and stops in one place"
+      },
+      "billing": {
+        "title": "Billing & collections",
+        "description": "Track who's paid, who's overdue, and export anytime"
+      }
+    },
+    "pricing": {
+      "tag": "Pricing",
+      "title": "Simple, pay-as-you-collect pricing",
+      "subtitle": "No monthly subscription — the only fees are usage-based, and they're never billed to you directly.",
+      "priceSuffix": "/month",
+      "priceTbd": "Pricing to be announced",
+      "comingSoon": "Coming soon",
+      "gatewayNote": "All payments are processed securely via ToyyibPay.",
+      "free": {
+        "planName": "Free plan",
+        "tagline": "No setup fees. No credit card required.",
+        "features": {
+          "perStudent": "RM1 per active student, billed monthly",
+          "perTransaction": "RM1 per transaction collected",
+          "deducted": "Fees are deducted automatically from each parent's payment — you never receive a separate bill."
+        }
+      },
+      "pro": {
+        "planName": "Pro plan",
+        "tagline": "For operators ready to automate collections and go live with GPS.",
+        "features": {
+          "perTransaction": "RM1 per transaction only — no per-student fee",
+          "reminders": "Automated billing reminders via WhatsApp & email",
+          "driverApp": "Driver app for live GPS tracking",
+          "liveTracking": "Live bus location & ETA for parents",
+          "boardingAlerts": "Boarding & alighting notifications for parents"
+        }
+      }
+    },
+    "faqTag": "FAQ",
+    "faqTitle": "Common questions",
+    "faqSubtitle": "Everything operators usually ask before signing up.",
+    "faq": {
+      "free": {
+        "question": "Is BasSekolah.my really free?",
+        "answer": "There's no monthly subscription — you only pay RM1 per active student and RM1 per transaction, both deducted automatically from each parent's payment. No setup fees, no credit card required."
+      },
+      "setup": {
+        "question": "How long does setup take?",
+        "answer": "Most operators are live within a day: add your buses, drivers, and routes, then share your 4-digit operator code with parents to start collecting applications."
+      },
+      "billing": {
+        "question": "How does billing and collection work?",
+        "answer": "Configure your base fees and discount rules once — BasSekolah.my calculates each family's bill automatically by billing cycle and sibling count, and tracks who's paid."
+      },
+      "dataIsolation": {
+        "question": "Is my fleet and student data private?",
+        "answer": "Yes — BasSekolah.my is fully multi-tenant. Your buses, staff, routes, students, and finances are never visible to other operators on the platform."
+      },
+      "parentsRegister": {
+        "question": "How do parents register?",
+        "answer": "Share your 4-digit operator code. Parents enter it on the homepage, submit a short application, and you approve or reject it from your dashboard."
+      },
+      "hiddenFees": {
+        "question": "Are there any hidden fees?",
+        "answer": "No — RM1 per student and RM1 per transaction, deducted from parent payments, is the only fee BasSekolah.my charges. No setup fees, no monthly minimums, no surprises."
+      }
+    }
+  },
+  "about": {
+    "eyebrow": "About BasSekolah.my",
+    "headline": "Built for the school run.",
+    "paragraph1": "Most Malaysian school bus operators still run their fleet, enrollment, and billing out of spreadsheets and WhatsApp groups — hard to track who owes what, which child is on which bus, and slow to onboard new families every term.",
+    "paragraph2": "BasSekolah.my brings fleet management, an application-and-approval enrollment flow, and automatic monthly billing into one bilingual workspace — built to be simple for operators to set up, and transparent for parents to use.",
+    "paragraph3": "Every application is reviewed before a child is added to a route, every invoice recalculates automatically with the right discounts, and every parent can see exactly which bus, driver, and stop their child is assigned to.",
+    "values": {
+      "transparency": {
+        "title": "Transparency",
+        "description": "Parents see the real bus, driver, and stop — not just a route name."
+      },
+      "simplicity": {
+        "title": "Simplicity",
+        "description": "No per-location pricing config or spreadsheets to maintain."
+      },
+      "fairBilling": {
+        "title": "Fair billing",
+        "description": "Sibling and term discounts calculated the same way, every month."
+      }
+    },
+    "ctaOperators": "See the operator platform",
+    "ctaParents": "Find your operator"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "headline": "Get in touch",
+    "description": "Questions about setting up your fleet, an application, or a bill? Send us an email.",
+    "responseNote": "We usually reply within one business day.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "message": "Message",
+      "submit": "Send message",
+      "submitting": "Sending…",
+      "failed": "Something went wrong. Please try again.",
+      "successTitle": "Message sent",
+      "successDescription": "Thanks for reaching out — we'll get back to you soon."
+    }
   },
   "auth": {
     "login": {
@@ -172,6 +509,46 @@
       "failed": "Could not create your workspace. Check your details and try again.",
       "submit": "Start free",
       "submitting": "Creating workspace…"
+    }
+  },
+  "admin": {
+    "nav": {
+      "platformAdmin": "Platform Admin",
+      "dashboard": "Dashboard",
+      "operators": "Operators",
+      "transactions": "Transactions"
+    },
+    "dashboard": {
+      "welcome": "Welcome, {{name}}",
+      "totalOperators": "Total Operators",
+      "totalStudents": "Total Students",
+      "totalBuses": "Total Buses",
+      "totalParents": "Total Parents"
+    },
+    "operators": {
+      "title": "Operators",
+      "company": "Company",
+      "code": "Code",
+      "contact": "Contact",
+      "plan": "Plan",
+      "students": "Students",
+      "buses": "Buses",
+      "noOperators": "No operators yet."
+    },
+    "transactions": {
+      "title": "Transactions",
+      "totalCollected": "Total Collected",
+      "transactionCount": "Transactions",
+      "operator": "Operator",
+      "allOperators": "All operators",
+      "date": "Date",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "noTransactions": "No transactions yet."
+    },
+    "operatorDetail": {
+      "back": "Back to Operators",
+      "empty": "Nothing here yet."
     }
   },
   "operator": {
@@ -309,6 +686,7 @@
     },
     "settings": {
       "title": "Settings",
+      "general": "General",
       "logo": "Logo",
       "noLogo": "No logo",
       "uploadLogo": "Upload logo",
@@ -344,6 +722,9 @@
       "myChildren": "My children",
       "enrollAChild": "Enroll a child",
       "noChildren": "No children enrolled yet. Click \"Enroll a child\" to get started.",
+      "yourOperator": "Your Operator",
+      "phone": "Phone",
+      "email": "Email",
       "name": "Name",
       "school": "School",
       "route": "Route",
@@ -357,6 +738,7 @@
       "amount": "Amount",
       "dueDate": "Due date",
       "payNow": "Pay now",
+      "viewInvoice": "View invoice",
       "applicationStatus": "Application status",
       "applicationPending": "Pending review",
       "applicationRejected": "Rejected",
@@ -371,16 +753,34 @@
       "noBusAssigned": "No bus has been assigned to this route yet."
     },
     "pay": {
-      "title": "Pay invoice",
-      "invoiceFor": "Invoice for {{name}}",
+      "title": "Pay your bill",
+      "subtitle": "Choose what you'd like to pay.",
+      "payTotalTitle": "Pay total outstanding",
+      "payTotalDescription": "Includes all unpaid and overdue invoices",
+      "payCurrentTitle": "Pay current bill only",
+      "payCurrentDescription": "This month's charges only",
+      "includedBills": "Included in this payment",
       "payWith": "Pay with ToyyibPay",
       "poweredBy": "Powered by ToyyibPay",
       "previewNotice": "This is a UI preview — payments aren't processed yet. Nothing has been charged or saved.",
       "redirecting": "Redirecting to ToyyibPay…",
       "successTitle": "Payment successful",
-      "successDescription": "This is a simulated confirmation for preview purposes. The invoice status hasn't actually changed.",
+      "successDescription": "This is a simulated confirmation for preview purposes. Your invoice status hasn't actually changed.",
       "backToDashboard": "Back to invoices",
-      "notFound": "Invoice not found."
+      "allCaughtUpTitle": "You're all caught up",
+      "allCaughtUpDescription": "You have no outstanding invoices right now."
+    },
+    "invoice": {
+      "title": "Invoice #{{id}}",
+      "operator": "Operator",
+      "contact": "Contact",
+      "route": "Route",
+      "billingCycle": "Billing cycle",
+      "amountBeforeDiscount": "Amount before discount",
+      "discount": "Discount",
+      "paidOn": "Paid on {{date}}",
+      "dueOn": "Due {{date}}",
+      "overdueSince": "Overdue since {{date}}"
     },
     "enroll": {
       "title": "Apply for a child",

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { AvatarUpload } from '@/components/AvatarUpload'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
@@ -42,7 +43,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Pagination } from '@/components/ui/pagination'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
-import { useCreateStaff, useDeleteStaff, useStaff, useUpdateStaff } from '@/hooks/useStaff'
+import { useCreateStaff, useDeleteStaff, useStaff, useUpdateStaff, useUploadStaffAvatar } from '@/hooks/useStaff'
 import { usePagination } from '@/hooks/usePagination'
 import type { Staff as StaffMember } from '@/api/staff'
 
@@ -82,6 +83,7 @@ function StaffFormDialog({
   const { t } = useTranslation()
   const create = useCreateStaff()
   const update = useUpdateStaff()
+  const uploadAvatar = useUploadStaffAvatar()
   const {
     register,
     handleSubmit,
@@ -124,6 +126,14 @@ function StaffFormDialog({
           </DialogTitle>
         </DialogHeader>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+          {staff && (
+            <AvatarUpload
+              imageUrl={staff.avatar_url}
+              fallback={staff.full_name.charAt(0).toUpperCase()}
+              isUploading={uploadAvatar.isPending}
+              onUpload={(file) => uploadAvatar.mutate({ id: staff.id, file })}
+            />
+          )}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="full_name">{t('operator.staff.fullName')}</Label>
             <Input id="full_name" {...register('full_name')} />
@@ -231,6 +241,7 @@ export function Staff() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-12" />
                   <TableHead>{t('operator.staff.name')}</TableHead>
                   <TableHead>{t('operator.staff.role')}</TableHead>
                   <TableHead>{t('operator.staff.phone')}</TableHead>
@@ -241,6 +252,15 @@ export function Staff() {
               <TableBody>
                 {pagedStaff.map((member) => (
                   <TableRow key={member.id}>
+                    <TableCell>
+                      {member.avatar_url ? (
+                        <img src={member.avatar_url} alt="" className="size-8 rounded-full border object-cover" />
+                      ) : (
+                        <div className="flex size-8 items-center justify-center rounded-full border bg-muted/50 text-xs text-muted-foreground">
+                          {member.full_name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell>{member.full_name}</TableCell>
                     <TableCell>{t(`operator.staff.${member.role}`)}</TableCell>
                     <TableCell>{member.phone}</TableCell>

@@ -19,6 +19,10 @@ export function formatPeriod(dateStr: string, language: string): string {
   })
 }
 
+export function isInvoiceOverdue(invoice: { status: string; due_date: string }): boolean {
+  return invoice.status === "issued" && new Date(invoice.due_date) < new Date()
+}
+
 /**
  * Malaysian school grade from date of birth: children enter Year 1 (Darjah 1)
  * in the January they turn 7, and Form 1 (Tingkatan 1) at 13 — placement is by

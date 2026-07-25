@@ -12,9 +12,9 @@ class StudentController extends Controller
         return $request->user()->parentProfile
             ->students()
             ->with([
-                'route.bus:id,plate_number,capacity',
-                'route.driver:id,full_name,phone',
-                'route.conductor:id,full_name,phone',
+                'route.bus:id,plate_number,capacity,avatar_path',
+                'route.driver:id,full_name,phone,avatar_path',
+                'route.conductor:id,full_name,phone,avatar_path',
                 'route.stops',
                 'pickupStop',
                 'invoices',

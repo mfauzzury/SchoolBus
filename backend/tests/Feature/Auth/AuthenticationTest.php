@@ -56,14 +56,16 @@ class AuthenticationTest extends TestCase
         $this->getJson('/api/me')->assertStatus(401);
     }
 
-    public function test_me_is_rejected_for_user_without_tenant(): void
+    public function test_me_succeeds_for_a_user_without_a_tenant(): void
     {
-        // A user with no tenant_id should be blocked by EnsureTenant, not crash.
+        // /me sits outside the `tenant` middleware group specifically so
+        // tenant-less users (saas_admin) can call it right after login —
+        // it should return a null tenant, not be blocked by EnsureTenant.
         $user = \App\Models\User::factory()->create(['tenant_id' => null]);
 
         $response = $this->actingAs($user)->getJson('/api/me');
 
-        $response->assertStatus(403);
+        $response->assertOk()->assertJsonPath('tenant', null);
     }
 
     public function test_logout_succeeds_for_an_authenticated_user(): void

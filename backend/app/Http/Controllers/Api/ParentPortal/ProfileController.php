@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\ParentPortal;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -29,6 +30,24 @@ class ProfileController extends Controller
         ]);
 
         $profile->update($data);
+
+        return $profile->fresh();
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        $profile = $request->user()->parentProfile;
+
+        $request->validate([
+            'avatar' => 'required|image|max:2048',
+        ]);
+
+        if ($profile->avatar_path) {
+            Storage::disk('public')->delete($profile->avatar_path);
+        }
+
+        $path = $request->file('avatar')->store('avatars/parents', 'public');
+        $profile->update(['avatar_path' => $path]);
 
         return $profile->fresh();
     }

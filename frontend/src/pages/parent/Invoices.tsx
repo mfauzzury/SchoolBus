@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import {
@@ -25,11 +25,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Pagination } from '@/components/ui/pagination'
 import { useMyInvoices, useMyStudents } from '@/hooks/useParentPortal'
 import { usePagination } from '@/hooks/usePagination'
+import { useTenant } from '@/hooks/useTenant'
 import { receiptUrl, type Invoice } from '@/api/parentPortal'
-import { cn, formatMoney, formatPeriod } from '@/lib/utils'
+import { cn, formatMoney, formatPeriod, isInvoiceOverdue } from '@/lib/utils'
 
 const ALL = 'all'
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1)
@@ -49,10 +57,12 @@ const invoiceStatusVariant: Record<Invoice['status'], 'success' | 'info' | 'outl
 
 export function ParentInvoices() {
   const { t, i18n } = useTranslation()
+  const { tenant } = useTenant()
   const { data: students } = useMyStudents()
   const { data: invoices, isLoading } = useMyInvoices()
   const [year, setYear] = useState(ALL)
   const [month, setMonth] = useState(ALL)
+  const [viewInvoice, setViewInvoice] = useState<Invoice | null>(null)
 
   const years = [...new Set((invoices ?? []).map((inv) => new Date(inv.period_start).getFullYear()))].sort(
     (a, b) => b - a,
@@ -65,10 +75,6 @@ export function ParentInvoices() {
     return true
   })
 
-  const today = new Date()
-  const isOverdue = (invoice: Invoice) =>
-    invoice.status === 'issued' && new Date(invoice.due_date) < today
-
   const totalExpected = filteredInvoices.reduce((sum, inv) => sum + Number(inv.final_amount), 0)
   const totalPaid = filteredInvoices
     .filter((inv) => inv.status === 'paid')
@@ -76,7 +82,11 @@ export function ParentInvoices() {
   const totalDue = filteredInvoices
     .filter((inv) => inv.status !== 'paid')
     .reduce((sum, inv) => sum + Number(inv.final_amount), 0)
-  const overdueCount = filteredInvoices.filter(isOverdue).length
+  const overdueCount = filteredInvoices.filter(isInvoiceOverdue).length
+
+  const hasOutstandingBalance = (invoices ?? []).some(
+    (inv) => inv.status === 'issued' || inv.status === 'overdue',
+  )
 
   const { page, setPage, pageCount, pageItems: pagedInvoices } = usePagination(filteredInvoices)
 
@@ -124,8 +134,13 @@ export function ParentInvoices() {
       ) : null}
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>{t('nav.invoices')}</CardTitle>
+          {hasOutstandingBalance && (
+            <Link to="/parent/invoices/pay" className={buttonVariants({ size: 'sm' })}>
+              {t('parent.dashboard.payNow')}
+            </Link>
+          )}
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {isLoading ? (
@@ -196,8 +211,7 @@ export function ParentInvoices() {
                 <TableBody>
                   {pagedInvoices.map((invoice) => {
                     const student = students?.find((s) => s.id === invoice.student_id)
-                    const payable = invoice.status === 'issued' || invoice.status === 'overdue'
-                    const displayStatus = isOverdue(invoice) ? 'overdue' : invoice.status
+                    const displayStatus = isInvoiceOverdue(invoice) ? 'overdue' : invoice.status
                     return (
                       <TableRow key={invoice.id}>
                         <TableCell>{student?.full_name ?? '—'}</TableCell>
@@ -210,22 +224,9 @@ export function ParentInvoices() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          {payable && (
-                            <Link
-                              to={`/parent/invoices/${invoice.id}/pay`}
-                              className={buttonVariants({ size: 'sm' })}
-                            >
-                              {t('parent.dashboard.payNow')}
-                            </Link>
-                          )}
-                          {invoice.status === 'paid' && (
-                            <a
-                              href={receiptUrl(invoice.id)}
-                              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-                            >
-                              {t('common.downloadReceipt')}
-                            </a>
-                          )}
+                          <Button variant="outline" size="sm" onClick={() => setViewInvoice(invoice)}>
+                            {t('parent.dashboard.viewInvoice')}
+                          </Button>
                         </TableCell>
                       </TableRow>
                     )
@@ -239,6 +240,109 @@ export function ParentInvoices() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={viewInvoice !== null} onOpenChange={(open) => !open && setViewInvoice(null)}>
+        <DialogContent>
+          {viewInvoice && (
+            <>
+              <DialogHeader>
+                <p className="text-xs text-muted-foreground">
+                  {t('parent.invoice.title', { id: viewInvoice.id })}
+                </p>
+                <DialogTitle className="text-3xl font-semibold">
+                  RM {formatMoney(viewInvoice.final_amount)}
+                </DialogTitle>
+                <div className="flex items-center gap-1.5 pt-0.5 text-sm">
+                  <span
+                    className={cn(
+                      'size-2 rounded-full',
+                      viewInvoice.status === 'paid' && 'bg-green-500',
+                      viewInvoice.status !== 'paid' &&
+                        (isInvoiceOverdue(viewInvoice) ? 'bg-red-500' : 'bg-blue-500'),
+                    )}
+                  />
+                  <span className="text-muted-foreground">
+                    {viewInvoice.status === 'paid' &&
+                      t('parent.invoice.paidOn', { date: viewInvoice.paid_at?.slice(0, 10) ?? '—' })}
+                    {viewInvoice.status !== 'paid' &&
+                      (isInvoiceOverdue(viewInvoice)
+                        ? t('parent.invoice.overdueSince', { date: viewInvoice.due_date.slice(0, 10) })
+                        : t('parent.invoice.dueOn', { date: viewInvoice.due_date.slice(0, 10) }))}
+                  </span>
+                </div>
+              </DialogHeader>
+
+              <div className="flex flex-col text-sm">
+                {tenant && (
+                  <>
+                    <div className="flex justify-between border-b py-1.5">
+                      <span className="text-muted-foreground">{t('parent.invoice.operator')}</span>
+                      <span>
+                        {tenant.company_name} · {tenant.operator_code}
+                      </span>
+                    </div>
+                    <div className="flex justify-between border-b py-1.5">
+                      <span className="text-muted-foreground">{t('parent.invoice.contact')}</span>
+                      <span>
+                        {tenant.contact_phone} · {tenant.email}
+                      </span>
+                    </div>
+                  </>
+                )}
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">{t('parent.dashboard.child')}</span>
+                  <span>{students?.find((s) => s.id === viewInvoice.student_id)?.full_name ?? '—'}</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">{t('parent.invoice.route')}</span>
+                  <span>
+                    {students?.find((s) => s.id === viewInvoice.student_id)?.route?.name ?? '—'}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">{t('parent.dashboard.billingPeriod')}</span>
+                  <span>{formatPeriod(viewInvoice.period_start, i18n.language)}</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">{t('parent.dashboard.package')}</span>
+                  <span>{t(`common.package.${viewInvoice.package_type}`)}</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">{t('parent.invoice.billingCycle')}</span>
+                  <span>{t(`common.billingPeriod.${viewInvoice.billing_period}`)}</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">{t('parent.invoice.amountBeforeDiscount')}</span>
+                  <span>RM {formatMoney(viewInvoice.amount_before_discount)}</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">{t('parent.invoice.discount')}</span>
+                  <span>- RM {formatMoney(viewInvoice.discount_amount)}</span>
+                </div>
+                <div className="flex justify-between py-1.5 font-medium">
+                  <span>{t('parent.dashboard.amount')}</span>
+                  <span>RM {formatMoney(viewInvoice.final_amount)}</span>
+                </div>
+              </div>
+
+              <DialogFooter>
+                {viewInvoice.status === 'paid' ? (
+                  <a
+                    href={receiptUrl(viewInvoice.id)}
+                    className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
+                  >
+                    {t('common.downloadReceipt')}
+                  </a>
+                ) : (
+                  <Link to="/parent/invoices/pay" className={cn(buttonVariants({}), 'w-full')}>
+                    {t('parent.dashboard.payNow')}
+                  </Link>
+                )}
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

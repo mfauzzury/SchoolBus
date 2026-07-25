@@ -52,6 +52,11 @@ export function useIsOperatorAdmin() {
   return data?.roles.includes('operator_admin') ?? false
 }
 
+export function useIsSaasAdmin() {
+  const { data } = useMe()
+  return data?.roles.includes('saas_admin') ?? false
+}
+
 export function useLogout() {
   const queryClient = useQueryClient()
 

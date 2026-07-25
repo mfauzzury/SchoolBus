@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
+use App\Http\Controllers\Api\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Operator\BusController;
 use App\Http\Controllers\Api\Operator\DashboardController;
@@ -17,6 +20,7 @@ use App\Http\Controllers\Api\ParentPortal\QuoteController;
 use App\Http\Controllers\Api\ParentPortal\RouteController as ParentRouteController;
 use App\Http\Controllers\Api\ParentPortal\StudentApplicationController as ParentStudentApplicationController;
 use App\Http\Controllers\Api\ParentPortal\StudentController as ParentStudentController;
+use App\Http\Controllers\Api\Public\ContactController;
 use App\Http\Controllers\Api\Public\OperatorRegistrationController;
 use App\Http\Controllers\Api\Public\PasswordResetController;
 use App\Http\Controllers\Api\Public\RegistrationController;
@@ -29,15 +33,23 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset']);
 
 Route::post('/register-operator', [OperatorRegistrationController::class, 'store']);
 
+Route::post('/contact', [ContactController::class, 'store']);
+
 Route::get('/register/{operatorCode}', [RegistrationController::class, 'show']);
 Route::post('/register/{operatorCode}', [RegistrationController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+
+    Route::middleware('role:saas_admin')->prefix('admin')->group(function () {
+        Route::get('dashboard/summary', [AdminDashboardController::class, 'summary']);
+        Route::get('operators', [AdminOperatorController::class, 'index']);
+        Route::get('operators/{operator}', [AdminOperatorController::class, 'show']);
+        Route::get('transactions', [AdminTransactionController::class, 'index']);
+    });
 
     Route::middleware('tenant')->group(function () {
-        Route::get('/me', [AuthController::class, 'me']);
-
         Route::middleware('role:operator_admin|operator_staff')->prefix('operator')->group(function () {
             Route::apiResource('buses', BusController::class)->except(['store', 'update', 'destroy']);
             Route::apiResource('staff', StaffController::class)->except(['store', 'update', 'destroy']);
@@ -59,6 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store']);
                 Route::put('profile', [ProfileController::class, 'update']);
                 Route::post('profile/logo', [ProfileController::class, 'updateLogo']);
+                Route::post('buses/{bus}/avatar', [BusController::class, 'uploadAvatar']);
+                Route::post('staff/{staff}/avatar', [StaffController::class, 'uploadAvatar']);
                 Route::post('student-applications/{studentApplication}/approve', [StudentApplicationController::class, 'approve']);
                 Route::post('student-applications/{studentApplication}/reject', [StudentApplicationController::class, 'reject']);
             });
@@ -73,6 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('invoices', [ParentInvoiceController::class, 'index']);
             Route::get('invoices/{invoice}/receipt', [ParentInvoiceController::class, 'receipt']);
             Route::put('profile', [ParentProfileController::class, 'update']);
+            Route::post('profile/avatar', [ParentProfileController::class, 'uploadAvatar']);
         });
     });
 });

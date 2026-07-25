@@ -26,7 +26,7 @@ const profileSchema = z.object({
 
 type ProfileForm = z.infer<typeof profileSchema>
 
-function toFormValues(tenant?: BusOperator): ProfileForm {
+function toFormValues(tenant?: BusOperator | null): ProfileForm {
   return {
     company_name: tenant?.company_name ?? '',
     contact_person: tenant?.contact_person ?? '',
@@ -228,108 +228,110 @@ export function Settings() {
   }
 
   return (
-    <div className="flex max-w-lg flex-col gap-6">
-      <h1 className="text-xl font-medium">{t('operator.settings.title')}</h1>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('operator.settings.logo')}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center gap-4">
-          {tenant?.logo_url ? (
-            <img
-              src={tenant.logo_url}
-              alt="Company logo"
-              className="size-16 rounded-lg border object-cover"
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="flex flex-col gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">{t('operator.settings.logo')}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center gap-4">
+            {tenant?.logo_url ? (
+              <img
+                src={tenant.logo_url}
+                alt="Company logo"
+                className="size-16 rounded-lg border object-cover"
+              />
+            ) : (
+              <div className="flex size-16 items-center justify-center rounded-lg border text-xs text-muted-foreground">
+                {t('operator.settings.noLogo')}
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => onLogoSelected(e.target.files?.[0])}
             />
-          ) : (
-            <div className="flex size-16 items-center justify-center rounded-lg border text-xs text-muted-foreground">
-              {t('operator.settings.noLogo')}
-            </div>
-          )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => onLogoSelected(e.target.files?.[0])}
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={uploadLogo.isPending}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {uploadLogo.isPending ? t('operator.settings.uploading') : t('operator.settings.uploadLogo')}
-          </Button>
-        </CardContent>
-      </Card>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={uploadLogo.isPending}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {uploadLogo.isPending ? t('operator.settings.uploading') : t('operator.settings.uploadLogo')}
+            </Button>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t('operator.settings.companyProfile')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="company_name">{t('operator.settings.companyName')}</Label>
-              <Input id="company_name" {...register('company_name')} />
-              {errors.company_name && (
-                <p className="text-sm text-destructive">{errors.company_name.message}</p>
-              )}
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="contact_person">{t('operator.settings.contactPerson')}</Label>
-              <Input id="contact_person" {...register('contact_person')} />
-              {errors.contact_person && (
-                <p className="text-sm text-destructive">{errors.contact_person.message}</p>
-              )}
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="contact_phone">{t('operator.settings.contactPhone')}</Label>
-              <Input id="contact_phone" {...register('contact_phone')} />
-              {errors.contact_phone && (
-                <p className="text-sm text-destructive">{errors.contact_phone.message}</p>
-              )}
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email">{t('operator.settings.email')}</Label>
-              <Input id="email" type="email" {...register('email')} />
-              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-            </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">{t('operator.settings.companyProfile')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="company_name">{t('operator.settings.companyName')}</Label>
+                <Input id="company_name" {...register('company_name')} />
+                {errors.company_name && (
+                  <p className="text-sm text-destructive">{errors.company_name.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="contact_person">{t('operator.settings.contactPerson')}</Label>
+                <Input id="contact_person" {...register('contact_person')} />
+                {errors.contact_person && (
+                  <p className="text-sm text-destructive">{errors.contact_person.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="contact_phone">{t('operator.settings.contactPhone')}</Label>
+                <Input id="contact_phone" {...register('contact_phone')} />
+                {errors.contact_phone && (
+                  <p className="text-sm text-destructive">{errors.contact_phone.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="email">{t('operator.settings.email')}</Label>
+                <Input id="email" type="email" {...register('email')} />
+                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+              </div>
 
-            <div className="mt-2 border-t pt-4">
-              <p className="mb-3 text-sm font-medium">{t('operator.settings.bankDetails')}</p>
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="bank_name">{t('operator.settings.bankName')}</Label>
-                  <Input id="bank_name" {...register('bank_name')} />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="account_number">{t('operator.settings.accountNumber')}</Label>
-                  <Input id="account_number" {...register('account_number')} />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="account_holder">{t('operator.settings.accountHolder')}</Label>
-                  <Input id="account_holder" {...register('account_holder')} />
+              <div className="mt-2 border-t pt-4">
+                <p className="mb-3 text-sm font-medium">{t('operator.settings.bankDetails')}</p>
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="bank_name">{t('operator.settings.bankName')}</Label>
+                    <Input id="bank_name" {...register('bank_name')} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="account_number">{t('operator.settings.accountNumber')}</Label>
+                    <Input id="account_number" {...register('account_number')} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="account_holder">{t('operator.settings.accountHolder')}</Label>
+                    <Input id="account_holder" {...register('account_holder')} />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {updateProfile.isError && (
-              <p className="text-sm text-destructive">{t('operator.settings.saveError')}</p>
-            )}
-            {updateProfile.isSuccess && (
-              <p className="text-sm text-muted-foreground">{t('common.saved')}</p>
-            )}
-            <Button type="submit" disabled={updateProfile.isPending}>
-              {updateProfile.isPending ? t('common.saving') : t('operator.settings.saveChanges')}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              {updateProfile.isError && (
+                <p className="text-sm text-destructive">{t('operator.settings.saveError')}</p>
+              )}
+              {updateProfile.isSuccess && (
+                <p className="text-sm text-muted-foreground">{t('common.saved')}</p>
+              )}
+              <Button type="submit" disabled={updateProfile.isPending}>
+                {updateProfile.isPending ? t('common.saving') : t('operator.settings.saveChanges')}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
 
-      <DiscountConfigCard />
+      <div className="flex flex-col gap-6">
+        <DiscountConfigCard />
+      </div>
     </div>
   )
 }

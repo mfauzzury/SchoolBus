@@ -7,6 +7,7 @@ import {
   listParentRoutes,
   submitStudentApplication,
   updateParentProfile,
+  uploadParentAvatar,
   type ApplyInput,
   type QuoteInput,
   type UpdateParentProfileInput,
@@ -46,6 +47,16 @@ export function useUpdateParentProfile() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (input: UpdateParentProfileInput) => updateParentProfile(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+    },
+  })
+}
+
+export function useUploadParentAvatar() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (file: File) => uploadParentAvatar(file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] })
     },

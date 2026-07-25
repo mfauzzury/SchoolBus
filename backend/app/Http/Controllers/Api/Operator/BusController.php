@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Operator;
 use App\Http\Controllers\Controller;
 use App\Models\Bus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BusController extends Controller
 {
@@ -47,5 +48,21 @@ class BusController extends Controller
         $bus->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function uploadAvatar(Request $request, Bus $bus)
+    {
+        $request->validate([
+            'avatar' => 'required|image|max:2048',
+        ]);
+
+        if ($bus->avatar_path) {
+            Storage::disk('public')->delete($bus->avatar_path);
+        }
+
+        $path = $request->file('avatar')->store('avatars/buses', 'public');
+        $bus->update(['avatar_path' => $path]);
+
+        return $bus->fresh();
     }
 }

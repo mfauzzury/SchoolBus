@@ -15,8 +15,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { AvatarUpload } from '@/components/AvatarUpload'
 import { useMe } from '@/hooks/useAuth'
-import { useUpdateParentProfile } from '@/hooks/useParentPortal'
+import { useUpdateParentProfile, useUploadParentAvatar } from '@/hooks/useParentPortal'
 import type { ParentProfile } from '@/api/auth'
 
 const profileSchema = z.object({
@@ -59,6 +60,7 @@ export function ParentProfilePage() {
   const { t } = useTranslation()
   const { data } = useMe()
   const updateProfile = useUpdateParentProfile()
+  const uploadAvatar = useUploadParentAvatar()
 
   const {
     register,
@@ -107,6 +109,12 @@ export function ParentProfilePage() {
               <p className="text-sm text-muted-foreground">{t('parent.profile.description')}</p>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
+              <AvatarUpload
+                imageUrl={data?.parentProfile?.avatar_url ?? null}
+                fallback={(data?.parentProfile?.full_name ?? data?.user.name ?? '?').charAt(0).toUpperCase()}
+                isUploading={uploadAvatar.isPending}
+                onUpload={(file) => uploadAvatar.mutate(file)}
+              />
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="full_name">{t('parent.profile.fullName')}</Label>
                 <Input id="full_name" {...register('full_name')} />

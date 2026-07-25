@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Operator;
 use App\Http\Controllers\Controller;
 use App\Models\Staff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
 {
@@ -59,5 +60,21 @@ class StaffController extends Controller
         $staff->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function uploadAvatar(Request $request, Staff $staff)
+    {
+        $request->validate([
+            'avatar' => 'required|image|max:2048',
+        ]);
+
+        if ($staff->avatar_path) {
+            Storage::disk('public')->delete($staff->avatar_path);
+        }
+
+        $path = $request->file('avatar')->store('avatars/staff', 'public');
+        $staff->update(['avatar_path' => $path]);
+
+        return $staff->fresh();
     }
 }

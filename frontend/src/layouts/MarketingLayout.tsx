@@ -1,0 +1,159 @@
+import { useState } from 'react'
+import { Link, NavLink, Outlet } from 'react-router-dom'
+import { Menu, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { useMe } from '@/hooks/useAuth'
+import { cn } from '@/lib/utils'
+
+export function BrandMark() {
+  return (
+    <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <circle cx="2.5" cy="7" r="1.6" fill="currentColor" className="text-primary-foreground" />
+        <circle cx="11.5" cy="7" r="1.6" fill="currentColor" className="text-primary-foreground" />
+        <line
+          x1="4.3"
+          y1="7"
+          x2="9.7"
+          y2="7"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+          className="text-primary-foreground"
+        />
+      </svg>
+    </span>
+  )
+}
+
+export function MarketingLayout() {
+  const { t } = useTranslation()
+  const { data: me, isLoading: meLoading } = useMe()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const dashboardPath = me?.roles.includes('parent') ? '/parent/dashboard' : '/operator/dashboard'
+
+  const navItems = [
+    { to: '/', label: t('marketingNav.parents') },
+    { to: '/operators', label: t('marketingNav.operators') },
+    { to: '/about', label: t('marketingNav.about') },
+    { to: '/contact', label: t('marketingNav.contact') },
+  ]
+
+  const authLink = !meLoading && (
+    <Link
+      to={me ? dashboardPath : '/login'}
+      className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+    >
+      {me ? t('nav.dashboard') : t('common.logIn')}
+    </Link>
+  )
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-10 border-b bg-background/85 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
+          <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-medium">
+            <BrandMark />
+            BasSekolah<span className="font-mono text-primary">.my</span>
+          </Link>
+
+          <nav className="hidden items-center gap-6 lg:flex">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  cn(
+                    'text-sm text-muted-foreground hover:text-foreground',
+                    isActive && 'font-medium text-foreground',
+                  )
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="hidden items-center gap-3 lg:flex">
+            <LanguageSwitcher />
+            {authLink}
+          </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X /> : <Menu />}
+          </Button>
+        </div>
+
+        {mobileOpen && (
+          <div className="border-t px-6 py-3 lg:hidden">
+            <nav className="flex flex-col gap-1">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      'rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted',
+                      isActive && 'font-medium text-foreground',
+                    )
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+            <div className="mt-3 flex items-center gap-3 border-t pt-3">
+              <LanguageSwitcher />
+              {authLink}
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main className="flex-1">
+        <Outlet />
+      </main>
+
+      <footer className="border-t py-8">
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-6 text-center text-sm text-muted-foreground sm:flex-row sm:justify-between sm:text-left">
+          <div className="flex flex-col items-center gap-2 sm:items-start">
+            <span className="flex items-center gap-2 font-medium text-foreground">
+              <BrandMark />
+              BasSekolah.my
+            </span>
+            <span>{t('landing.footer')}</span>
+          </div>
+          <nav className="flex flex-wrap items-center justify-center gap-4">
+            {navItems.map((item) => (
+              <Link key={item.to} to={item.to} className="hover:text-foreground">
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div className="mx-auto mt-6 flex max-w-5xl flex-col items-center gap-3 border-t px-6 pt-6 text-xs text-muted-foreground sm:flex-row sm:justify-between">
+          <span>{t('footer.copyright', { year: new Date().getFullYear() })}</span>
+          <nav className="flex items-center gap-4">
+            <Link to="/terms" className="hover:text-foreground">
+              {t('footer.terms')}
+            </Link>
+            <Link to="/privacy" className="hover:text-foreground">
+              {t('footer.privacy')}
+            </Link>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  )
+}

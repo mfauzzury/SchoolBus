@@ -11,12 +11,14 @@ export interface ParentRouteBus {
   id: number
   plate_number: string
   capacity: number
+  avatar_url: string | null
 }
 
 export interface ParentRouteContact {
   id: number
   full_name: string
   phone: string
+  avatar_url: string | null
 }
 
 export interface ParentRoute {
@@ -148,5 +150,14 @@ export interface UpdateParentProfileInput {
 
 export async function updateParentProfile(input: UpdateParentProfileInput): Promise<ParentProfile> {
   const { data } = await apiClient.put<ParentProfile>('/api/parent/profile', input)
+  return data
+}
+
+export async function uploadParentAvatar(file: File): Promise<ParentProfile> {
+  const formData = new FormData()
+  formData.append('avatar', file)
+  const { data } = await apiClient.post<ParentProfile>('/api/parent/profile/avatar', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
   return data
 }

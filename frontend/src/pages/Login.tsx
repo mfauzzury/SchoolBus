@@ -46,7 +46,13 @@ export function Login() {
   const onSubmit = (values: LoginForm) => {
     login.mutate(values, {
       onSuccess: (data) => {
-        navigate(data.roles.includes('parent') ? '/parent/dashboard' : '/operator/dashboard')
+        if (data.roles.includes('saas_admin')) {
+          navigate('/admin/dashboard')
+        } else if (data.roles.includes('parent')) {
+          navigate('/parent/dashboard')
+        } else {
+          navigate('/operator/dashboard')
+        }
       },
     })
   }

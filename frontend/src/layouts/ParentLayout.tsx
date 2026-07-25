@@ -26,7 +26,7 @@ export function ParentLayout() {
   return (
     <div className="min-h-screen">
       <header className="border-b">
-        <div className="flex items-center justify-between gap-2 px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-4 sm:px-6">
           <Link to="/" className="shrink-0 font-medium hover:text-primary">
             BasSekolah.my
           </Link>
@@ -55,6 +55,13 @@ export function ParentLayout() {
 
           <div className="hidden min-w-0 items-center gap-3 sm:gap-4 lg:flex">
             <LanguageSwitcher />
+            {data?.parentProfile?.avatar_url && (
+              <img
+                src={data.parentProfile.avatar_url}
+                alt=""
+                className="size-6 shrink-0 rounded-full object-cover"
+              />
+            )}
             <span className="hidden truncate text-sm text-muted-foreground sm:inline">
               {data?.user.name}
             </span>
@@ -110,7 +117,7 @@ export function ParentLayout() {
           </div>
         )}
       </header>
-      <main className="p-4 sm:p-6">
+      <main className="mx-auto max-w-5xl p-4 sm:p-6">
         <Outlet />
       </main>
     </div>

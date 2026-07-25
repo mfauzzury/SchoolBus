@@ -8,9 +8,10 @@ export interface Staff {
   role: 'driver' | 'conductor'
   license_expiry_date: string | null
   status: 'active' | 'inactive'
+  avatar_url: string | null
 }
 
-export type StaffInput = Omit<Staff, 'id'>
+export type StaffInput = Omit<Staff, 'id' | 'avatar_url'>
 
 export async function listStaff(role?: 'driver' | 'conductor'): Promise<Staff[]> {
   const { data } = await apiClient.get<Staff[]>('/api/operator/staff', {
@@ -31,4 +32,13 @@ export async function updateStaff(id: number, input: Partial<StaffInput>): Promi
 
 export async function deleteStaff(id: number): Promise<void> {
   await apiClient.delete(`/api/operator/staff/${id}`)
+}
+
+export async function uploadStaffAvatar(id: number, file: File): Promise<Staff> {
+  const formData = new FormData()
+  formData.append('avatar', file)
+  const { data } = await apiClient.post<Staff>(`/api/operator/staff/${id}/avatar`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return data
 }

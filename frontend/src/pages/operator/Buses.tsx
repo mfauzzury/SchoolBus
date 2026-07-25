@@ -3,7 +3,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
+import { Bus as BusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { AvatarUpload } from '@/components/AvatarUpload'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
@@ -42,7 +44,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Pagination } from '@/components/ui/pagination'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
-import { useBuses, useCreateBus, useDeleteBus, useUpdateBus } from '@/hooks/useBuses'
+import { useBuses, useCreateBus, useDeleteBus, useUpdateBus, useUploadBusAvatar } from '@/hooks/useBuses'
 import { usePagination } from '@/hooks/usePagination'
 import type { Bus } from '@/api/buses'
 
@@ -72,6 +74,7 @@ function BusFormDialog({
   const { t } = useTranslation()
   const create = useCreateBus()
   const update = useUpdateBus()
+  const uploadAvatar = useUploadBusAvatar()
   const {
     register,
     handleSubmit,
@@ -111,6 +114,15 @@ function BusFormDialog({
           <DialogTitle>{bus ? t('operator.buses.editBus') : t('operator.buses.addBus')}</DialogTitle>
         </DialogHeader>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+          {bus && (
+            <AvatarUpload
+              shape="square"
+              imageUrl={bus.avatar_url}
+              fallback={<BusIcon className="size-6" />}
+              isUploading={uploadAvatar.isPending}
+              onUpload={(file) => uploadAvatar.mutate({ id: bus.id, file })}
+            />
+          )}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="plate_number">{t('operator.buses.plateNumber')}</Label>
             <Input id="plate_number" {...register('plate_number')} />
@@ -196,6 +208,7 @@ export function Buses() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-12" />
                   <TableHead>{t('operator.buses.plateNumber')}</TableHead>
                   <TableHead>{t('operator.buses.capacity')}</TableHead>
                   <TableHead>{t('operator.buses.status')}</TableHead>
@@ -205,6 +218,15 @@ export function Buses() {
               <TableBody>
                 {pagedBuses.map((bus) => (
                   <TableRow key={bus.id}>
+                    <TableCell>
+                      {bus.avatar_url ? (
+                        <img src={bus.avatar_url} alt="" className="size-8 rounded-md border object-cover" />
+                      ) : (
+                        <div className="flex size-8 items-center justify-center rounded-md border bg-muted/50 text-muted-foreground">
+                          <BusIcon className="size-4" />
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell>{bus.plate_number}</TableCell>
                     <TableCell>{bus.capacity}</TableCell>
                     <TableCell>
