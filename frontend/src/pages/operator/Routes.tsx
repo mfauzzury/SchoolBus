@@ -55,6 +55,7 @@ const routeSchema = z.object({
   zone: z.string().optional(),
   school_destination: z.string().optional(),
   base_monthly_fee: z.string().optional(),
+  one_way_monthly_fee: z.string().optional(),
   bus_id: z.string(),
   driver_id: z.string(),
   conductor_id: z.string(),
@@ -69,6 +70,7 @@ function toFormValues(route?: Route): RouteForm {
     zone: route?.zone ?? '',
     school_destination: route?.school_destination ?? '',
     base_monthly_fee: route?.base_monthly_fee ? String(Number(route.base_monthly_fee)) : '',
+    one_way_monthly_fee: route?.one_way_monthly_fee ? String(Number(route.one_way_monthly_fee)) : '',
     bus_id: route?.bus_id ? String(route.bus_id) : UNASSIGNED,
     driver_id: route?.driver_id ? String(route.driver_id) : UNASSIGNED,
     conductor_id: route?.conductor_id ? String(route.conductor_id) : UNASSIGNED,
@@ -125,6 +127,7 @@ function RouteFormDialog({
       zone: values.zone || null,
       school_destination: values.school_destination || null,
       base_monthly_fee: values.base_monthly_fee ? Number(values.base_monthly_fee) : null,
+      one_way_monthly_fee: values.one_way_monthly_fee ? Number(values.one_way_monthly_fee) : null,
       bus_id: values.bus_id === UNASSIGNED ? null : Number(values.bus_id),
       driver_id: values.driver_id === UNASSIGNED ? null : Number(values.driver_id),
       conductor_id: values.conductor_id === UNASSIGNED ? null : Number(values.conductor_id),
@@ -157,10 +160,17 @@ function RouteFormDialog({
             <Label htmlFor="school_destination">{t('operator.routes.schoolDestination')}</Label>
             <Input id="school_destination" {...register('school_destination')} />
           </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="base_monthly_fee">{t('operator.routes.baseMonthlyFee')}</Label>
-            <Input id="base_monthly_fee" type="number" step="0.01" {...register('base_monthly_fee')} />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="base_monthly_fee">{t('operator.routes.baseMonthlyFee')}</Label>
+              <Input id="base_monthly_fee" type="number" step="0.01" {...register('base_monthly_fee')} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="one_way_monthly_fee">{t('operator.routes.oneWayMonthlyFee')}</Label>
+              <Input id="one_way_monthly_fee" type="number" step="0.01" {...register('one_way_monthly_fee')} />
+            </div>
           </div>
+          <p className="-mt-2 text-xs text-muted-foreground">{t('operator.routes.oneWayFeeHint')}</p>
 
           <div className="flex flex-col gap-1.5">
             <Label>{t('operator.routes.bus')}</Label>
@@ -169,7 +179,7 @@ function RouteFormDialog({
               value={busId}
               onValueChange={(v) => setValue('bus_id', v ?? UNASSIGNED)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('common.unassigned')} />
               </SelectTrigger>
               <SelectContent>
@@ -190,7 +200,7 @@ function RouteFormDialog({
               value={driverId}
               onValueChange={(v) => setValue('driver_id', v ?? UNASSIGNED)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('common.unassigned')} />
               </SelectTrigger>
               <SelectContent>
@@ -211,7 +221,7 @@ function RouteFormDialog({
               value={conductorId}
               onValueChange={(v) => setValue('conductor_id', v ?? UNASSIGNED)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('common.unassigned')} />
               </SelectTrigger>
               <SelectContent>
@@ -296,6 +306,7 @@ export function Routes() {
                   <TableHead>{t('operator.routes.conductor')}</TableHead>
                   <TableHead>{t('operator.routes.stops')}</TableHead>
                   <TableHead>{t('operator.routes.baseFee')}</TableHead>
+                  <TableHead>{t('operator.routes.oneWayFee')}</TableHead>
                   {isAdmin && <TableHead className="text-right">{t('operator.routes.actions')}</TableHead>}
                 </TableRow>
               </TableHeader>
@@ -309,6 +320,9 @@ export function Routes() {
                     <TableCell>{route.stops.length}</TableCell>
                     <TableCell>
                       {route.base_monthly_fee ? `RM ${formatMoney(route.base_monthly_fee)}` : '—'}
+                    </TableCell>
+                    <TableCell>
+                      {route.one_way_monthly_fee ? `RM ${formatMoney(route.one_way_monthly_fee)}` : '—'}
                     </TableCell>
                     {isAdmin && (
                       <TableCell className="text-right">

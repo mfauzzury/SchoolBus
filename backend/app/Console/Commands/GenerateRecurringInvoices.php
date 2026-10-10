@@ -5,55 +5,51 @@ namespace App\Console\Commands;
 use App\Models\Student;
 use App\Services\InvoiceGenerator;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use RuntimeException;
 
 /**
- * Phone-bill-style recurring billing: once an active student's current
- * invoice period ends, issue their next month's invoice — regardless of
- * whether the previous one was paid, same as a postpaid phone line.
- * Suspending/withdrawing a student (enrollment_status) stops future bills.
+ * Phone-bill-style recurring billing: every active student gets a bill for
+ * the current calendar month — regardless of whether the previous one was
+ * paid, same as a postpaid phone line. Months the operator doesn't bill
+ * (school holidays) are skipped, and suspending/withdrawing a student
+ * (enrollment_status) stops future bills.
+ *
+ * Runs daily rather than only on the 1st, so a missed run or a student
+ * reactivated mid-month is picked up the next day; a month is never billed twice.
  */
 class GenerateRecurringInvoices extends Command
 {
     protected $signature = 'invoices:generate-recurring';
 
-    protected $description = "Issue each active student's next monthly invoice once their current billing period has ended.";
+    protected $description = "Issue each active student's bill for the current month if they don't have one yet.";
 
     public function handle(InvoiceGenerator $generator): int
     {
+        $month = InvoiceGenerator::currentMonth();
         $count = 0;
+        $skipped = 0;
 
         Student::query()
             ->where('enrollment_status', 'active')
-            ->has('invoices')
-            ->chunk(100, function ($students) use ($generator, &$count) {
+            ->with(['busOperator', 'route'])
+            ->chunkById(100, function ($students) use ($generator, $month, &$count, &$skipped) {
                 foreach ($students as $student) {
-                    $latest = $student->invoices()->latest('period_end')->first();
-
-                    if (! $latest?->period_end) {
+                    if (! $generator->isBillable($student, $month) || $generator->invoiceForMonth($student, $month)) {
                         continue;
                     }
 
-                    $nextPeriodStart = Carbon::parse($latest->period_end);
-
-                    if ($nextPeriodStart->isFuture()) {
-                        continue;
+                    try {
+                        $generator->generateForMonth($student, $month);
+                        $count++;
+                    } catch (RuntimeException $e) {
+                        // One student without a route or price must not stop everyone else's bills.
+                        $skipped++;
+                        $this->warn("Skipped student #{$student->id}: {$e->getMessage()}");
                     }
-
-                    $alreadyBilled = $student->invoices()
-                        ->whereDate('period_start', $nextPeriodStart)
-                        ->exists();
-
-                    if ($alreadyBilled) {
-                        continue;
-                    }
-
-                    $generator->generateForPeriod($student, $nextPeriodStart);
-                    $count++;
                 }
             });
 
-        $this->info("Generated {$count} recurring invoice(s).");
+        $this->info("Generated {$count} recurring invoice(s).".($skipped ? " Skipped {$skipped}." : ''));
 
         return self::SUCCESS;
     }

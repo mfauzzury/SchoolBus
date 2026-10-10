@@ -44,6 +44,7 @@ class OperatorController extends Controller
 
         return [
             ...$operator->toArray(),
+            'billplz' => $operator->billplzSummary(),
             'finance_summary' => [
                 'total_expected' => $totalExpected,
                 'total_collected' => $totalCollected,

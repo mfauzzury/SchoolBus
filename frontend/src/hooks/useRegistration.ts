@@ -6,7 +6,7 @@ export function useTenantByCode(operatorCode: string) {
     queryKey: ['tenant-by-code', operatorCode],
     queryFn: () => fetchTenantByCode(operatorCode),
     retry: false,
-    enabled: operatorCode.length === 4,
+    enabled: operatorCode.length === 5,
   })
 }
 

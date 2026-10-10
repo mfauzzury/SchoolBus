@@ -19,6 +19,14 @@ export function formatPeriod(dateStr: string, language: string): string {
   })
 }
 
+/**
+ * What is still owed on a bill. Falls back to the face value where the API
+ * doesn't send a balance (invoices nested inside another record).
+ */
+export function invoiceBalance(invoice: { final_amount: string; balance?: string }): number {
+  return Number(invoice.balance ?? invoice.final_amount)
+}
+
 export function isInvoiceOverdue(invoice: { status: string; due_date: string }): boolean {
   return invoice.status === "issued" && new Date(invoice.due_date) < new Date()
 }

@@ -17,6 +17,7 @@ export interface Route {
   driver_id: number | null
   conductor_id: number | null
   base_monthly_fee: string | null
+  one_way_monthly_fee: string | null
   bus: Bus | null
   driver: Staff | null
   conductor: Staff | null
@@ -31,6 +32,7 @@ export interface RouteInput {
   driver_id?: number | null
   conductor_id?: number | null
   base_monthly_fee?: number | null
+  one_way_monthly_fee?: number | null
   stops?: { name: string; sequence: number }[]
 }
 

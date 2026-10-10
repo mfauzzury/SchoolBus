@@ -18,9 +18,11 @@ class DiscountConfigControllerTest extends TestCase
         $response = $this->actingAs($admin)->getJson('/api/operator/discount-config');
 
         $response->assertOk()
-            ->assertJsonPath('billing_periods.monthly', 0)
-            ->assertJsonPath('billing_periods.yearly', 15)
-            ->assertJsonPath('sibling_discounts.2', 10);
+            ->assertJsonPath('sibling_discounts.1', 0)
+            ->assertJsonPath('sibling_discounts.2', 10)
+            ->assertJsonPath('sibling_discounts.3', 15)
+            // Paying ahead (quarterly/yearly) is gone, and so are its discounts.
+            ->assertJsonMissingPath('billing_periods');
     }
 
     public function test_admin_can_partially_update_rates_without_losing_the_rest(): void
@@ -29,7 +31,7 @@ class DiscountConfigControllerTest extends TestCase
         $admin = $this->createOperatorAdmin($tenant);
 
         $this->actingAs($admin)->putJson('/api/operator/discount-config', [
-            'billing_periods' => ['monthly' => 20],
+            'sibling_discounts' => ['2' => 20],
         ])->assertOk();
 
         // array_replace, not array_merge — sibling tier keys ('1','2','3') are
@@ -37,10 +39,8 @@ class DiscountConfigControllerTest extends TestCase
         $response = $this->actingAs($admin)->getJson('/api/operator/discount-config');
 
         $response->assertOk()
-            ->assertJsonPath('billing_periods.monthly', 20)
-            ->assertJsonPath('billing_periods.yearly', 15)
             ->assertJsonPath('sibling_discounts.1', 0)
-            ->assertJsonPath('sibling_discounts.2', 10)
+            ->assertJsonPath('sibling_discounts.2', 20)
             ->assertJsonPath('sibling_discounts.3', 15);
     }
 
@@ -50,8 +50,8 @@ class DiscountConfigControllerTest extends TestCase
         $admin = $this->createOperatorAdmin($tenant);
 
         $this->actingAs($admin)->putJson('/api/operator/discount-config', [
-            'billing_periods' => ['monthly' => 150],
-        ])->assertStatus(422)->assertJsonValidationErrors(['billing_periods.monthly']);
+            'sibling_discounts' => ['2' => 150],
+        ])->assertStatus(422)->assertJsonValidationErrors(['sibling_discounts.2']);
     }
 
     public function test_staff_can_view_but_not_update_discount_config(): void
@@ -60,7 +60,7 @@ class DiscountConfigControllerTest extends TestCase
         $staff = $this->createOperatorStaff($tenant);
 
         $this->actingAs($staff)->getJson('/api/operator/discount-config')->assertOk();
-        $this->actingAs($staff)->putJson('/api/operator/discount-config', ['billing_periods' => ['monthly' => 5]])
+        $this->actingAs($staff)->putJson('/api/operator/discount-config', ['sibling_discounts' => ['2' => 5]])
             ->assertStatus(403);
     }
 }

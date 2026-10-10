@@ -10,7 +10,7 @@ export function About() {
   const { t } = useTranslation()
 
   return (
-    <div className="mx-auto max-w-5xl px-6">
+    <div className="mx-auto max-w-content px-4 lg:px-8">
       <section className="flex flex-col gap-5 py-20">
         <span className="flex items-center gap-2 text-xs font-bold tracking-wider text-primary uppercase">
           <span className="size-1.5 rounded-full bg-primary" />

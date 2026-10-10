@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { useSubmitContactMessage } from '@/hooks/useContact'
+import { cn } from '@/lib/utils'
 
 const SUPPORT_EMAIL = 'hello@bassekolah.my'
 
@@ -49,7 +50,7 @@ export function Contact() {
 
         <a
           href={`mailto:${SUPPORT_EMAIL}`}
-          className={buttonVariants({ variant: 'outline', className: 'mt-2' })}
+          className={cn(buttonVariants({ variant: 'outline' }), 'mt-2')}
         >
           <Mail />
           {SUPPORT_EMAIL}

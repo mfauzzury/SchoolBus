@@ -1,8 +1,18 @@
 import axios from 'axios'
 import { queryClient } from '@/lib/queryClient'
 
+// Falls back to whatever host served this page (same host, port 8000) when
+// VITE_API_URL isn't set — so the same dev build works whether it's opened
+// via localhost or a LAN IP (e.g. testing on a phone), with no per-device
+// .env edits. A real deployment sets VITE_API_URL explicitly and that
+// always wins. Cookie-based auth requires the API to share the page's
+// hostname anyway (SameSite=Lax blocks cross-site fetch cookies), so this
+// mirrors the only configuration that can actually work.
+export const apiBaseUrl =
+  import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:8000`
+
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: apiBaseUrl,
   withCredentials: true,
   withXSRFToken: true,
 })

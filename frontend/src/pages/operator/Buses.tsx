@@ -148,7 +148,7 @@ function BusFormDialog({
               value={status}
               onValueChange={(v) => setValue('status', v as BusForm['status'])}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('operator.buses.selectStatus')} />
               </SelectTrigger>
               <SelectContent>

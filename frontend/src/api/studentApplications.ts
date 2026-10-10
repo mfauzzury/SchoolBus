@@ -6,7 +6,6 @@ export interface OperatorStudentApplication {
   date_of_birth: string
   school_name: string
   package_type: 'one_way' | 'return'
-  billing_period: string
   status: 'pending' | 'approved' | 'rejected'
   route_id: number | null
   fee_override: string | null
@@ -26,6 +25,9 @@ export interface ApproveApplicationInput {
   school_name: string
   fee_override?: number | null
   pickup_stop_id?: number | null
+  billing_start?: 'this_month' | 'next_month'
+  // What to charge for the first month instead of the full fee (mid-month join).
+  first_month_amount?: number | null
 }
 
 export interface RejectApplicationInput {

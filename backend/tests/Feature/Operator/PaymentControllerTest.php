@@ -95,4 +95,50 @@ class PaymentControllerTest extends TestCase
             'method' => 'cash', 'payment_date' => now()->toDateString(), 'amount_paid' => 10,
         ])->assertStatus(404);
     }
+
+    public function test_a_payment_cannot_be_more_than_what_is_still_owed(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+        $invoice = Invoice::factory()->create(['tenant_id' => $tenant->id, 'final_amount' => 150]);
+        $invoice->payments()->create([
+            'tenant_id' => $tenant->id,
+            'method' => 'cash',
+            'payment_date' => now()->toDateString(),
+            'amount_paid' => 100,
+        ]);
+
+        // RM50 is left, so RM60 is refused and nothing is recorded.
+        $this->actingAs($admin)->postJson("/api/operator/invoices/{$invoice->id}/payments", [
+            'method' => 'cash',
+            'payment_date' => now()->toDateString(),
+            'amount_paid' => 60,
+        ])->assertStatus(422)->assertJsonValidationErrors(['amount_paid']);
+        $this->assertDatabaseCount('payments', 1);
+
+        $this->actingAs($admin)->postJson("/api/operator/invoices/{$invoice->id}/payments", [
+            'method' => 'cash',
+            'payment_date' => now()->toDateString(),
+            'amount_paid' => 50,
+        ])->assertCreated()->assertJsonPath('status', 'paid');
+    }
+
+    public function test_a_settled_bill_cannot_take_another_payment(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+        $invoice = Invoice::factory()->paid()->create(['tenant_id' => $tenant->id, 'final_amount' => 150]);
+        $invoice->payments()->create([
+            'tenant_id' => $tenant->id,
+            'method' => 'cash',
+            'payment_date' => now()->toDateString(),
+            'amount_paid' => 150,
+        ]);
+
+        $this->actingAs($admin)->postJson("/api/operator/invoices/{$invoice->id}/payments", [
+            'method' => 'cash',
+            'payment_date' => now()->toDateString(),
+            'amount_paid' => 10,
+        ])->assertStatus(422)->assertJsonValidationErrors(['amount_paid']);
+    }
 }

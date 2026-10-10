@@ -1,12 +1,6 @@
 import { apiClient } from './client'
 
 export interface DiscountConfig {
-  billing_periods: {
-    monthly: number
-    quarterly: number
-    half_year: number
-    yearly: number
-  }
   sibling_discounts: {
     '1': number
     '2': number

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
+import { buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -24,7 +26,8 @@ import { useRoutes } from '@/hooks/useRoutes'
 import { useOperatorStudents } from '@/hooks/useOperatorStudents'
 import { usePagination } from '@/hooks/usePagination'
 import type { OperatorStudent } from '@/api/operatorStudents'
-import { formatMoney } from '@/lib/utils'
+import { cn, formatMoney } from '@/lib/utils'
+import { routeFeeFor } from '@/lib/billing'
 
 const ALL = 'all'
 
@@ -39,6 +42,7 @@ const invoiceVariant: Record<string, 'success' | 'info' | 'outline' | 'destructi
   issued: 'info',
   paid: 'success',
   overdue: 'destructive',
+  void: 'outline',
 }
 
 export function Students() {
@@ -144,19 +148,23 @@ export function Students() {
                   <TableHead>{t('operator.students.parent')}</TableHead>
                   <TableHead>{t('operator.students.route')}</TableHead>
                   <TableHead>{t('operator.students.package')}</TableHead>
-                  <TableHead>{t('operator.students.billing')}</TableHead>
+                  <TableHead>{t('operator.students.monthlyFee')}</TableHead>
                   <TableHead>{t('operator.students.status')}</TableHead>
                   <TableHead>{t('operator.students.latestInvoice')}</TableHead>
+                  <TableHead className="text-right" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {pagedStudents.map((student) => {
                   const latestInvoice = student.invoices[0]
+                  const monthlyFee = student.fee_override ?? routeFeeFor(student.route, student.package_type)
                   return (
                     <TableRow key={student.id}>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span>{student.full_name}</span>
+                          <Link to={`/operator/students/${student.id}`} className="font-medium hover:text-primary">
+                            {student.full_name}
+                          </Link>
                           <span className="text-xs text-muted-foreground">{student.school_name}</span>
                         </div>
                       </TableCell>
@@ -170,7 +178,16 @@ export function Students() {
                       </TableCell>
                       <TableCell>{student.route?.name ?? '—'}</TableCell>
                       <TableCell>{t(`common.package.${student.package_type}`)}</TableCell>
-                      <TableCell>{t(`common.billingPeriod.${student.billing_period}`)}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span>{monthlyFee ? `RM ${formatMoney(monthlyFee)}` : '—'}</span>
+                          {student.fee_override && (
+                            <span className="text-xs text-muted-foreground">
+                              {t('operator.students.customFeeTag')}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <Badge variant={enrollmentVariant[student.enrollment_status]}>
                           {t(`common.status.${student.enrollment_status}`)}
@@ -186,6 +203,14 @@ export function Students() {
                           <span className="text-sm text-muted-foreground">—</span>
                         )}
                       </TableCell>
+                      <TableCell className="text-right">
+                        <Link
+                          to={`/operator/students/${student.id}`}
+                          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+                        >
+                          {t('operator.students.viewStudent')}
+                        </Link>
+                      </TableCell>
                     </TableRow>
                   )
                 })}
@@ -199,6 +224,7 @@ export function Students() {
           ) : null}
         </CardContent>
       </Card>
+
     </div>
   )
 }

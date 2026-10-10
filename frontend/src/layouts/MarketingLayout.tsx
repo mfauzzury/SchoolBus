@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { ThemeSwitcher } from '@/components/ThemeSwitcher'
 import { useMe } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 
@@ -53,7 +54,7 @@ export function MarketingLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 border-b bg-background/85 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
+        <div className="mx-auto flex max-w-content items-center justify-between gap-4 px-4 lg:px-8 py-4">
           <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-medium">
             <BrandMark />
             BasSekolah<span className="font-mono text-primary">.my</span>
@@ -78,6 +79,7 @@ export function MarketingLayout() {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
+            <ThemeSwitcher />
             <LanguageSwitcher />
             {authLink}
           </div>
@@ -114,6 +116,7 @@ export function MarketingLayout() {
               ))}
             </nav>
             <div className="mt-3 flex items-center gap-3 border-t pt-3">
+              <ThemeSwitcher />
               <LanguageSwitcher />
               {authLink}
             </div>
@@ -126,7 +129,7 @@ export function MarketingLayout() {
       </main>
 
       <footer className="border-t py-8">
-        <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-6 text-center text-sm text-muted-foreground sm:flex-row sm:justify-between sm:text-left">
+        <div className="mx-auto flex max-w-content flex-col items-center gap-4 px-4 lg:px-8 text-center text-sm text-muted-foreground sm:flex-row sm:justify-between sm:text-left">
           <div className="flex flex-col items-center gap-2 sm:items-start">
             <span className="flex items-center gap-2 font-medium text-foreground">
               <BrandMark />
@@ -142,7 +145,7 @@ export function MarketingLayout() {
             ))}
           </nav>
         </div>
-        <div className="mx-auto mt-6 flex max-w-5xl flex-col items-center gap-3 border-t px-6 pt-6 text-xs text-muted-foreground sm:flex-row sm:justify-between">
+        <div className="mx-auto mt-6 flex max-w-content flex-col items-center gap-3 border-t px-4 lg:px-8 pt-6 text-xs text-muted-foreground sm:flex-row sm:justify-between">
           <span>{t('footer.copyright', { year: new Date().getFullYear() })}</span>
           <nav className="flex items-center gap-4">
             <Link to="/terms" className="hover:text-foreground">

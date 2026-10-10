@@ -28,6 +28,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'billplz' => [
+        // Billplz must reach the callback over the public internet, so in local
+        // dev point this at a tunnel (ngrok etc.). Falls back to APP_URL.
+        'callback_base_url' => env('BILLPLZ_CALLBACK_BASE_URL'),
+        'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

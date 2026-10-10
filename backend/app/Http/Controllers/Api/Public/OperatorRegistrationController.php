@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Password;
 
 class OperatorRegistrationController extends Controller
 {
@@ -18,7 +19,7 @@ class OperatorRegistrationController extends Controller
             'contact_person' => 'required|string|max:255',
             'contact_phone' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|unique:bus_operators,email',
-            'password' => 'required|string|min:8',
+            'password' => ['required', 'string', Password::min(8)->letters()->numbers()],
         ]);
 
         $user = DB::transaction(function () use ($data) {

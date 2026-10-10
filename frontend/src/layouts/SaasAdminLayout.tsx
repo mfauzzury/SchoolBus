@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { ThemeSwitcher } from '@/components/ThemeSwitcher'
 import { cn } from '@/lib/utils'
 
 export function SaasAdminLayout() {
@@ -22,7 +23,7 @@ export function SaasAdminLayout() {
   return (
     <div className="min-h-screen">
       <header className="border-b">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-content items-center justify-between px-4 py-4 lg:px-8">
           <Link to="/admin/dashboard" className="flex min-w-0 items-center gap-2 hover:text-primary">
             <span className="truncate font-medium">{t('admin.nav.platformAdmin')}</span>
           </Link>
@@ -45,6 +46,7 @@ export function SaasAdminLayout() {
           </nav>
 
           <div className="hidden items-center gap-4 lg:flex">
+            <ThemeSwitcher />
             <LanguageSwitcher />
             <span className="text-sm text-muted-foreground">{data?.user.name}</span>
             <Button variant="outline" size="sm" onClick={() => logout.mutate()}>
@@ -83,7 +85,10 @@ export function SaasAdminLayout() {
               ))}
             </nav>
             <div className="mt-3 flex flex-col gap-3 border-t pt-3">
-              <LanguageSwitcher />
+              <div className="flex items-center gap-3">
+                <ThemeSwitcher />
+                <LanguageSwitcher />
+              </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{data?.user.name}</span>
                 <Button variant="outline" size="sm" onClick={() => logout.mutate()}>
@@ -94,7 +99,7 @@ export function SaasAdminLayout() {
           </div>
         )}
       </header>
-      <main className="mx-auto max-w-5xl p-4 sm:p-6">
+      <main className="mx-auto max-w-content p-4 sm:py-6 lg:px-8">
         <Outlet />
       </main>
     </div>

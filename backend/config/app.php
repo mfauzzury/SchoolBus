@@ -69,6 +69,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Billing Timezone
+    |--------------------------------------------------------------------------
+    |
+    | Timestamps are stored in UTC, but "the 1st of the month" has to be the
+    | operators' local 1st — otherwise bills would only appear at 8am in Malaysia.
+    |
+    */
+
+    'billing_timezone' => env('BILLING_TIMEZONE', 'Asia/Kuala_Lumpur'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
     |

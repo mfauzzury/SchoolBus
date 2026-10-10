@@ -40,12 +40,6 @@
     "package": {
       "one_way": "One-Way",
       "return": "Return"
-    },
-    "billingPeriod": {
-      "monthly": "Monthly",
-      "quarterly": "Quarterly",
-      "half_year": "Half-Year",
-      "yearly": "Yearly"
     }
   },
   "language": {
@@ -63,7 +57,9 @@
     "settings": "Settings",
     "myChildren": "My children",
     "invoices": "Invoices",
-    "profile": "Profile"
+    "profile": "Profile",
+    "track": "Track",
+    "live": "Live"
   },
   "marketingNav": {
     "parents": "For Parents",
@@ -96,7 +92,7 @@
       },
       "fees": {
         "title": "4. Fees and payment",
-        "body": "The Free plan carries no monthly subscription fee. BasSekolah.my charges RM1 per active student and RM1 per transaction collected, both deducted automatically from the parent's payment at the point of collection via our payment gateway, ToyyibPay. Operators are never billed separately for these fees. Pricing for additional plans will be published before they become available."
+        "body": "The Free plan carries no monthly subscription fee. For each transaction collected, a RM1.25 payment gateway fee and a 2% platform fee apply, both deducted automatically from the parent's payment at the point of collection via our payment gateway, Billplz. The Pro plan, available soon, is RM1,200 per year with a RM1 payment gateway fee and a 1% platform fee per transaction. Operators are never billed separately for transaction fees."
       },
       "responsibilities": {
         "title": "5. Operator responsibilities",
@@ -129,7 +125,7 @@
     "sections": {
       "collect": {
         "title": "1. Information we collect",
-        "body": "We collect account information (name, email, phone) for operators and parents; student information (name, date of birth, school, route) submitted by parents or operators; and payment records (amount, method, date) processed through ToyyibPay. We never store full card or bank account numbers ourselves."
+        "body": "We collect account information (name, email, phone) for operators and parents; student information (name, date of birth, school, route) submitted by parents or operators; and payment records (amount, method, date) processed through Billplz. We never store full card or bank account numbers ourselves."
       },
       "use": {
         "title": "2. How we use information",
@@ -174,6 +170,12 @@
     "headline": "Know exactly which bus your child is on.",
     "subheadline": "Apply to your child's bus operator in minutes, then see the exact bus, driver, and stop they're assigned to. Pay online and get a receipt every month.",
     "seeHowItWorks": "See how it works",
+    "images": {
+      "hero": "Primary school pupils in uniform laughing together on their school field in Sabah",
+      "van": "A yellow BAS SEKOLAH school van parked by the roadside in Petaling Jaya",
+      "pupils": "Schoolchildren in uniform holding hands and walking together through a school courtyard"
+    },
+    "photoCredits": "Photos via Wikimedia Commons:",
     "capabilities": {
       "bilingual": "EN / BM interface",
       "transparency": "See your child's bus, driver & stop",
@@ -186,7 +188,7 @@
     "journey": {
       "find": {
         "title": "Find your operator",
-        "body": "Enter the 4-digit ID your bus operator gives you to find their workspace."
+        "body": "Enter the 5-digit ID your bus operator gives you to find their workspace."
       },
       "apply": {
         "title": "Apply in minutes",
@@ -206,7 +208,7 @@
     "parentCard": {
       "kicker": "I'm a parent",
       "title": "Find your operator",
-      "description": "Enter your bus operator's 4-digit ID to register or sign in.",
+      "description": "Enter your bus operator's 5-digit ID to register or sign in.",
       "checking": "Checking…",
       "notFound": "No operator found with that ID",
       "alreadyRegistered": "Already registered? Log in"
@@ -223,7 +225,7 @@
     "faq": {
       "findOperator": {
         "question": "How do I find my child's bus operator?",
-        "answer": "Ask your school bus operator for their 4-digit operator code, then enter it on the homepage to find their workspace and register instantly."
+        "answer": "Ask your school bus operator for their 5-digit operator code, then enter it on the homepage to find their workspace and register instantly."
       },
       "billing": {
         "question": "How is my bill calculated?",
@@ -239,7 +241,7 @@
       },
       "receipts": {
         "question": "Can I get a receipt for my payment?",
-        "answer": "Every paid invoice has a downloadable PDF receipt available from your dashboard, itemized with your operator's details for your records."
+        "answer": "Every payment you make has its own downloadable PDF receipt, available from your invoice in your dashboard. It shows what you paid, what was paid before, and what is still owed."
       },
       "security": {
         "question": "Is my data secure?",
@@ -252,6 +254,12 @@
     "headline": "Run the route. Skip the spreadsheet.",
     "subheadline": "Fleet, enrollment, and monthly billing in one workspace — approve applications, assign routes, and let billing run itself.",
     "seeHowItWorks": "See how it works",
+    "images": {
+      "hero": "A yellow BAS SEKOLAH school bus driving along a street in Bangsar, Kuala Lumpur",
+      "depot": "Aerial view of a large bus depot with rows of buses parked side by side",
+      "bus": "A classic orange BAS SEKOLAH school bus parked on a Malaysian street"
+    },
+    "photoCredits": "Photos via Wikimedia Commons:",
     "capabilities": {
       "fleet": "Fleet & route management",
       "applications": "Application approval workflow",
@@ -270,7 +278,7 @@
       },
       "applications": {
         "old": "New applications via WhatsApp messages you copy into a register by hand",
-        "new": "Parents apply online with your 4-digit code — approve with one click"
+        "new": "Parents apply online with your 5-digit code — approve with one click"
       },
       "discounts": {
         "old": "Calculating sibling and term discounts by hand, differently every time",
@@ -293,7 +301,7 @@
       "apply": {
         "who": "Parent",
         "title": "Parents apply with your code",
-        "body": "Parents find you with your 4-digit operator code and submit a short application — child's name, date of birth, school, and package."
+        "body": "Parents find you with your 5-digit operator code and submit a short application — child's name, date of birth, school, and package."
       },
       "approve": {
         "who": "Operator",
@@ -320,7 +328,7 @@
     "screenshots": {
       "tag": "Product tour",
       "title": "A look inside the dashboard",
-      "subtitle": "Screenshots coming soon — here's what you'll find inside.",
+      "subtitle": "A quick tour of what you'll find inside.",
       "dashboard": {
         "title": "Dashboard overview",
         "description": "Fleet, student, and revenue stats at a glance"
@@ -337,17 +345,17 @@
     "pricing": {
       "tag": "Pricing",
       "title": "Simple, pay-as-you-collect pricing",
-      "subtitle": "No monthly subscription — the only fees are usage-based, and they're never billed to you directly.",
+      "subtitle": "No monthly subscription. Transaction fees are deducted automatically from each payment — Pro adds an annual plan with lower rates.",
       "priceSuffix": "/month",
-      "priceTbd": "Pricing to be announced",
+      "priceSuffixYear": "/year",
       "comingSoon": "Coming soon",
-      "gatewayNote": "All payments are processed securely via ToyyibPay.",
+      "gatewayNote": "All payments are processed securely via Billplz.",
       "free": {
         "planName": "Free plan",
         "tagline": "No setup fees. No credit card required.",
         "features": {
-          "perStudent": "RM1 per active student, billed monthly",
-          "perTransaction": "RM1 per transaction collected",
+          "perTransaction": "RM1.25 per transaction — payment gateway fee",
+          "platformFee": "2% per transaction — platform fee",
           "deducted": "Fees are deducted automatically from each parent's payment — you never receive a separate bill."
         }
       },
@@ -355,7 +363,8 @@
         "planName": "Pro plan",
         "tagline": "For operators ready to automate collections and go live with GPS.",
         "features": {
-          "perTransaction": "RM1 per transaction only — no per-student fee",
+          "perTransaction": "RM1 per transaction — payment gateway fee",
+          "platformFee": "1% per transaction — platform fee",
           "reminders": "Automated billing reminders via WhatsApp & email",
           "driverApp": "Driver app for live GPS tracking",
           "liveTracking": "Live bus location & ETA for parents",
@@ -369,11 +378,11 @@
     "faq": {
       "free": {
         "question": "Is BasSekolah.my really free?",
-        "answer": "There's no monthly subscription — you only pay RM1 per active student and RM1 per transaction, both deducted automatically from each parent's payment. No setup fees, no credit card required."
+        "answer": "There's no monthly subscription — you only pay a RM1.25 payment gateway fee and a 2% platform fee per transaction, both deducted automatically from each parent's payment. No setup fees, no credit card required."
       },
       "setup": {
         "question": "How long does setup take?",
-        "answer": "Most operators are live within a day: add your buses, drivers, and routes, then share your 4-digit operator code with parents to start collecting applications."
+        "answer": "Most operators are live within a day: add your buses, drivers, and routes, then share your 5-digit operator code with parents to start collecting applications."
       },
       "billing": {
         "question": "How does billing and collection work?",
@@ -385,11 +394,11 @@
       },
       "parentsRegister": {
         "question": "How do parents register?",
-        "answer": "Share your 4-digit operator code. Parents enter it on the homepage, submit a short application, and you approve or reject it from your dashboard."
+        "answer": "Share your 5-digit operator code. Parents enter it on the homepage, submit a short application, and you approve or reject it from your dashboard."
       },
       "hiddenFees": {
         "question": "Are there any hidden fees?",
-        "answer": "No — RM1 per student and RM1 per transaction, deducted from parent payments, is the only fee BasSekolah.my charges. No setup fees, no monthly minimums, no surprises."
+        "answer": "No — on the Free plan, the RM1.25 payment gateway fee and 2% platform fee per transaction, deducted from parent payments, are the only fees. Pro is RM1,200 a year with a RM1 gateway fee and 1% platform fee per transaction. No setup fees, no monthly minimums, no surprises."
       }
     }
   },
@@ -496,19 +505,70 @@
       "failed": "Registration failed. Check your details and try again.",
       "notFound": "Registration link not found.",
       "submit": "Register",
-      "submitting": "Creating account…"
+      "submitting": "Creating account…",
+      "fullNamePlaceholder": "e.g. Aisyah binti Rahman",
+      "icNumberPlaceholder": "e.g. 900101-14-5678",
+      "phonePlaceholder": "e.g. 012-345 6789",
+      "emailPlaceholder": "you@example.com",
+      "addressLine1Placeholder": "e.g. No. 12, Jalan Mawar 3",
+      "addressLine2Placeholder": "Taman, apartment or unit no.",
+      "cityPlaceholder": "e.g. Shah Alam",
+      "postcodePlaceholder": "e.g. 40000",
+      "emergencyContactNamePlaceholder": "e.g. Siti binti Ali",
+      "emergencyContactRelationshipPlaceholder": "e.g. Grandmother",
+      "emergencyContactPhonePlaceholder": "e.g. 013-456 7890"
     },
     "operatorSignup": {
       "title": "Set up your workspace",
       "description": "Start managing your fleet and collections",
       "companyName": "Company name",
       "contactPerson": "Your name",
-      "contactPhone": "Phone",
+      "contactPhone": "Phone number",
       "email": "Email",
       "password": "Password",
       "failed": "Could not create your workspace. Check your details and try again.",
       "submit": "Start free",
-      "submitting": "Creating workspace…"
+      "submitting": "Creating workspace…",
+      "companyNamePlaceholder": "e.g. Sunrise Transport Sdn Bhd",
+      "contactPersonPlaceholder": "e.g. Ahmad bin Ali",
+      "contactPhonePlaceholder": "e.g. 012-345 6789",
+      "emailPlaceholder": "you@company.com",
+      "stepLabel": "Step {{current}} of {{total}}",
+      "steps": {
+        "company": "Company",
+        "details": "Your details",
+        "password": "Password"
+      },
+      "next": "Next",
+      "back": "Back"
+    },
+    "validation": {
+      "required": "This field is required",
+      "email": "Enter a valid email address"
+    },
+    "password": {
+      "placeholder": "Create a password",
+      "tip": "Tip: 12+ characters mixing upper and lower case, numbers and symbols is strongest.",
+      "rules": {
+        "length": "8+ characters",
+        "letter": "A letter",
+        "number": "A number"
+      },
+      "strength": {
+        "label": "Strength",
+        "tooShort": "Too short",
+        "weak": "Weak",
+        "fair": "Fair",
+        "good": "Good",
+        "strong": "Strong"
+      },
+      "errors": {
+        "tooShort": "Password must be at least 8 characters",
+        "needsLetter": "Include at least one letter",
+        "needsNumber": "Include at least one number"
+      },
+      "show": "Show password",
+      "hide": "Hide password"
     }
   },
   "admin": {
@@ -548,19 +608,90 @@
     },
     "operatorDetail": {
       "back": "Back to Operators",
-      "empty": "Nothing here yet."
+      "empty": "Nothing here yet.",
+      "tabDetails": "Details",
+      "tabGateway": "Payment gateway",
+      "company": {
+        "title": "Company details",
+        "code": "Operator code",
+        "contactPerson": "Contact person",
+        "phone": "Phone",
+        "email": "Email",
+        "plan": "Plan",
+        "parents": "Parents"
+      },
+      "billplz": {
+        "title": "Online payments (Billplz)",
+        "description": "Parents pay this operator's invoices through the operator's own Billplz account — funds settle directly to them.",
+        "statusEnabled": "Enabled",
+        "statusDisabled": "Not configured",
+        "modeSandbox": "Sandbox",
+        "modeLive": "Live",
+        "secretKey": "API Secret Key",
+        "xSignatureKey": "X Signature Key",
+        "collectionId": "Collection ID",
+        "sandbox": "Sandbox mode (use billplz-sandbox.com)",
+        "keyStored": "A key is saved. Leave blank to keep it.",
+        "keyPlaceholder": "Paste key",
+        "save": "Save",
+        "saving": "Saving…",
+        "saved": "Billplz settings saved.",
+        "saveError": "Couldn't save. Check the values and try again.",
+        "disable": "Disable online payments",
+        "disableConfirm": "Remove the Billplz credentials for this operator? Parents will no longer be able to pay online.",
+        "hint": "Find these in the operator's Billplz account under Settings. Enable \"X Signature\" for payment completion.",
+        "test": {
+          "button": "Test connection",
+          "testing": "Testing…",
+          "ok": "Connected to Billplz — collection \"{{title}}\" found.",
+          "xSignatureNote": "The X Signature key can't be tested here; it's verified when the first payment callback arrives.",
+          "unauthorized": "Billplz rejected the Secret Key. Check it was copied correctly and that Sandbox mode matches the account (sandbox keys only work in Sandbox mode).",
+          "collection_not_found": "The Secret Key works, but this Collection ID doesn't exist in that Billplz account.",
+          "unreachable": "Couldn't reach Billplz. Try again in a moment.",
+          "x_signature_same_as_secret": "The X Signature key is identical to the Secret Key — they are two different values in Billplz Settings.",
+          "error": "The test couldn't run. Save the credentials first and try again."
+        }
+      }
     }
   },
   "operator": {
     "dashboard": {
       "welcome": "Welcome, {{name}} — {{company}}",
       "operatorId": "Your Operator ID",
-      "operatorIdDescription": "Share this 4-digit ID with parents so they can register and enroll their children.",
+      "operatorIdDescription": "Share this 5-digit ID, link or QR code with parents so they can register and enroll their children.",
       "copy": "Copy",
       "copied": "Copied",
-      "pendingApplications": "Pending Applications",
-      "pendingApplicationsDescription": "New enrollment applications waiting for your review.",
-      "reviewApplications": "Review applications"
+      "newApplications": "New applications",
+      "newApplicationsWaiting": "waiting for your review",
+      "noNewApplications": "No new applications right now",
+      "reviewApplications": "Review applications",
+      "share": {
+        "linkLabel": "Your registration link",
+        "copyLink": "Copy link",
+        "whatsapp": "Share on WhatsApp",
+        "downloadQr": "Download QR",
+        "qrAlt": "QR code for your registration link",
+        "message": "Register your child for {{company}}'s school bus service here: {{link}}"
+      },
+      "charts": {
+        "collectionsTitle": "Collections by month",
+        "collectionsDescription": "Invoice value for each billing month, by payment status.",
+        "seatsTitle": "Seats by route",
+        "seatsDescription": "Enrolled students against each bus's capacity.",
+        "month": "Month",
+        "empty": "No invoices yet. Billing will appear here once invoices are issued.",
+        "noRoutes": "No routes yet.",
+        "series": {
+          "collected": "Collected",
+          "pending": "Awaiting payment",
+          "overdue": "Overdue"
+        },
+        "seatsOf": "{{used}} of {{capacity}} seats",
+        "noBus": "No bus assigned",
+        "full": "Full",
+        "nearlyFull": "Nearly full",
+        "collectionRate": "{{percent}}% of expected collected"
+      }
     },
     "buses": {
       "title": "Buses",
@@ -600,7 +731,7 @@
       "routeName": "Route name",
       "zone": "Zone",
       "schoolDestination": "School destination",
-      "baseMonthlyFee": "Base monthly fee (RM)",
+      "baseMonthlyFee": "Return fee per month (RM)",
       "bus": "Bus",
       "driver": "Driver",
       "conductor": "Conductor",
@@ -608,9 +739,12 @@
       "addStop": "Add stop",
       "stopNamePlaceholder": "Stop name",
       "remove": "Remove",
-      "baseFee": "Base fee",
+      "baseFee": "Return fee",
       "actions": "Actions",
-      "deleteConfirm": "Delete {{name}}?"
+      "deleteConfirm": "Delete {{name}}?",
+      "oneWayMonthlyFee": "One-way fee per month (RM)",
+      "oneWayFeeHint": "Leave the one-way fee blank to charge the return fee.",
+      "oneWayFee": "One-way fee"
     },
     "students": {
       "title": "Students",
@@ -619,11 +753,53 @@
       "student": "Student",
       "parent": "Parent",
       "package": "Package",
-      "billing": "Billing",
       "latestInvoice": "Latest invoice",
       "noStudents": "No students enrolled yet.",
       "noResults": "No students match your search.",
-      "searchPlaceholder": "Search by student, parent, or school"
+      "searchPlaceholder": "Search by student, parent, or school",
+      "monthlyFee": "Monthly fee",
+      "customFeeTag": "Custom fee",
+      "editBilling": "Edit billing",
+      "customFee": "Monthly fee for this child (RM)",
+      "customFeeHint": "Leave empty to use the route's fee. No sibling discount is taken off a fee you enter here.",
+      "statusHint": "Suspended and withdrawn children are not billed.",
+      "viewStudent": "View",
+      "back": "Back to students",
+      "notFound": "This student could not be found.",
+      "childDetails": "Child details",
+      "parentDetails": "Parent / guardian",
+      "pickupStop": "Pickup stop",
+      "enrolledOn": "Enrolled on",
+      "phone": "Phone",
+      "email": "Email",
+      "icNumber": "IC number",
+      "address": "Address",
+      "emergencyContact": "Emergency contact",
+      "familyBalance": "Family balance owed",
+      "otherChildren": "Other children",
+      "billingSettings": "Recurring bill",
+      "billsTitle": "Bills",
+      "paymentsTitle": "Payments received",
+      "noBills": "No bills yet for this student.",
+      "noPayments": "No payments received yet.",
+      "tabDetails": "Student details",
+      "nextBill": "Next bill",
+      "nextBillDue": "due {{date}}",
+      "afterSiblingDiscount": "after {{rate}}% sibling discount",
+      "noBill": {
+        "suspended": "No bills for now. This child is suspended.",
+        "withdrawn": "No more bills. This child has withdrawn.",
+        "ended": "No more bills. Billing ended after {{month}}.",
+        "no_fee": "No monthly fee yet. Set a fee on the route, or enter one below.",
+        "no_billed_months": "No month is set for billing. Choose months in Settings."
+      },
+      "startFrom": "Start billing from",
+      "stopAfter": "Stop billing after",
+      "windowHint": "Leave empty to keep billing every month until you stop it.",
+      "stopBeforeStartError": "The stop month cannot be before the start month.",
+      "scheduleNote": "Bills go out on the 1st of each month and are due on day {{day}}.",
+      "scheduleLink": "Change in Settings",
+      "monthNotSet": "Not set"
     },
     "applications": {
       "title": "Student Applications",
@@ -642,7 +818,7 @@
       "schoolName": "School name",
       "pickupStop": "Pickup stop",
       "feeOverride": "Monthly fee (RM)",
-      "feeOverrideHint": "Leave blank to use the selected route's fee.",
+      "feeOverrideHint": "Leave blank to use the selected route's fee. A fee entered here is charged exactly, with no sibling discount.",
       "approve": "Approve",
       "reject": "Reject",
       "confirmReject": "Confirm rejection",
@@ -652,7 +828,15 @@
       "submitError": "Something went wrong. Please try again.",
       "reviewResult": "Review result",
       "resultingRoute": "Route",
-      "reviewedOn": "Reviewed on"
+      "reviewedOn": "Reviewed on",
+      "noRouteFee": "This route has no fee yet. Enter a monthly fee for this child, or set a fee on the route.",
+      "firstBill": "First bill",
+      "firstBillFull": "Full fee for this month",
+      "firstBillCustom": "Reduced amount for this month",
+      "firstBillNextMonth": "Start billing next month",
+      "firstBillHint": "Bills cover a whole calendar month and go out on the 1st.",
+      "firstMonthAmount": "Amount for this month (RM)",
+      "monthlyFee": "Monthly fee"
     },
     "finances": {
       "title": "Finances",
@@ -674,7 +858,6 @@
       "dueDate": "Due date",
       "actions": "Actions",
       "recordPayment": "Record payment",
-      "recordPaymentFor": "Record payment for {{name}}",
       "method": "Method",
       "cash": "Cash",
       "bankTransfer": "Bank Transfer",
@@ -682,7 +865,60 @@
       "online": "Online",
       "referenceNumber": "Reference number",
       "paymentDate": "Payment date",
-      "amountPaid": "Amount paid (RM)"
+      "amountPaid": "Amount paid (RM)",
+      "tabBills": "Bills",
+      "tabTransactions": "Transactions",
+      "tabOutstanding": "Outstanding",
+      "void": "Cancelled",
+      "balance": "Balance",
+      "view": "View",
+      "total": "Total",
+      "noBills": "No bills match these filters.",
+      "addAdjustment": "Add adjustment",
+      "adjustmentType": "Type",
+      "adjustmentDiscount": "Discount (reduce the bill)",
+      "adjustmentCharge": "Extra charge (add to the bill)",
+      "adjustmentAmount": "Amount (RM)",
+      "adjustmentReason": "Reason",
+      "adjustmentReasonPlaceholder": "Shown to the parent on the bill",
+      "adjustmentHint": "This changes this bill only. To change the fee for every month, edit the student's monthly fee on the Students page.",
+      "removeAdjustment": "Remove",
+      "belowPaidError": "The bill cannot go below what is already paid.",
+      "beingPaidError": "The parent is paying this bill online right now. Try again in a few minutes.",
+      "adjustError": "Could not change this bill. Try again.",
+      "cancelBill": "Cancel bill",
+      "cancelReason": "Reason for cancelling",
+      "confirmCancel": "Confirm cancellation",
+      "cancelHasPayments": "A bill with payments cannot be cancelled.",
+      "cancelledReason": "Cancelled: {{reason}}",
+      "createBill": "Create bill",
+      "createBillDescription": "Bills are created automatically on the 1st. Use this only to re-issue a cancelled bill or to bill a missed month.",
+      "createBillError": "Could not create the bill. The student may already have a bill for that month, or has no route or monthly fee.",
+      "selectStudent": "Select a student",
+      "date": "Date",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "allMethods": "All methods",
+      "billPeriod": "Bill for",
+      "totalReceived": "Total received",
+      "noTransactions": "No payments received in this period.",
+      "parent": "Parent",
+      "children": "Children",
+      "unpaidBills": "Unpaid bills",
+      "oldestDue": "Oldest due date",
+      "daysLate_one": "{{count}} day late",
+      "daysLate_other": "{{count}} days late",
+      "notDue": "Not due yet",
+      "owed": "Amount owed",
+      "noOutstanding": "Nobody owes anything. All bills are paid.",
+      "searchPlaceholder": "Search student or parent",
+      "totalBilled": "Total billed",
+      "totalPaid": "Total paid",
+      "openBill": "Open",
+      "backToFinances": "Back to finances",
+      "backToStudent": "Back to {{name}}",
+      "billNotFound": "This bill could not be found.",
+      "overpayError": "That is more than the RM {{amount}} still owed on this bill."
     },
     "settings": {
       "title": "Settings",
@@ -703,17 +939,20 @@
       "saveChanges": "Save changes",
       "saveError": "Could not save changes. Try again.",
       "discountRates": "Discount rates",
-      "discountRatesDescription": "Percentage off the base fee, applied at invoicing.",
-      "billingPeriod": "Billing period",
-      "monthly": "Monthly (%)",
-      "quarterly": "Quarterly (%)",
-      "halfYear": "Half-Year (%)",
-      "yearly": "Yearly (%)",
+      "discountRatesDescription": "Percentage off the monthly fee for a parent's second and later children. Not applied to a child with a custom fee.",
       "siblingDiscount": "Sibling discount",
       "firstChild": "1st child (%)",
       "secondChild": "2nd child (%)",
       "thirdChild": "3rd+ child (%)",
-      "rateRangeError": "Must be 0–100"
+      "rateRangeError": "Must be 0–100",
+      "billing": "Billing",
+      "billingDescription": "Every child is billed on the 1st of each billed month.",
+      "dueDay": "Payment due day",
+      "dueDayHint": "Day of the month the bill must be paid by (1–28).",
+      "dueDayError": "Enter a day from 1 to 28.",
+      "billedMonths": "Billed months",
+      "billedMonthsHint": "Untick months with no bus service, such as school holidays. No bills go out for those months.",
+      "billedMonthsError": "Choose at least one month."
     }
   },
   "parent": {
@@ -738,6 +977,10 @@
       "amount": "Amount",
       "dueDate": "Due date",
       "payNow": "Pay now",
+      "reminderOverdueTitle": "Payment overdue",
+      "reminderDueTitle": "Payment due",
+      "reminderUnpaid": "unpaid",
+      "reminderDescription": "You have RM {{amount}} outstanding across your invoices.",
       "viewInvoice": "View invoice",
       "applicationStatus": "Application status",
       "applicationPending": "Pending review",
@@ -752,6 +995,27 @@
       "pickupStopLabel": "Pickup stop",
       "noBusAssigned": "No bus has been assigned to this route yet."
     },
+    "child": {
+      "back": "Back to dashboard",
+      "notFound": "We couldn't find this child.",
+      "fullName": "Full name",
+      "dateOfBirth": "Date of birth",
+      "age_one": "{{count}} year old",
+      "age_other": "{{count}} years old",
+      "gender": "Sex",
+      "male": "Boy",
+      "female": "Girl",
+      "schoolDetails": "School details",
+      "teacherName": "Teacher's name",
+      "className": "Class",
+      "schoolPhone": "School phone number",
+      "nameRequired": "Please enter your child's name.",
+      "dateRequired": "Please choose the date of birth.",
+      "saveError": "We couldn't save the changes. Please try again.",
+      "photoError": "We couldn't upload the photo. Please use a picture under 2 MB.",
+      "operatorNote": "To change school, route or package, please contact your bus operator.",
+      "edit": "Edit"
+    },
     "pay": {
       "title": "Pay your bill",
       "subtitle": "Choose what you'd like to pay.",
@@ -760,27 +1024,39 @@
       "payCurrentTitle": "Pay current bill only",
       "payCurrentDescription": "This month's charges only",
       "includedBills": "Included in this payment",
-      "payWith": "Pay with ToyyibPay",
-      "poweredBy": "Powered by ToyyibPay",
-      "previewNotice": "This is a UI preview — payments aren't processed yet. Nothing has been charged or saved.",
-      "redirecting": "Redirecting to ToyyibPay…",
-      "successTitle": "Payment successful",
-      "successDescription": "This is a simulated confirmation for preview purposes. Your invoice status hasn't actually changed.",
+      "poweredBy": "Secure payments by Billplz",
+      "redirectNote": "You'll be taken to Billplz to pay with FPX online banking, e-wallet or card.",
+      "payAmount": "Pay RM {{amount}}",
+      "processing": "Taking you to Billplz…",
+      "startError": "We couldn't start the payment. Please try again in a moment.",
+      "unavailableTitle": "Online payment isn't available yet",
+      "unavailableDescription": "Your bus operator hasn't set up online payments. Please pay them directly and they'll record it for you.",
       "backToDashboard": "Back to invoices",
-      "allCaughtUpTitle": "You're all caught up",
-      "allCaughtUpDescription": "You have no outstanding invoices right now."
+      "allCaughtUpTitle": "All caught up",
+      "allCaughtUpDescription": "You have no outstanding invoices right now.",
+      "return": {
+        "checkingTitle": "Confirming your payment…",
+        "checkingDescription": "Please keep this page open for a moment.",
+        "successTitle": "Payment successful",
+        "successDescription": "Thank you! RM {{amount}} has been received and your invoices are marked as paid. Receipts are ready to download.",
+        "failedTitle": "Payment not completed",
+        "failedDescription": "No payment was received for this bill, so you haven't been charged. You can try again.",
+        "waitingTitle": "Still waiting for confirmation",
+        "waitingDescription": "We haven't received confirmation from the bank yet. If you were charged, your invoice will update within a few minutes — refresh this page to check.",
+        "tryAgain": "Try again",
+        "refresh": "Check again"
+      }
     },
     "invoice": {
       "title": "Invoice #{{id}}",
       "operator": "Operator",
       "contact": "Contact",
       "route": "Route",
-      "billingCycle": "Billing cycle",
-      "amountBeforeDiscount": "Amount before discount",
-      "discount": "Discount",
       "paidOn": "Paid on {{date}}",
       "dueOn": "Due {{date}}",
-      "overdueSince": "Overdue since {{date}}"
+      "overdueSince": "Overdue since {{date}}",
+      "back": "Back to invoices",
+      "notFound": "This invoice could not be found."
     },
     "enroll": {
       "title": "Apply for a child",
@@ -801,6 +1077,17 @@
     "profile": {
       "title": "Profile",
       "description": "Your own contact details on file with the operator.",
+      "preferences": "Preferences",
+      "theme": "Theme",
+      "language": "Language",
+      "changePassword": "Change password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "passwordMismatch": "Passwords don't match.",
+      "passwordUpdateError": "Could not update your password. Check your current password and try again.",
+      "passwordUpdated": "Your password has been updated.",
+      "updatePassword": "Update password",
       "fullName": "Full name",
       "relationship": "Relationship to child",
       "selectRelationship": "Select relationship",
@@ -817,6 +1104,10 @@
       "addressLine2": "Address line 2",
       "city": "City",
       "postcode": "Postcode",
+      "tabDetails": "My details",
+      "tabPassword": "Password",
+      "personalDetails": "Personal details",
+      "contactAddress": "Contact and address",
       "emergencyContact": "Emergency contact",
       "emergencyContactName": "Emergency contact name",
       "emergencyContactRelationship": "Relationship to guardian",
@@ -824,5 +1115,77 @@
       "saveChanges": "Save changes",
       "saveError": "Could not save changes. Try again."
     }
+  },
+  "tracking": {
+    "title": "Track bus",
+    "subtitle": "Live location of your child's school bus",
+    "recenter": "Recenter",
+    "status": {
+      "scheduled": "Not started",
+      "active": "On the way",
+      "completed": "Completed"
+    },
+    "direction": {
+      "pickup": "Morning pickup",
+      "dropoff": "Afternoon drop-off"
+    },
+    "child": {
+      "waiting": "Waiting to board",
+      "notBoarded": "Did not board",
+      "boarded": "Boarded at {{time}}",
+      "alighted": "Dropped off at {{time}}"
+    },
+    "signal": {
+      "live": "Live · updated {{ago}}",
+      "stale": "Weak signal · last seen {{ago}}",
+      "lost": "Signal lost · last seen {{ago}}",
+      "none": "Waiting for the bus location…"
+    },
+    "ago": {
+      "seconds": "{{count}}s ago",
+      "minutes": "{{count}} min ago"
+    },
+    "speed": "{{speed}} km/h",
+    "lostHint": "The driver's phone may be offline. Call the driver if you're concerned.",
+    "callDriver": "Call",
+    "notStartedTitle": "Trip hasn't started yet",
+    "notStartedBody": "The bus will appear on the map once the driver starts the trip.",
+    "waitingGpsTitle": "Trip started",
+    "waitingGpsBody": "Waiting for the first location from the bus. This usually takes a few seconds.",
+    "completedTitle": "Trip completed",
+    "completedBody": "The trip ended at {{time}}. The bus is no longer being tracked.",
+    "noTripsTitle": "No trips today",
+    "noTripsBody": "None of your children are on a bus trip today.",
+    "dashboardCard": {
+      "onTheWay": "{{name}}'s bus is on the way",
+      "track": "Track bus"
+    },
+    "operator": {
+      "title": "Live fleet",
+      "subtitle": "Today's trips and bus positions",
+      "activeCount": "{{count}} on the road",
+      "filter": {
+        "all": "All",
+        "active": "Active",
+        "scheduled": "Not started",
+        "completed": "Completed"
+      },
+      "boarded": "{{boarded}}/{{total}} boarded",
+      "noSignalAlert_one": "{{count}} bus with weak or lost signal",
+      "noSignalAlert_other": "{{count}} buses with weak or lost signal",
+      "noTrips": "No trips match this filter.",
+      "noLocation": "No location yet",
+      "notOnMap": "Not on the map",
+      "startedAt": "Started {{time}}",
+      "endedAt": "Ended {{time}}"
+    }
+  },
+  "billing": {
+    "item": {
+      "fee": "Bus fee",
+      "discount": "Discount"
+    },
+    "paidSoFar": "Paid so far",
+    "balance": "Balance due"
   }
 }

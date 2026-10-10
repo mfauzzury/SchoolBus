@@ -21,9 +21,14 @@ import {
 } from '@/hooks/useStudentApplications'
 import { useRoutes } from '@/hooks/useRoutes'
 import { formatMoney } from '@/lib/utils'
+import { routeFeeFor } from '@/lib/billing'
 import type { OperatorStudentApplication } from '@/api/studentApplications'
 
 const NO_STOP = 'none'
+
+// Bills cover whole calendar months, so the operator decides what a child
+// joining part-way through pays for the month they join.
+type FirstBill = 'full' | 'custom' | 'next_month'
 
 const statusVariant: Record<OperatorStudentApplication['status'], 'success' | 'info' | 'destructive'> = {
   pending: 'info',
@@ -46,6 +51,8 @@ export function ApplicationReview() {
   const [schoolName, setSchoolName] = useState('')
   const [feeOverride, setFeeOverride] = useState('')
   const [pickupStopId, setPickupStopId] = useState(NO_STOP)
+  const [firstBill, setFirstBill] = useState<FirstBill>('full')
+  const [firstMonthAmount, setFirstMonthAmount] = useState('')
   const [rejecting, setRejecting] = useState(false)
   const [rejectionReason, setRejectionReason] = useState('')
 
@@ -57,14 +64,27 @@ export function ApplicationReview() {
 
   const school = schoolName || application.school_name
 
+  // The route's price for this child's package; one-way falls back to the return fee.
+  const routeFee = routeFeeFor(selectedRoute, application.package_type)
+  const monthlyFee = feeOverride || routeFee
+  const firstBillLabels: Record<FirstBill, string> = {
+    full: t('operator.applications.firstBillFull'),
+    custom: t('operator.applications.firstBillCustom'),
+    next_month: t('operator.applications.firstBillNextMonth'),
+  }
+  const canApprove =
+    !!routeId && !!monthlyFee && (firstBill !== 'custom' || firstMonthAmount !== '')
+
   const onApprove = () => {
-    if (!routeId) return
+    if (!canApprove) return
     approve.mutate(
       {
         route_id: Number(routeId),
         school_name: school,
         fee_override: feeOverride ? Number(feeOverride) : null,
         pickup_stop_id: pickupStopId === NO_STOP ? null : Number(pickupStopId),
+        billing_start: firstBill === 'next_month' ? 'next_month' : 'this_month',
+        first_month_amount: firstBill === 'custom' ? Number(firstMonthAmount) : null,
       },
       { onSuccess: () => navigate('/operator/applications') },
     )
@@ -101,10 +121,6 @@ export function ApplicationReview() {
             <span>{t(`common.package.${application.package_type}`)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">{t('operator.students.billing')}</span>
-            <span>{t(`common.billingPeriod.${application.billing_period}`)}</span>
-          </div>
-          <div className="flex justify-between">
             <span className="text-muted-foreground">{t('operator.applications.parent')}</span>
             <span>{application.parent_profile?.full_name ?? '—'}</span>
           </div>
@@ -133,7 +149,7 @@ export function ApplicationReview() {
                   value={routeId}
                   onValueChange={(v) => setRouteId(v ?? '')}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder={t('parent.enroll.selectRoute')} />
                   </SelectTrigger>
                   <SelectContent>
@@ -157,7 +173,7 @@ export function ApplicationReview() {
                     value={pickupStopId}
                     onValueChange={(v) => setPickupStopId(v ?? NO_STOP)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -192,20 +208,62 @@ export function ApplicationReview() {
                   step="0.01"
                   value={feeOverride}
                   onChange={(e) => setFeeOverride(e.target.value)}
-                  placeholder={
-                    selectedRoute?.base_monthly_fee
-                      ? `RM ${formatMoney(selectedRoute.base_monthly_fee)}`
-                      : undefined
-                  }
+                  placeholder={routeFee ? `RM ${formatMoney(routeFee)}` : undefined}
                 />
                 <p className="text-xs text-muted-foreground">{t('operator.applications.feeOverrideHint')}</p>
+                {routeId && !monthlyFee && (
+                  <p className="text-sm text-destructive">{t('operator.applications.noRouteFee')}</p>
+                )}
               </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label>{t('operator.applications.firstBill')}</Label>
+                <Select
+                  items={firstBillLabels}
+                  value={firstBill}
+                  onValueChange={(v) => setFirstBill((v as FirstBill) ?? 'full')}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(firstBillLabels) as FirstBill[]).map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {firstBillLabels[option]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">{t('operator.applications.firstBillHint')}</p>
+              </div>
+
+              {firstBill === 'custom' && (
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="first_month_amount">{t('operator.applications.firstMonthAmount')}</Label>
+                  <Input
+                    id="first_month_amount"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={firstMonthAmount}
+                    onChange={(e) => setFirstMonthAmount(e.target.value)}
+                    placeholder={monthlyFee ? `RM ${formatMoney(monthlyFee)}` : undefined}
+                  />
+                </div>
+              )}
+
+              {monthlyFee && (
+                <div className="flex justify-between rounded-lg border p-3 text-sm">
+                  <span className="text-muted-foreground">{t('operator.applications.monthlyFee')}</span>
+                  <span className="font-medium">RM {formatMoney(monthlyFee)}</span>
+                </div>
+              )}
 
               {approve.isError && (
                 <p className="text-sm text-destructive">{t('operator.applications.submitError')}</p>
               )}
 
-              <Button onClick={onApprove} disabled={!routeId || approve.isPending}>
+              <Button onClick={onApprove} disabled={!canApprove || approve.isPending}>
                 {approve.isPending ? t('common.loading') : t('operator.applications.approve')}
               </Button>
             </CardContent>

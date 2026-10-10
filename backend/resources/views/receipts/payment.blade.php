@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Receipt #{{ $invoice->id }}</title>
+    <title>Receipt {{ $payment->receipt_number }}</title>
     <style>
         body {
             font-family: Helvetica, Arial, sans-serif;
@@ -96,21 +96,31 @@
                 </td>
                 <td style="width: 40%;">
                     <div class="receipt-label">Receipt</div>
-                    <div class="receipt-number">#{{ $invoice->id }}</div>
+                    <div class="receipt-number">{{ $payment->receipt_number }}</div>
                 </td>
             </tr>
         </table>
 
         <div class="spacer">&nbsp;</div>
 
+        @php
+            $methodLabels = [
+                'cash' => 'Cash',
+                'bank_transfer' => 'Bank transfer',
+                'fpx' => 'FPX',
+                'online' => 'Online payment (Billplz)',
+            ];
+            $settled = $balanceAfter <= 0;
+        @endphp
+
         <table class="amount-table">
             <tr>
                 <td style="width: 55%;">
-                    <div class="amount-label">Amount paid</div>
-                    <div class="amount-value">RM {{ number_format((float) $invoice->final_amount, 2) }}</div>
+                    <div class="amount-label">Amount received</div>
+                    <div class="amount-value">RM {{ number_format((float) $payment->amount_paid, 2) }}</div>
                 </td>
                 <td style="width: 45%;" class="amount-status">
-                    <span class="dot">&nbsp;</span>&nbsp; Paid on {{ optional($payment?->payment_date)->format('d M Y') ?? '—' }}
+                    <span class="dot">&nbsp;</span>&nbsp; Received on {{ $payment->payment_date?->format('d M Y') }}
                 </td>
             </tr>
         </table>
@@ -145,15 +155,15 @@
                     <table class="meta-table">
                         <tr>
                             <td class="label">Method</td>
-                            <td class="value">{{ $payment ? ucwords(str_replace('_', ' ', $payment->method)) : '—' }}</td>
+                            <td class="value">{{ $methodLabels[$payment->method] ?? ucwords(str_replace('_', ' ', $payment->method)) }}</td>
                         </tr>
                         <tr>
                             <td class="label">Reference no.</td>
-                            <td class="value">{{ $payment?->reference_number ?? '—' }}</td>
+                            <td class="value">{{ $payment->reference_number ?? '—' }}</td>
                         </tr>
                         <tr>
-                            <td class="label">Payment date</td>
-                            <td class="value">{{ optional($payment?->payment_date)->format('d M Y') ?? '—' }}</td>
+                            <td class="label">Bill no.</td>
+                            <td class="value">#{{ $invoice->id }}</td>
                         </tr>
                     </table>
                 </td>
@@ -163,24 +173,34 @@
         <table class="line-table">
             <thead>
                 <tr>
-                    <th>Description</th>
+                    <th>Bill</th>
                     <th class="amount">Amount (RM)</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Bus fee — {{ $invoice->period_start?->format('F Y') }}</td>
-                    <td class="amount">{{ number_format((float) $invoice->amount_before_discount, 2) }}</td>
-                </tr>
-                @if ((float) $invoice->discount_amount > 0)
+                @foreach ($invoice->items as $item)
                     <tr>
-                        <td>Discount</td>
-                        <td class="amount">-{{ number_format((float) $invoice->discount_amount, 2) }}</td>
+                        <td>{{ $item->description }}@if ($loop->first) — {{ $invoice->period_start?->format('F Y') }}@endif</td>
+                        <td class="amount">{{ number_format((float) $item->amount, 2) }}</td>
+                    </tr>
+                @endforeach
+                <tr>
+                    <td><strong>Bill total</strong></td>
+                    <td class="amount"><strong>{{ number_format((float) $invoice->final_amount, 2) }}</strong></td>
+                </tr>
+                @if ($paidBefore > 0)
+                    <tr>
+                        <td>Paid before this payment</td>
+                        <td class="amount">-{{ number_format($paidBefore, 2) }}</td>
                     </tr>
                 @endif
+                <tr>
+                    <td>This payment</td>
+                    <td class="amount">-{{ number_format((float) $payment->amount_paid, 2) }}</td>
+                </tr>
                 <tr class="total-row">
-                    <td>Total paid</td>
-                    <td class="amount">RM {{ number_format((float) $invoice->final_amount, 2) }}</td>
+                    <td>{{ $settled ? 'Paid in full' : 'Balance remaining' }}</td>
+                    <td class="amount">RM {{ number_format($balanceAfter, 2) }}</td>
                 </tr>
             </tbody>
         </table>

@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
  */
 trait FiltersInvoices
 {
+    use SearchesStudents;
+
     private function filteredInvoices(Request $request): Builder
     {
         $query = Invoice::query();
@@ -31,6 +33,23 @@ trait FiltersInvoices
             } else {
                 $query->where('status', $request->input('status'));
             }
+        } elseif (! $request->boolean('include_void')) {
+            // Cancelled bills are history, not money owed: they only show when
+            // asked for by name (status=void) or for a billing history
+            // (include_void), never in totals or the default list.
+            $query->where('status', '!=', InvoiceStatus::Void);
+        }
+
+        if ($request->filled('student_id')) {
+            $query->where('student_id', $request->integer('student_id'));
+        }
+
+        if ($request->filled('parent_id')) {
+            $query->whereHas('student', fn (Builder $student) => $student->where('parent_id', $request->integer('parent_id')));
+        }
+
+        if ($request->filled('search')) {
+            $query->whereHas('student', fn (Builder $student) => $this->matchStudentSearch($student, $request));
         }
 
         if ($request->filled('year')) {

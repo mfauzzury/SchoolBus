@@ -1,32 +1,37 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { CheckCircle2, Loader2, Wallet } from 'lucide-react'
+import { CheckCircle2, Loader2, ShieldCheck } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { useMyInvoices, useMyStudents } from '@/hooks/useParentPortal'
-import { formatMoney, formatPeriod, isInvoiceOverdue } from '@/lib/utils'
+import {
+  useMyInvoices,
+  useMyStudents,
+  usePaymentConfig,
+  useStartPayment,
+} from '@/hooks/useParentPortal'
+import { formatMoney, formatPeriod, invoiceBalance, isInvoiceOverdue } from '@/lib/utils'
 import type { Invoice } from '@/api/parentPortal'
 
-type View = 'checkout' | 'processing' | 'success'
 type PayOption = 'total' | 'current'
 
 export function PayInvoices() {
   const { t, i18n } = useTranslation()
   const { data: invoices, isLoading: invoicesLoading } = useMyInvoices()
   const { data: students, isLoading: studentsLoading } = useMyStudents()
-  const [view, setView] = useState<View>('checkout')
+  const { data: paymentConfig, isLoading: configLoading } = usePaymentConfig()
+  const startPayment = useStartPayment()
   const [payOption, setPayOption] = useState<PayOption>('total')
 
-  const loading = invoicesLoading || studentsLoading
+  const loading = invoicesLoading || studentsLoading || configLoading
   const unpaidInvoices = (invoices ?? []).filter(
     (inv) => inv.status === 'issued' || inv.status === 'overdue',
   )
   const currentInvoices = unpaidInvoices.filter((inv) => !isInvoiceOverdue(inv))
   const hasOverdue = currentInvoices.length < unpaidInvoices.length
 
-  const total = (list: Invoice[]) => list.reduce((sum, inv) => sum + Number(inv.final_amount), 0)
+  const total = (list: Invoice[]) => list.reduce((sum, inv) => sum + invoiceBalance(inv), 0)
   const totalOutstanding = total(unpaidInvoices)
   const currentTotal = total(currentInvoices)
 
@@ -36,28 +41,16 @@ export function PayInvoices() {
   const studentName = (studentId: number) =>
     students?.find((s) => s.id === studentId)?.full_name ?? '—'
 
+  // Redirects the browser to Billplz's hosted page (FPX / e-wallet / card there).
   const onPay = () => {
-    setView('processing')
-    setTimeout(() => setView('success'), 1200)
+    startPayment.mutate(
+      selectedInvoices.map((invoice) => invoice.id),
+      { onSuccess: ({ url }) => window.location.assign(url) },
+    )
   }
 
   if (loading) {
     return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
-  }
-
-  if (view === 'success') {
-    return (
-      <Card className="mx-auto max-w-md">
-        <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
-          <CheckCircle2 className="size-12 text-primary" />
-          <p className="text-lg font-medium">{t('parent.pay.successTitle')}</p>
-          <p className="text-sm text-muted-foreground">{t('parent.pay.successDescription')}</p>
-          <Link to="/parent/invoices" className={buttonVariants({ className: 'mt-2' })}>
-            {t('parent.pay.backToDashboard')}
-          </Link>
-        </CardContent>
-      </Card>
-    )
   }
 
   if (unpaidInvoices.length === 0) {
@@ -67,6 +60,20 @@ export function PayInvoices() {
           <CheckCircle2 className="size-12 text-primary" />
           <p className="text-lg font-medium">{t('parent.pay.allCaughtUpTitle')}</p>
           <p className="text-sm text-muted-foreground">{t('parent.pay.allCaughtUpDescription')}</p>
+          <Link to="/parent/invoices" className={buttonVariants({ className: 'mt-2' })}>
+            {t('parent.pay.backToDashboard')}
+          </Link>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (!paymentConfig?.enabled) {
+    return (
+      <Card className="mx-auto max-w-md">
+        <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
+          <p className="text-lg font-medium">{t('parent.pay.unavailableTitle')}</p>
+          <p className="text-sm text-muted-foreground">{t('parent.pay.unavailableDescription')}</p>
           <Link to="/parent/invoices" className={buttonVariants({ className: 'mt-2' })}>
             {t('parent.pay.backToDashboard')}
           </Link>
@@ -136,7 +143,7 @@ export function PayInvoices() {
                 <span className="text-muted-foreground">
                   {studentName(invoice.student_id)} · {formatPeriod(invoice.period_start, i18n.language)}
                 </span>
-                <span>RM {formatMoney(invoice.final_amount)}</span>
+                <span>RM {formatMoney(invoiceBalance(invoice))}</span>
               </div>
             ))}
             <div className="mt-1 flex justify-between border-t pt-1.5 text-base font-medium">
@@ -146,21 +153,27 @@ export function PayInvoices() {
           </div>
         </div>
 
-        <Button onClick={onPay} disabled={view === 'processing'} className="w-full">
-          {view === 'processing' ? (
+        {startPayment.isError && (
+          <p role="alert" className="text-sm text-destructive">
+            {t('parent.pay.startError')}
+          </p>
+        )}
+
+        <Button onClick={onPay} disabled={startPayment.isPending || startPayment.isSuccess} className="w-full">
+          {startPayment.isPending || startPayment.isSuccess ? (
             <>
               <Loader2 className="animate-spin" />
-              {t('parent.pay.redirecting')}
+              {t('parent.pay.processing')}
             </>
           ) : (
-            <>
-              <Wallet />
-              {t('parent.pay.payWith')}
-            </>
+            t('parent.pay.payAmount', { amount: formatMoney(selectedTotal) })
           )}
         </Button>
+        <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
+          <ShieldCheck className="size-3.5" />
+          {t('parent.pay.redirectNote')}
+        </p>
         <p className="text-center text-xs text-muted-foreground">{t('parent.pay.poweredBy')}</p>
-        <p className="text-center text-xs text-muted-foreground">{t('parent.pay.previewNotice')}</p>
       </CardContent>
     </Card>
   )

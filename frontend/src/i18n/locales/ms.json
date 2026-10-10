@@ -40,12 +40,6 @@
     "package": {
       "one_way": "Sehala",
       "return": "Pergi-Balik"
-    },
-    "billingPeriod": {
-      "monthly": "Bulanan",
-      "quarterly": "Suku Tahun",
-      "half_year": "Setengah Tahun",
-      "yearly": "Tahunan"
     }
   },
   "language": {
@@ -62,8 +56,10 @@
     "finances": "Kewangan",
     "settings": "Tetapan",
     "myChildren": "Anak-anak saya",
-    "invoices": "Invois",
-    "profile": "Profil"
+    "invoices": "Bil",
+    "profile": "Profil",
+    "track": "Jejak",
+    "live": "Langsung"
   },
   "marketingNav": {
     "parents": "Untuk Ibu Bapa",
@@ -96,7 +92,7 @@
       },
       "fees": {
         "title": "4. Yuran dan bayaran",
-        "body": "Pelan Percuma tidak mempunyai yuran langganan bulanan. BasSekolah.my mengenakan RM1 setiap pelajar aktif dan RM1 setiap transaksi yang dikutip, kedua-duanya ditolak secara automatik daripada bayaran ibu bapa pada ketika kutipan melalui gerbang pembayaran kami, ToyyibPay. Pengendali tidak akan dibilkan secara berasingan untuk yuran ini. Harga untuk pelan tambahan akan diumumkan sebelum ia tersedia."
+        "body": "Pelan Percuma tidak mempunyai yuran langganan bulanan. Bagi setiap transaksi yang dikutip, yuran gerbang pembayaran RM1.25 dan yuran platform 2% dikenakan, kedua-duanya ditolak secara automatik daripada bayaran ibu bapa pada ketika kutipan melalui gerbang pembayaran kami, Billplz. Pelan Pro, yang akan tersedia tidak lama lagi, ialah RM1,200 setahun dengan yuran gerbang pembayaran RM1 dan yuran platform 1% setiap transaksi. Pengendali tidak akan dibilkan secara berasingan untuk yuran transaksi."
       },
       "responsibilities": {
         "title": "5. Tanggungjawab pengendali",
@@ -129,11 +125,11 @@
     "sections": {
       "collect": {
         "title": "1. Maklumat yang kami kumpul",
-        "body": "Kami mengumpul maklumat akaun (nama, e-mel, telefon) untuk pengendali dan ibu bapa; maklumat pelajar (nama, tarikh lahir, sekolah, laluan) yang dihantar oleh ibu bapa atau pengendali; dan rekod bayaran (jumlah, kaedah, tarikh) yang diproses melalui ToyyibPay. Kami tidak pernah menyimpan nombor kad atau akaun bank penuh sendiri."
+        "body": "Kami mengumpul maklumat akaun (nama, e-mel, telefon) untuk pengendali dan ibu bapa; maklumat pelajar (nama, tarikh lahir, sekolah, laluan) yang dihantar oleh ibu bapa atau pengendali; dan rekod bayaran (jumlah, kaedah, tarikh) yang diproses melalui Billplz. Kami tidak pernah menyimpan nombor kad atau akaun bank penuh sendiri."
       },
       "use": {
         "title": "2. Bagaimana kami menggunakan maklumat",
-        "body": "Kami menggunakan maklumat ini untuk mengendalikan Platform: menguruskan pendaftaran, menjana invois, mengira diskaun, memproses bayaran, dan menyediakan sokongan pelanggan."
+        "body": "Kami menggunakan maklumat ini untuk mengendalikan Platform: menguruskan pendaftaran, menjana bil, mengira diskaun, memproses bayaran, dan menyediakan sokongan pelanggan."
       },
       "sharing": {
         "title": "3. Perkongsian data",
@@ -174,6 +170,12 @@
     "headline": "Tahu dengan tepat bas mana anak anda naiki.",
     "subheadline": "Mohon kepada pengendali bas anak anda dalam beberapa minit, kemudian lihat dengan tepat bas, pemandu, dan perhentian yang ditetapkan. Bayar dalam talian dan dapatkan resit setiap bulan.",
     "seeHowItWorks": "Lihat cara ia berfungsi",
+    "images": {
+      "hero": "Murid sekolah rendah berpakaian seragam ketawa bersama di padang sekolah mereka di Sabah",
+      "van": "Van sekolah kuning \"BAS SEKOLAH\" diparkir di tepi jalan di Petaling Jaya",
+      "pupils": "Murid berpakaian seragam berpegangan tangan berjalan bersama melalui halaman sekolah"
+    },
+    "photoCredits": "Foto melalui Wikimedia Commons:",
     "capabilities": {
       "bilingual": "Antara muka EN / BM",
       "transparency": "Lihat bas, pemandu & perhentian anak anda",
@@ -186,7 +188,7 @@
     "journey": {
       "find": {
         "title": "Cari pengendali anda",
-        "body": "Masukkan ID 4-digit yang diberikan oleh pengendali bas anda untuk mencari ruang kerja mereka."
+        "body": "Masukkan ID 5-digit yang diberikan oleh pengendali bas anda untuk mencari ruang kerja mereka."
       },
       "apply": {
         "title": "Mohon dalam beberapa minit",
@@ -206,7 +208,7 @@
     "parentCard": {
       "kicker": "Saya ibu bapa",
       "title": "Cari pengendali anda",
-      "description": "Masukkan ID 4-digit pengendali bas anda untuk mendaftar atau log masuk.",
+      "description": "Masukkan ID 5-digit pengendali bas anda untuk mendaftar atau log masuk.",
       "checking": "Menyemak…",
       "notFound": "Tiada pengendali dijumpai dengan ID tersebut",
       "alreadyRegistered": "Sudah berdaftar? Log masuk"
@@ -223,11 +225,11 @@
     "faq": {
       "findOperator": {
         "question": "Bagaimana saya cari pengendali bas anak saya?",
-        "answer": "Minta kod 4-digit pengendali daripada pengendali bas sekolah anda, kemudian masukkannya di halaman utama untuk mencari ruang kerja mereka dan mendaftar serta-merta."
+        "answer": "Minta kod 5-digit pengendali daripada pengendali bas sekolah anda, kemudian masukkannya di halaman utama untuk mencari ruang kerja mereka dan mendaftar serta-merta."
       },
       "billing": {
         "question": "Bagaimana bil saya dikira?",
-        "answer": "Pengendali anda menetapkan yuran bulanan asas bagi setiap laluan. Diskaun untuk kitaran bil yang lebih panjang dan anak yang ramai dikira secara automatik dan disenaraikan pada setiap invois."
+        "answer": "Pengendali anda menetapkan yuran bulanan asas bagi setiap laluan. Diskaun untuk kitaran bil yang lebih panjang dan anak yang ramai dikira secara automatik dan disenaraikan pada setiap bil."
       },
       "payment": {
         "question": "Bagaimana saya bayar?",
@@ -239,7 +241,7 @@
       },
       "receipts": {
         "question": "Bolehkah saya dapat resit untuk bayaran saya?",
-        "answer": "Setiap invois yang dibayar mempunyai resit PDF yang boleh dimuat turun dari papan pemuka anda, disenaraikan dengan butiran pengendali anda untuk rekod anda."
+        "answer": "Setiap bayaran yang anda buat mempunyai resit PDF tersendiri yang boleh dimuat turun daripada bil anda dalam papan pemuka. Ia menunjukkan jumlah yang dibayar, bayaran sebelumnya, dan baki yang masih terhutang."
       },
       "security": {
         "question": "Adakah data saya selamat?",
@@ -252,6 +254,12 @@
     "headline": "Urus laluan. Lupakan helaian Excel.",
     "subheadline": "Armada, pendaftaran, dan bil bulanan dalam satu ruang kerja — luluskan permohonan, tetapkan laluan, dan biarkan bil berjalan sendiri.",
     "seeHowItWorks": "Lihat cara ia berfungsi",
+    "images": {
+      "hero": "Bas sekolah kuning \"BAS SEKOLAH\" bergerak di sepanjang jalan di Bangsar, Kuala Lumpur",
+      "depot": "Pemandangan udara depoh bas besar dengan barisan bas diparkir bersebelahan",
+      "bus": "Bas sekolah oren klasik \"BAS SEKOLAH\" diparkir di tepi jalan di Malaysia"
+    },
+    "photoCredits": "Foto melalui Wikimedia Commons:",
     "capabilities": {
       "fleet": "Pengurusan armada & laluan",
       "applications": "Aliran kerja kelulusan permohonan",
@@ -270,7 +278,7 @@
       },
       "applications": {
         "old": "Permohonan baharu melalui mesej WhatsApp yang anda salin ke daftar secara manual",
-        "new": "Ibu bapa memohon dalam talian dengan kod 4-digit anda — luluskan dengan satu klik"
+        "new": "Ibu bapa memohon dalam talian dengan kod 5-digit anda — luluskan dengan satu klik"
       },
       "discounts": {
         "old": "Mengira diskaun adik-beradik dan tempoh secara manual, berbeza setiap kali",
@@ -293,12 +301,12 @@
       "apply": {
         "who": "Ibu bapa",
         "title": "Ibu bapa mohon dengan kod anda",
-        "body": "Ibu bapa cari anda dengan kod 4-digit pengendali dan hantar permohonan ringkas — nama anak, tarikh lahir, sekolah, dan pakej."
+        "body": "Ibu bapa cari anda dengan kod 5-digit pengendali dan hantar permohonan ringkas — nama anak, tarikh lahir, sekolah, dan pakej."
       },
       "approve": {
         "who": "Pengendali",
         "title": "Semak dan luluskan",
-        "body": "Tetapkan laluan dan bas, sahkan yuran. Satu klik mencipta rekod pelajar dan mengeluarkan invois pertama."
+        "body": "Tetapkan laluan dan bas, sahkan yuran. Satu klik mencipta rekod pelajar dan mengeluarkan bil pertama."
       },
       "bill": {
         "who": "Kedua-dua",
@@ -320,7 +328,7 @@
     "screenshots": {
       "tag": "Lawatan produk",
       "title": "Lihat ke dalam papan pemuka",
-      "subtitle": "Tangkapan skrin akan datang tidak lama lagi — inilah yang anda akan jumpa di dalamnya.",
+      "subtitle": "Lawatan ringkas ke dalam apa yang akan anda temui di dalamnya.",
       "dashboard": {
         "title": "Gambaran papan pemuka",
         "description": "Statistik armada, pelajar, dan hasil sekali imbas"
@@ -337,17 +345,17 @@
     "pricing": {
       "tag": "Harga",
       "title": "Harga mudah, bayar apabila kutip",
-      "subtitle": "Tiada langganan bulanan — hanya yuran berdasarkan penggunaan, dan ia tidak pernah dibilkan kepada anda secara langsung.",
+      "subtitle": "Tiada langganan bulanan. Yuran transaksi ditolak secara automatik daripada setiap bayaran — Pro menambah pelan tahunan dengan kadar lebih rendah.",
       "priceSuffix": "/bulan",
-      "priceTbd": "Harga akan diumumkan",
+      "priceSuffixYear": "/tahun",
       "comingSoon": "Akan datang",
-      "gatewayNote": "Semua bayaran diproses dengan selamat melalui ToyyibPay.",
+      "gatewayNote": "Semua bayaran diproses dengan selamat melalui Billplz.",
       "free": {
         "planName": "Pelan Percuma",
         "tagline": "Tiada yuran persediaan. Tiada kad kredit diperlukan.",
         "features": {
-          "perStudent": "RM1 setiap pelajar aktif, dibilkan bulanan",
-          "perTransaction": "RM1 setiap transaksi yang dikutip",
+          "perTransaction": "RM1.25 setiap transaksi — yuran gerbang pembayaran",
+          "platformFee": "2% setiap transaksi — yuran platform",
           "deducted": "Yuran ditolak secara automatik daripada setiap bayaran ibu bapa — anda tidak akan menerima bil berasingan."
         }
       },
@@ -355,7 +363,8 @@
         "planName": "Pelan Pro",
         "tagline": "Untuk pengendali yang bersedia mengautomasikan kutipan dan menggunakan GPS.",
         "features": {
-          "perTransaction": "RM1 setiap transaksi sahaja — tiada yuran setiap pelajar",
+          "perTransaction": "RM1 setiap transaksi — yuran gerbang pembayaran",
+          "platformFee": "1% setiap transaksi — yuran platform",
           "reminders": "Peringatan bil automatik melalui WhatsApp & e-mel",
           "driverApp": "Aplikasi pemandu untuk penjejakan GPS langsung",
           "liveTracking": "Lokasi bas langsung & anggaran masa tiba untuk ibu bapa",
@@ -369,11 +378,11 @@
     "faq": {
       "free": {
         "question": "Adakah BasSekolah.my benar-benar percuma?",
-        "answer": "Tiada langganan bulanan — anda hanya membayar RM1 setiap pelajar aktif dan RM1 setiap transaksi, kedua-duanya ditolak secara automatik daripada bayaran ibu bapa. Tiada yuran persediaan, tiada kad kredit diperlukan."
+        "answer": "Tiada langganan bulanan — anda hanya membayar yuran gerbang pembayaran RM1.25 dan yuran platform 2% setiap transaksi, kedua-duanya ditolak secara automatik daripada bayaran ibu bapa. Tiada yuran persediaan, tiada kad kredit diperlukan."
       },
       "setup": {
         "question": "Berapa lama persediaan mengambil masa?",
-        "answer": "Kebanyakan pengendali beroperasi dalam masa sehari: tambah bas, pemandu, dan laluan anda, kemudian kongsi kod 4-digit pengendali anda dengan ibu bapa untuk mula menerima permohonan."
+        "answer": "Kebanyakan pengendali beroperasi dalam masa sehari: tambah bas, pemandu, dan laluan anda, kemudian kongsi kod 5-digit pengendali anda dengan ibu bapa untuk mula menerima permohonan."
       },
       "billing": {
         "question": "Bagaimana pengebilan dan kutipan berfungsi?",
@@ -385,11 +394,11 @@
       },
       "parentsRegister": {
         "question": "Bagaimana ibu bapa mendaftar?",
-        "answer": "Kongsikan kod 4-digit pengendali anda. Ibu bapa memasukkannya di halaman utama, menghantar permohonan ringkas, dan anda meluluskan atau menolaknya dari papan pemuka anda."
+        "answer": "Kongsikan kod 5-digit pengendali anda. Ibu bapa memasukkannya di halaman utama, menghantar permohonan ringkas, dan anda meluluskan atau menolaknya dari papan pemuka anda."
       },
       "hiddenFees": {
         "question": "Adakah terdapat sebarang yuran tersembunyi?",
-        "answer": "Tiada — RM1 setiap pelajar dan RM1 setiap transaksi, ditolak daripada bayaran ibu bapa, adalah satu-satunya yuran yang dikenakan oleh BasSekolah.my. Tiada yuran persediaan, tiada minimum bulanan, tiada kejutan."
+        "answer": "Tiada — di Pelan Percuma, yuran gerbang pembayaran RM1.25 dan yuran platform 2% setiap transaksi, ditolak daripada bayaran ibu bapa, adalah satu-satunya yuran. Pelan Pro ialah RM1,200 setahun dengan yuran gerbang RM1 dan yuran platform 1% setiap transaksi. Tiada yuran persediaan, tiada minimum bulanan, tiada kejutan."
       }
     }
   },
@@ -398,7 +407,7 @@
     "headline": "Dibina untuk perjalanan ke sekolah.",
     "paragraph1": "Kebanyakan pengendali bas sekolah di Malaysia masih menguruskan armada, pendaftaran, dan bil menggunakan hamparan data dan kumpulan WhatsApp — sukar untuk menjejaki siapa yang berhutang, anak mana di bas mana, dan lambat mendaftarkan keluarga baharu setiap penggal.",
     "paragraph2": "BasSekolah.my menggabungkan pengurusan armada, aliran pendaftaran mohon-dan-luluskan, dan bil bulanan automatik dalam satu ruang kerja dwibahasa — dibina untuk mudah disediakan oleh pengendali, dan telus untuk digunakan oleh ibu bapa.",
-    "paragraph3": "Setiap permohonan disemak sebelum anak ditambah ke laluan, setiap invois dikira semula secara automatik dengan diskaun yang betul, dan setiap ibu bapa boleh lihat dengan tepat bas, pemandu, dan perhentian yang ditetapkan untuk anak mereka.",
+    "paragraph3": "Setiap permohonan disemak sebelum anak ditambah ke laluan, setiap bil dikira semula secara automatik dengan diskaun yang betul, dan setiap ibu bapa boleh lihat dengan tepat bas, pemandu, dan perhentian yang ditetapkan untuk anak mereka.",
     "values": {
       "transparency": {
         "title": "Ketelusan",
@@ -496,19 +505,70 @@
       "failed": "Pendaftaran gagal. Semak butiran anda dan cuba lagi.",
       "notFound": "Pautan pendaftaran tidak dijumpai.",
       "submit": "Daftar",
-      "submitting": "Mencipta akaun…"
+      "submitting": "Mencipta akaun…",
+      "fullNamePlaceholder": "cth. Aisyah binti Rahman",
+      "icNumberPlaceholder": "cth. 900101-14-5678",
+      "phonePlaceholder": "cth. 012-345 6789",
+      "emailPlaceholder": "anda@contoh.com",
+      "addressLine1Placeholder": "cth. No. 12, Jalan Mawar 3",
+      "addressLine2Placeholder": "Taman, apartmen atau no. unit",
+      "cityPlaceholder": "cth. Shah Alam",
+      "postcodePlaceholder": "cth. 40000",
+      "emergencyContactNamePlaceholder": "cth. Siti binti Ali",
+      "emergencyContactRelationshipPlaceholder": "cth. Nenek",
+      "emergencyContactPhonePlaceholder": "cth. 013-456 7890"
     },
     "operatorSignup": {
       "title": "Sediakan ruang kerja anda",
       "description": "Mula uruskan armada dan kutipan anda",
       "companyName": "Nama syarikat",
       "contactPerson": "Nama anda",
-      "contactPhone": "Telefon",
+      "contactPhone": "No. telefon",
       "email": "Emel",
       "password": "Kata laluan",
       "failed": "Tidak dapat mencipta ruang kerja anda. Semak butiran anda dan cuba lagi.",
       "submit": "Mula percuma",
-      "submitting": "Mencipta ruang kerja…"
+      "submitting": "Mencipta ruang kerja…",
+      "companyNamePlaceholder": "cth. Sunrise Transport Sdn Bhd",
+      "contactPersonPlaceholder": "cth. Ahmad bin Ali",
+      "contactPhonePlaceholder": "cth. 012-345 6789",
+      "emailPlaceholder": "anda@syarikat.com",
+      "stepLabel": "Langkah {{current}} daripada {{total}}",
+      "steps": {
+        "company": "Syarikat",
+        "details": "Maklumat anda",
+        "password": "Kata laluan"
+      },
+      "next": "Seterusnya",
+      "back": "Kembali"
+    },
+    "validation": {
+      "required": "Ruangan ini diperlukan",
+      "email": "Masukkan alamat e-mel yang sah"
+    },
+    "password": {
+      "placeholder": "Cipta kata laluan",
+      "tip": "Petua: 12+ aksara dengan campuran huruf besar dan kecil, nombor dan simbol adalah paling kukuh.",
+      "rules": {
+        "length": "8+ aksara",
+        "letter": "Satu huruf",
+        "number": "Satu nombor"
+      },
+      "strength": {
+        "label": "Kekuatan",
+        "tooShort": "Terlalu pendek",
+        "weak": "Lemah",
+        "fair": "Sederhana",
+        "good": "Baik",
+        "strong": "Kukuh"
+      },
+      "errors": {
+        "tooShort": "Kata laluan mestilah sekurang-kurangnya 8 aksara",
+        "needsLetter": "Sertakan sekurang-kurangnya satu huruf",
+        "needsNumber": "Sertakan sekurang-kurangnya satu nombor"
+      },
+      "show": "Tunjukkan kata laluan",
+      "hide": "Sembunyikan kata laluan"
     }
   },
   "admin": {
@@ -548,19 +608,90 @@
     },
     "operatorDetail": {
       "back": "Kembali ke Pengendali",
-      "empty": "Belum ada apa-apa di sini."
+      "empty": "Belum ada apa-apa di sini.",
+      "tabDetails": "Butiran",
+      "tabGateway": "Gerbang pembayaran",
+      "company": {
+        "title": "Butiran syarikat",
+        "code": "Kod pengendali",
+        "contactPerson": "Orang untuk dihubungi",
+        "phone": "Telefon",
+        "email": "E-mel",
+        "plan": "Pelan",
+        "parents": "Ibu bapa"
+      },
+      "billplz": {
+        "title": "Pembayaran dalam talian (Billplz)",
+        "description": "Ibu bapa membayar bil pengendali ini melalui akaun Billplz pengendali sendiri — dana terus masuk kepada mereka.",
+        "statusEnabled": "Diaktifkan",
+        "statusDisabled": "Belum dikonfigurasi",
+        "modeSandbox": "Sandbox",
+        "modeLive": "Langsung",
+        "secretKey": "Kunci Rahsia API",
+        "xSignatureKey": "Kunci X Signature",
+        "collectionId": "ID Koleksi",
+        "sandbox": "Mod sandbox (guna billplz-sandbox.com)",
+        "keyStored": "Kunci telah disimpan. Biarkan kosong untuk mengekalkannya.",
+        "keyPlaceholder": "Tampal kunci",
+        "save": "Simpan",
+        "saving": "Menyimpan…",
+        "saved": "Tetapan Billplz disimpan.",
+        "saveError": "Tidak dapat disimpan. Semak nilai dan cuba lagi.",
+        "disable": "Nyahaktifkan pembayaran dalam talian",
+        "disableConfirm": "Buang kelayakan Billplz untuk pengendali ini? Ibu bapa tidak lagi boleh membayar dalam talian.",
+        "hint": "Dapatkan ini di akaun Billplz pengendali dalam Tetapan. Aktifkan \"X Signature\" untuk penyelesaian pembayaran.",
+        "test": {
+          "button": "Uji sambungan",
+          "testing": "Menguji…",
+          "ok": "Berjaya disambungkan ke Billplz — koleksi \"{{title}}\" ditemui.",
+          "xSignatureNote": "Kunci X Signature tidak boleh diuji di sini; ia disahkan apabila panggilan balik pembayaran pertama diterima.",
+          "unauthorized": "Billplz menolak Kunci Rahsia. Semak ia disalin dengan betul dan mod Sandbox sepadan dengan akaun (kunci sandbox hanya berfungsi dalam mod Sandbox).",
+          "collection_not_found": "Kunci Rahsia berfungsi, tetapi ID Koleksi ini tidak wujud dalam akaun Billplz tersebut.",
+          "unreachable": "Tidak dapat menghubungi Billplz. Cuba lagi sebentar nanti.",
+          "x_signature_same_as_secret": "Kunci X Signature sama dengan Kunci Rahsia — kedua-duanya nilai berbeza dalam Tetapan Billplz.",
+          "error": "Ujian tidak dapat dijalankan. Simpan kelayakan dahulu dan cuba lagi."
+        }
+      }
     }
   },
   "operator": {
     "dashboard": {
       "welcome": "Selamat datang, {{name}} — {{company}}",
       "operatorId": "ID Pengendali Anda",
-      "operatorIdDescription": "Kongsi ID 4-digit ini dengan ibu bapa supaya mereka boleh mendaftar dan mendaftarkan anak mereka.",
+      "operatorIdDescription": "Kongsi ID 5-digit, pautan atau kod QR ini dengan ibu bapa supaya mereka boleh mendaftar dan mendaftarkan anak mereka.",
       "copy": "Salin",
       "copied": "Disalin",
-      "pendingApplications": "Permohonan Menunggu",
-      "pendingApplicationsDescription": "Permohonan pendaftaran baharu yang menunggu semakan anda.",
-      "reviewApplications": "Semak permohonan"
+      "newApplications": "Permohonan baharu",
+      "newApplicationsWaiting": "menunggu semakan anda",
+      "noNewApplications": "Tiada permohonan baharu buat masa ini",
+      "reviewApplications": "Semak permohonan",
+      "share": {
+        "linkLabel": "Pautan pendaftaran anda",
+        "copyLink": "Salin pautan",
+        "whatsapp": "Kongsi di WhatsApp",
+        "downloadQr": "Muat turun QR",
+        "qrAlt": "Kod QR untuk pautan pendaftaran anda",
+        "message": "Daftarkan anak anda untuk perkhidmatan bas sekolah {{company}} di sini: {{link}}"
+      },
+      "charts": {
+        "collectionsTitle": "Kutipan mengikut bulan",
+        "collectionsDescription": "Nilai bil bagi setiap bulan bil, mengikut status bayaran.",
+        "seatsTitle": "Tempat duduk mengikut laluan",
+        "seatsDescription": "Pelajar berdaftar berbanding kapasiti setiap bas.",
+        "month": "Bulan",
+        "empty": "Belum ada bil. Pengebilan akan dipaparkan di sini selepas bil dikeluarkan.",
+        "noRoutes": "Belum ada laluan.",
+        "series": {
+          "collected": "Dikutip",
+          "pending": "Menunggu bayaran",
+          "overdue": "Tertunggak"
+        },
+        "seatsOf": "{{used}} daripada {{capacity}} tempat duduk",
+        "noBus": "Tiada bas ditetapkan",
+        "full": "Penuh",
+        "nearlyFull": "Hampir penuh",
+        "collectionRate": "{{percent}}% daripada jangkaan telah dikutip"
+      }
     },
     "buses": {
       "title": "Bas",
@@ -600,7 +731,7 @@
       "routeName": "Nama laluan",
       "zone": "Zon",
       "schoolDestination": "Destinasi sekolah",
-      "baseMonthlyFee": "Yuran bulanan asas (RM)",
+      "baseMonthlyFee": "Yuran pergi-balik sebulan (RM)",
       "bus": "Bas",
       "driver": "Pemandu",
       "conductor": "Konduktor",
@@ -608,9 +739,12 @@
       "addStop": "Tambah perhentian",
       "stopNamePlaceholder": "Nama perhentian",
       "remove": "Buang",
-      "baseFee": "Yuran asas",
+      "baseFee": "Yuran pergi-balik",
       "actions": "Tindakan",
-      "deleteConfirm": "Padam {{name}}?"
+      "deleteConfirm": "Padam {{name}}?",
+      "oneWayMonthlyFee": "Yuran sehala sebulan (RM)",
+      "oneWayFeeHint": "Biarkan yuran sehala kosong untuk caj yuran pergi-balik.",
+      "oneWayFee": "Yuran sehala"
     },
     "students": {
       "title": "Pelajar",
@@ -619,11 +753,53 @@
       "student": "Pelajar",
       "parent": "Ibu bapa",
       "package": "Pakej",
-      "billing": "Bil",
-      "latestInvoice": "Invois terkini",
+      "latestInvoice": "Bil terkini",
       "noStudents": "Belum ada pelajar didaftarkan.",
       "noResults": "Tiada pelajar sepadan dengan carian anda.",
-      "searchPlaceholder": "Cari mengikut pelajar, ibu bapa, atau sekolah"
+      "searchPlaceholder": "Cari mengikut pelajar, ibu bapa, atau sekolah",
+      "monthlyFee": "Yuran bulanan",
+      "customFeeTag": "Yuran khas",
+      "editBilling": "Edit bil",
+      "customFee": "Yuran bulanan untuk anak ini (RM)",
+      "customFeeHint": "Biarkan kosong untuk guna yuran laluan. Tiada diskaun adik-beradik ditolak daripada yuran yang anda masukkan di sini.",
+      "statusHint": "Anak yang digantung atau menarik diri tidak dibilkan.",
+      "viewStudent": "Lihat",
+      "back": "Kembali ke senarai pelajar",
+      "notFound": "Pelajar ini tidak dijumpai.",
+      "childDetails": "Butiran anak",
+      "parentDetails": "Ibu bapa / penjaga",
+      "pickupStop": "Perhentian ambil",
+      "enrolledOn": "Didaftarkan pada",
+      "phone": "Telefon",
+      "email": "Emel",
+      "icNumber": "No. kad pengenalan",
+      "address": "Alamat",
+      "emergencyContact": "Kenalan kecemasan",
+      "familyBalance": "Baki keluarga terhutang",
+      "otherChildren": "Anak lain",
+      "billingSettings": "Bil berulang",
+      "billsTitle": "Bil",
+      "paymentsTitle": "Bayaran diterima",
+      "noBills": "Belum ada bil untuk pelajar ini.",
+      "noPayments": "Belum ada bayaran diterima.",
+      "tabDetails": "Butiran pelajar",
+      "nextBill": "Bil seterusnya",
+      "nextBillDue": "cukup tempoh {{date}}",
+      "afterSiblingDiscount": "selepas diskaun adik-beradik {{rate}}%",
+      "noBill": {
+        "suspended": "Tiada bil buat masa ini. Anak ini digantung.",
+        "withdrawn": "Tiada bil lagi. Anak ini telah menarik diri.",
+        "ended": "Tiada bil lagi. Bil tamat selepas {{month}}.",
+        "no_fee": "Belum ada yuran bulanan. Tetapkan yuran pada laluan, atau masukkan di bawah.",
+        "no_billed_months": "Tiada bulan ditetapkan untuk bil. Pilih bulan di Tetapan."
+      },
+      "startFrom": "Mula bil dari",
+      "stopAfter": "Henti bil selepas",
+      "windowHint": "Biarkan kosong untuk terus bil setiap bulan sehingga anda menghentikannya.",
+      "stopBeforeStartError": "Bulan henti tidak boleh sebelum bulan mula.",
+      "scheduleNote": "Bil dikeluarkan pada 1 hb setiap bulan dan cukup tempoh pada hari ke-{{day}}.",
+      "scheduleLink": "Ubah di Tetapan",
+      "monthNotSet": "Tidak ditetapkan"
     },
     "applications": {
       "title": "Permohonan Pelajar",
@@ -642,7 +818,7 @@
       "schoolName": "Nama sekolah",
       "pickupStop": "Perhentian ambil",
       "feeOverride": "Yuran bulanan (RM)",
-      "feeOverrideHint": "Biarkan kosong untuk guna yuran laluan yang dipilih.",
+      "feeOverrideHint": "Biarkan kosong untuk guna yuran laluan yang dipilih. Yuran yang dimasukkan di sini dicaj tepat, tanpa diskaun adik-beradik.",
       "approve": "Luluskan",
       "reject": "Tolak",
       "confirmReject": "Sahkan penolakan",
@@ -652,7 +828,15 @@
       "submitError": "Sesuatu tidak kena. Sila cuba lagi.",
       "reviewResult": "Keputusan semakan",
       "resultingRoute": "Laluan",
-      "reviewedOn": "Disemak pada"
+      "reviewedOn": "Disemak pada",
+      "noRouteFee": "Laluan ini belum ada yuran. Masukkan yuran bulanan untuk anak ini, atau tetapkan yuran pada laluan.",
+      "firstBill": "Bil pertama",
+      "firstBillFull": "Yuran penuh untuk bulan ini",
+      "firstBillCustom": "Jumlah dikurangkan untuk bulan ini",
+      "firstBillNextMonth": "Mula bil bulan depan",
+      "firstBillHint": "Bil meliputi sebulan kalendar penuh dan dikeluarkan pada 1 hb.",
+      "firstMonthAmount": "Jumlah untuk bulan ini (RM)",
+      "monthlyFee": "Yuran bulanan"
     },
     "finances": {
       "title": "Kewangan",
@@ -674,7 +858,6 @@
       "dueDate": "Tarikh cukup tempoh",
       "actions": "Tindakan",
       "recordPayment": "Rekod bayaran",
-      "recordPaymentFor": "Rekod bayaran untuk {{name}}",
       "method": "Kaedah",
       "cash": "Tunai",
       "bankTransfer": "Pindahan Bank",
@@ -682,7 +865,59 @@
       "online": "Dalam Talian",
       "referenceNumber": "Nombor rujukan",
       "paymentDate": "Tarikh bayaran",
-      "amountPaid": "Jumlah dibayar (RM)"
+      "amountPaid": "Jumlah dibayar (RM)",
+      "tabBills": "Bil",
+      "tabTransactions": "Transaksi",
+      "tabOutstanding": "Tunggakan",
+      "void": "Dibatalkan",
+      "balance": "Baki",
+      "view": "Lihat",
+      "total": "Jumlah",
+      "noBills": "Tiada bil sepadan dengan penapis ini.",
+      "addAdjustment": "Tambah pelarasan",
+      "adjustmentType": "Jenis",
+      "adjustmentDiscount": "Diskaun (kurangkan bil)",
+      "adjustmentCharge": "Caj tambahan (tambah pada bil)",
+      "adjustmentAmount": "Jumlah (RM)",
+      "adjustmentReason": "Sebab",
+      "adjustmentReasonPlaceholder": "Dipaparkan kepada ibu bapa pada bil",
+      "adjustmentHint": "Ini mengubah bil ini sahaja. Untuk menukar yuran setiap bulan, edit yuran bulanan pelajar di halaman Pelajar.",
+      "removeAdjustment": "Buang",
+      "belowPaidError": "Bil tidak boleh kurang daripada jumlah yang sudah dibayar.",
+      "beingPaidError": "Ibu bapa sedang membayar bil ini dalam talian. Cuba lagi dalam beberapa minit.",
+      "adjustError": "Tidak dapat mengubah bil ini. Cuba lagi.",
+      "cancelBill": "Batalkan bil",
+      "cancelReason": "Sebab pembatalan",
+      "confirmCancel": "Sahkan pembatalan",
+      "cancelHasPayments": "Bil yang sudah ada bayaran tidak boleh dibatalkan.",
+      "cancelledReason": "Dibatalkan: {{reason}}",
+      "createBill": "Cipta bil",
+      "createBillDescription": "Bil dicipta secara automatik pada 1 hb. Guna ini hanya untuk mengeluarkan semula bil yang dibatalkan atau untuk bil bulan yang tertinggal.",
+      "createBillError": "Tidak dapat mencipta bil. Pelajar mungkin sudah ada bil untuk bulan itu, atau tiada laluan atau yuran bulanan.",
+      "selectStudent": "Pilih pelajar",
+      "date": "Tarikh",
+      "dateFrom": "Dari",
+      "dateTo": "Hingga",
+      "allMethods": "Semua kaedah",
+      "billPeriod": "Bil untuk",
+      "totalReceived": "Jumlah diterima",
+      "noTransactions": "Tiada bayaran diterima dalam tempoh ini.",
+      "parent": "Ibu bapa",
+      "children": "Anak",
+      "unpaidBills": "Bil belum dibayar",
+      "oldestDue": "Tarikh cukup tempoh terawal",
+      "daysLate_other": "Lewat {{count}} hari",
+      "notDue": "Belum cukup tempoh",
+      "owed": "Jumlah terhutang",
+      "noOutstanding": "Tiada tunggakan. Semua bil sudah dibayar.",
+      "searchPlaceholder": "Cari pelajar atau ibu bapa",
+      "totalBilled": "Jumlah dibil",
+      "totalPaid": "Jumlah dibayar",
+      "openBill": "Buka",
+      "backToFinances": "Kembali ke kewangan",
+      "backToStudent": "Kembali ke {{name}}",
+      "billNotFound": "Bil ini tidak dijumpai.",
+      "overpayError": "Jumlah ini melebihi RM {{amount}} yang masih terhutang untuk bil ini."
     },
     "settings": {
       "title": "Tetapan",
@@ -703,17 +938,20 @@
       "saveChanges": "Simpan perubahan",
       "saveError": "Tidak dapat menyimpan perubahan. Cuba lagi.",
       "discountRates": "Kadar diskaun",
-      "discountRatesDescription": "Peratusan potongan daripada yuran asas, digunakan semasa invois.",
-      "billingPeriod": "Tempoh bil",
-      "monthly": "Bulanan (%)",
-      "quarterly": "Suku Tahun (%)",
-      "halfYear": "Setengah Tahun (%)",
-      "yearly": "Tahunan (%)",
+      "discountRatesDescription": "Peratusan potongan yuran bulanan untuk anak kedua dan seterusnya. Tidak digunakan untuk anak dengan yuran khas.",
       "siblingDiscount": "Diskaun adik-beradik",
       "firstChild": "Anak ke-1 (%)",
       "secondChild": "Anak ke-2 (%)",
       "thirdChild": "Anak ke-3+ (%)",
-      "rateRangeError": "Mesti 0–100"
+      "rateRangeError": "Mesti 0–100",
+      "billing": "Bil",
+      "billingDescription": "Setiap anak dibilkan pada 1 hb setiap bulan yang dibilkan.",
+      "dueDay": "Hari akhir bayaran",
+      "dueDayHint": "Hari dalam bulan bil mesti dibayar (1–28).",
+      "dueDayError": "Masukkan hari antara 1 hingga 28.",
+      "billedMonths": "Bulan yang dibilkan",
+      "billedMonthsHint": "Nyahtanda bulan tanpa perkhidmatan bas, seperti cuti sekolah. Tiada bil dikeluarkan untuk bulan tersebut.",
+      "billedMonthsError": "Pilih sekurang-kurangnya satu bulan."
     }
   },
   "parent": {
@@ -731,14 +969,18 @@
       "package": "Pakej",
       "grade": "Gred",
       "status": "Status",
-      "invoices": "Invois",
-      "noInvoices": "Belum ada invois.",
+      "invoices": "Bil",
+      "noInvoices": "Belum ada bil.",
       "child": "Anak",
       "billingPeriod": "Tempoh bil",
       "amount": "Jumlah",
       "dueDate": "Tarikh cukup tempoh",
       "payNow": "Bayar sekarang",
-      "viewInvoice": "Lihat invois",
+      "reminderOverdueTitle": "Bayaran tertunggak",
+      "reminderDueTitle": "Bayaran perlu dibayar",
+      "reminderUnpaid": "belum dibayar",
+      "reminderDescription": "Anda mempunyai RM {{amount}} tertunggak merentasi bil anda.",
+      "viewInvoice": "Lihat bil",
       "applicationStatus": "Status permohonan",
       "applicationPending": "Menunggu semakan",
       "applicationRejected": "Ditolak",
@@ -752,35 +994,68 @@
       "pickupStopLabel": "Perhentian jemputan",
       "noBusAssigned": "Belum ada bas ditetapkan untuk laluan ini."
     },
+    "child": {
+      "back": "Kembali ke papan pemuka",
+      "notFound": "Kami tidak jumpa anak ini.",
+      "fullName": "Nama penuh",
+      "dateOfBirth": "Tarikh lahir",
+      "age_one": "{{count}} tahun",
+      "age_other": "{{count}} tahun",
+      "gender": "Jantina",
+      "male": "Lelaki",
+      "female": "Perempuan",
+      "schoolDetails": "Maklumat sekolah",
+      "teacherName": "Nama guru",
+      "className": "Kelas",
+      "schoolPhone": "Nombor telefon sekolah",
+      "nameRequired": "Sila masukkan nama anak anda.",
+      "dateRequired": "Sila pilih tarikh lahir.",
+      "saveError": "Kami tidak dapat menyimpan perubahan. Sila cuba lagi.",
+      "photoError": "Kami tidak dapat memuat naik gambar. Sila guna gambar kurang daripada 2 MB.",
+      "operatorNote": "Untuk menukar sekolah, laluan atau pakej, sila hubungi pengendali bas anda.",
+      "edit": "Ubah"
+    },
     "pay": {
       "title": "Bayar bil anda",
       "subtitle": "Pilih apa yang anda ingin bayar.",
       "payTotalTitle": "Bayar jumlah tertunggak",
-      "payTotalDescription": "Termasuk semua invois belum dibayar dan tertunggak",
+      "payTotalDescription": "Termasuk semua bil belum dibayar dan tertunggak",
       "payCurrentTitle": "Bayar bil semasa sahaja",
       "payCurrentDescription": "Caj bulan ini sahaja",
       "includedBills": "Termasuk dalam bayaran ini",
-      "payWith": "Bayar dengan ToyyibPay",
-      "poweredBy": "Dikuasakan oleh ToyyibPay",
-      "previewNotice": "Ini adalah pratonton antara muka — bayaran belum diproses lagi. Tiada caj atau simpanan dibuat.",
-      "redirecting": "Mengalihkan ke ToyyibPay…",
-      "successTitle": "Bayaran berjaya",
-      "successDescription": "Ini adalah pengesahan simulasi untuk tujuan pratonton. Status invois anda sebenarnya tidak berubah.",
-      "backToDashboard": "Kembali ke invois",
+      "poweredBy": "Pembayaran selamat oleh Billplz",
+      "redirectNote": "Anda akan dibawa ke Billplz untuk membayar melalui perbankan dalam talian FPX, e-dompet atau kad.",
+      "payAmount": "Bayar RM {{amount}}",
+      "processing": "Membawa anda ke Billplz…",
+      "startError": "Kami tidak dapat memulakan pembayaran. Sila cuba lagi sebentar nanti.",
+      "unavailableTitle": "Pembayaran dalam talian belum tersedia",
+      "unavailableDescription": "Pengendali bas anda belum menyediakan pembayaran dalam talian. Sila bayar terus kepada mereka dan mereka akan merekodkannya untuk anda.",
+      "backToDashboard": "Kembali ke bil",
       "allCaughtUpTitle": "Semuanya sudah selesai",
-      "allCaughtUpDescription": "Anda tiada invois tertunggak buat masa ini."
+      "allCaughtUpDescription": "Anda tiada bil tertunggak buat masa ini.",
+      "return": {
+        "checkingTitle": "Mengesahkan pembayaran anda…",
+        "checkingDescription": "Sila kekalkan halaman ini terbuka seketika.",
+        "successTitle": "Pembayaran berjaya",
+        "successDescription": "Terima kasih! RM {{amount}} telah diterima dan bil anda ditandakan sebagai dibayar. Resit sedia untuk dimuat turun.",
+        "failedTitle": "Pembayaran tidak selesai",
+        "failedDescription": "Tiada bayaran diterima untuk bil ini, jadi anda tidak dicaj. Anda boleh cuba lagi.",
+        "waitingTitle": "Masih menunggu pengesahan",
+        "waitingDescription": "Kami belum menerima pengesahan daripada bank. Jika anda telah dicaj, bil anda akan dikemas kini dalam beberapa minit — muat semula halaman ini untuk menyemak.",
+        "tryAgain": "Cuba lagi",
+        "refresh": "Semak semula"
+      }
     },
     "invoice": {
-      "title": "Invois #{{id}}",
+      "title": "Bil #{{id}}",
       "operator": "Pengendali",
       "contact": "Hubungi",
       "route": "Laluan",
-      "billingCycle": "Kitaran bil",
-      "amountBeforeDiscount": "Jumlah sebelum diskaun",
-      "discount": "Diskaun",
       "paidOn": "Dibayar pada {{date}}",
       "dueOn": "Cukup tempoh {{date}}",
-      "overdueSince": "Tertunggak sejak {{date}}"
+      "overdueSince": "Tertunggak sejak {{date}}",
+      "back": "Kembali ke bil",
+      "notFound": "Bil ini tidak dijumpai."
     },
     "enroll": {
       "title": "Mohon untuk anak",
@@ -801,6 +1076,17 @@
     "profile": {
       "title": "Profil",
       "description": "Butiran hubungan anda yang direkodkan bersama pengendali.",
+      "preferences": "Keutamaan",
+      "theme": "Tema",
+      "language": "Bahasa",
+      "changePassword": "Tukar kata laluan",
+      "currentPassword": "Kata laluan semasa",
+      "newPassword": "Kata laluan baharu",
+      "confirmNewPassword": "Sahkan kata laluan baharu",
+      "passwordMismatch": "Kata laluan tidak sepadan.",
+      "passwordUpdateError": "Tidak dapat mengemaskini kata laluan anda. Semak kata laluan semasa anda dan cuba lagi.",
+      "passwordUpdated": "Kata laluan anda telah dikemaskini.",
+      "updatePassword": "Kemaskini kata laluan",
       "fullName": "Nama penuh",
       "relationship": "Hubungan dengan anak",
       "selectRelationship": "Pilih hubungan",
@@ -817,6 +1103,10 @@
       "addressLine2": "Alamat baris 2",
       "city": "Bandar",
       "postcode": "Poskod",
+      "tabDetails": "Butiran saya",
+      "tabPassword": "Kata laluan",
+      "personalDetails": "Butiran peribadi",
+      "contactAddress": "Hubungan dan alamat",
       "emergencyContact": "Hubungan kecemasan",
       "emergencyContactName": "Nama hubungan kecemasan",
       "emergencyContactRelationship": "Hubungan dengan penjaga",
@@ -824,5 +1114,77 @@
       "saveChanges": "Simpan perubahan",
       "saveError": "Tidak dapat menyimpan perubahan. Cuba lagi."
     }
+  },
+  "tracking": {
+    "title": "Jejak bas",
+    "subtitle": "Lokasi langsung bas sekolah anak anda",
+    "recenter": "Pusatkan",
+    "status": {
+      "scheduled": "Belum mula",
+      "active": "Dalam perjalanan",
+      "completed": "Selesai"
+    },
+    "direction": {
+      "pickup": "Ambil pagi",
+      "dropoff": "Hantar petang"
+    },
+    "child": {
+      "waiting": "Menunggu untuk naik",
+      "notBoarded": "Tidak naik",
+      "boarded": "Naik pada {{time}}",
+      "alighted": "Diturunkan pada {{time}}"
+    },
+    "signal": {
+      "live": "Langsung · dikemas kini {{ago}}",
+      "stale": "Isyarat lemah · kali terakhir {{ago}}",
+      "lost": "Isyarat hilang · kali terakhir {{ago}}",
+      "none": "Menunggu lokasi bas…"
+    },
+    "ago": {
+      "seconds": "{{count}}s lalu",
+      "minutes": "{{count}} min lalu"
+    },
+    "speed": "{{speed}} km/j",
+    "lostHint": "Telefon pemandu mungkin di luar talian. Hubungi pemandu jika anda risau.",
+    "callDriver": "Hubungi",
+    "notStartedTitle": "Perjalanan belum bermula",
+    "notStartedBody": "Bas akan dipaparkan di peta sebaik sahaja pemandu memulakan perjalanan.",
+    "waitingGpsTitle": "Perjalanan telah bermula",
+    "waitingGpsBody": "Menunggu lokasi pertama daripada bas. Biasanya ini mengambil beberapa saat.",
+    "completedTitle": "Perjalanan selesai",
+    "completedBody": "Perjalanan tamat pada {{time}}. Bas tidak lagi dijejaki.",
+    "noTripsTitle": "Tiada perjalanan hari ini",
+    "noTripsBody": "Tiada anak anda dalam perjalanan bas hari ini.",
+    "dashboardCard": {
+      "onTheWay": "Bas {{name}} dalam perjalanan",
+      "track": "Jejak bas"
+    },
+    "operator": {
+      "title": "Armada langsung",
+      "subtitle": "Perjalanan hari ini dan kedudukan bas",
+      "activeCount": "{{count}} di jalan raya",
+      "filter": {
+        "all": "Semua",
+        "active": "Aktif",
+        "scheduled": "Belum mula",
+        "completed": "Selesai"
+      },
+      "boarded": "{{boarded}}/{{total}} telah naik",
+      "noSignalAlert_one": "{{count}} bas dengan isyarat lemah atau hilang",
+      "noSignalAlert_other": "{{count}} bas dengan isyarat lemah atau hilang",
+      "noTrips": "Tiada perjalanan sepadan dengan penapis ini.",
+      "noLocation": "Tiada lokasi lagi",
+      "notOnMap": "Tiada di peta",
+      "startedAt": "Mula {{time}}",
+      "endedAt": "Tamat {{time}}"
+    }
+  },
+  "billing": {
+    "item": {
+      "fee": "Yuran bas",
+      "discount": "Diskaun"
+    },
+    "paidSoFar": "Sudah dibayar",
+    "balance": "Baki perlu dibayar"
   }
 }

@@ -2,10 +2,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   ArrowRight,
-  Bus as BusIcon,
   CheckCircle2,
-  LayoutDashboard,
-  Wallet,
   XCircle,
 } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -18,6 +15,13 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { cn } from '@/lib/utils'
+import { BillplzLogo } from '@/components/BillplzLogo'
+import opHeroBus from '@/assets/landing/op-hero-bus.webp'
+import opJourneyDepot from '@/assets/landing/op-journey-depot.webp'
+import opGetStartedBus from '@/assets/landing/op-get-started-bus.webp'
+import tourDashboard from '@/assets/landing/tour-dashboard.webp'
+import tourRoutes from '@/assets/landing/tour-routes.webp'
+import tourFinances from '@/assets/landing/tour-finances.webp'
 
 const capabilities = ['fleet', 'applications', 'discounts', 'free'] as const
 
@@ -28,13 +32,34 @@ const faqs = ['free', 'setup', 'billing', 'dataIsolation', 'parentsRegister', 'h
 const whySwitchPairs = ['payments', 'applications', 'discounts', 'visibility'] as const
 
 const screenshots = [
-  { key: 'dashboard', icon: LayoutDashboard },
-  { key: 'fleet', icon: BusIcon },
-  { key: 'billing', icon: Wallet },
+  { key: 'dashboard', src: tourDashboard },
+  { key: 'fleet', src: tourRoutes },
+  { key: 'billing', src: tourFinances },
 ] as const
 
-const freeFeatures = ['perStudent', 'perTransaction', 'deducted'] as const
-const proFeatures = ['perTransaction', 'reminders', 'driverApp', 'liveTracking', 'boardingAlerts'] as const
+// Wikimedia Commons photos used on this page. CC BY / BY-SA licences require credit.
+const photoCredits = [
+  {
+    author: 'Auswandern Malaysia',
+    license: 'CC BY 2.0',
+    href: 'https://commons.wikimedia.org/wiki/File:Schoolbus_in_Bangsar,_Kuala_Lumpur,_Malaysia.jpg',
+  },
+  {
+    author: '慕尼黑啤酒',
+    license: 'CC BY-SA 3.0',
+    href: 'https://commons.wikimedia.org/wiki/File:Malaysia_School_Bus.jpg',
+  },
+] as const
+
+const freeFeatures = ['perTransaction', 'platformFee', 'deducted'] as const
+const proFeatures = [
+  'perTransaction',
+  'platformFee',
+  'reminders',
+  'driverApp',
+  'liveTracking',
+  'boardingAlerts',
+] as const
 
 function PricingCard({ tier }: { tier: 'free' | 'pro' }) {
   const { t } = useTranslation()
@@ -52,16 +77,16 @@ function PricingCard({ tier }: { tier: 'free' | 'pro' }) {
         <span className="text-[0.68rem] font-bold tracking-wider text-primary uppercase">
           {t(`operatorsPage.pricing.${tier}.planName`)}
         </span>
-        {tier === 'free' ? (
-          <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-medium">RM0</span>
-            <span className="text-muted-foreground">{t('operatorsPage.pricing.priceSuffix')}</span>
-          </div>
-        ) : (
-          <div className="text-2xl font-medium text-muted-foreground">
-            {t('operatorsPage.pricing.priceTbd')}
-          </div>
-        )}
+        <div className="flex items-baseline gap-1">
+          <span className="text-4xl font-medium">{tier === 'free' ? 'RM0' : 'RM1,200'}</span>
+          <span className="text-muted-foreground">
+            {t(
+              tier === 'free'
+                ? 'operatorsPage.pricing.priceSuffix'
+                : 'operatorsPage.pricing.priceSuffixYear',
+            )}
+          </span>
+        </div>
         <p className="text-sm text-muted-foreground">{t(`operatorsPage.pricing.${tier}.tagline`)}</p>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-4">
@@ -144,30 +169,41 @@ export function Operators() {
   const { t } = useTranslation()
 
   return (
-    <div className="mx-auto max-w-5xl px-6">
-      <section className="flex flex-col gap-5 py-20">
-        <span className="flex items-center gap-2 text-xs font-bold tracking-wider text-primary uppercase">
-          <span className="size-1.5 rounded-full bg-primary" />
-          {t('operatorsPage.eyebrow')}
-        </span>
-        <h1 className="max-w-xl text-4xl leading-tight font-medium text-balance sm:text-5xl">
-          {t('operatorsPage.headline')}
-        </h1>
-        <p className="max-w-xl text-balance text-muted-foreground">
-          {t('operatorsPage.subheadline')}
-        </p>
+    <div className="mx-auto max-w-content px-4 lg:px-8">
+      <section className="flex flex-col gap-12 py-20">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+          <div className="flex flex-col gap-5">
+            <span className="flex items-center gap-2 text-xs font-bold tracking-wider text-primary uppercase">
+              <span className="size-1.5 rounded-full bg-primary" />
+              {t('operatorsPage.eyebrow')}
+            </span>
+            <h1 className="max-w-xl text-4xl leading-tight font-medium text-balance sm:text-5xl">
+              {t('operatorsPage.headline')}
+            </h1>
+            <p className="max-w-xl text-balance text-muted-foreground">
+              {t('operatorsPage.subheadline')}
+            </p>
 
-        <div className="flex flex-wrap gap-3 pt-2 pb-8">
-          <a href="#get-started" className={buttonVariants({ size: 'lg' })}>
-            {t('operatorsPage.operatorCard.startFree')}
-            <ArrowRight />
-          </a>
-          <a href="#journey" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}>
-            {t('operatorsPage.seeHowItWorks')}
-          </a>
-          <a href="#pricing" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}>
-            {t('operatorsPage.pricing.tag')}
-          </a>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <a href="#get-started" className={buttonVariants({ size: 'lg' })}>
+                {t('operatorsPage.operatorCard.startFree')}
+                <ArrowRight />
+              </a>
+              <a href="#journey" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}>
+                {t('operatorsPage.seeHowItWorks')}
+              </a>
+              <a href="#pricing" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}>
+                {t('operatorsPage.pricing.tag')}
+              </a>
+            </div>
+          </div>
+
+          <img
+            src={opHeroBus}
+            alt={t('operatorsPage.images.hero')}
+            fetchPriority="high"
+            className="aspect-[3/2] w-full rounded-2xl object-cover shadow-sm"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -223,36 +259,48 @@ export function Operators() {
         </div>
       </section>
 
-      <section id="journey" className="border-t py-20">
-        <div className="mb-10 max-w-md">
-          <span className="mb-2 block font-mono text-xs font-bold text-primary uppercase">
-            {t('operatorsPage.journeyTag')}
-          </span>
-          <h2 className="text-2xl font-medium">{t('operatorsPage.journeyTitle')}</h2>
-          <p className="mt-1 text-muted-foreground">{t('operatorsPage.journeySubtitle')}</p>
+      <section
+        id="journey"
+        className="grid items-center gap-12 border-t py-20 lg:grid-cols-2 lg:gap-14"
+      >
+        <div>
+          <div className="mb-10 max-w-md">
+            <span className="mb-2 block font-mono text-xs font-bold text-primary uppercase">
+              {t('operatorsPage.journeyTag')}
+            </span>
+            <h2 className="text-2xl font-medium">{t('operatorsPage.journeyTitle')}</h2>
+            <p className="mt-1 text-muted-foreground">{t('operatorsPage.journeySubtitle')}</p>
+          </div>
+
+          <div className="flex max-w-xl flex-col">
+            {journey.map((key, i) => (
+              <div key={key} className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-background font-mono text-xs font-bold">
+                    {String(i + 1).padStart(2, '0')}
+                  </div>
+                  {i < journey.length - 1 && <div className="w-0.5 flex-1 bg-border" />}
+                </div>
+                <div className={cn('pb-10', i === journey.length - 1 && 'pb-0')}>
+                  <span className="mb-1 block text-[0.66rem] font-bold tracking-wider text-primary uppercase">
+                    {t(`operatorsPage.journey.${key}.who`)}
+                  </span>
+                  <h3 className="mb-1.5 font-medium">{t(`operatorsPage.journey.${key}.title`)}</h3>
+                  <p className="max-w-sm text-sm text-muted-foreground">
+                    {t(`operatorsPage.journey.${key}.body`)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="flex max-w-xl flex-col">
-          {journey.map((key, i) => (
-            <div key={key} className="flex gap-4">
-              <div className="flex flex-col items-center">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-background font-mono text-xs font-bold">
-                  {String(i + 1).padStart(2, '0')}
-                </div>
-                {i < journey.length - 1 && <div className="w-0.5 flex-1 bg-border" />}
-              </div>
-              <div className={cn('pb-10', i === journey.length - 1 && 'pb-0')}>
-                <span className="mb-1 block text-[0.66rem] font-bold tracking-wider text-primary uppercase">
-                  {t(`operatorsPage.journey.${key}.who`)}
-                </span>
-                <h3 className="mb-1.5 font-medium">{t(`operatorsPage.journey.${key}.title`)}</h3>
-                <p className="max-w-sm text-sm text-muted-foreground">
-                  {t(`operatorsPage.journey.${key}.body`)}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <img
+          src={opJourneyDepot}
+          alt={t('operatorsPage.images.depot')}
+          loading="lazy"
+          className="aspect-[4/3] w-full rounded-2xl object-cover shadow-sm"
+        />
       </section>
 
       <section id="screenshots" className="border-t py-20">
@@ -265,11 +313,16 @@ export function Operators() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-3">
-          {screenshots.map(({ key, icon: Icon }) => (
+          {screenshots.map(({ key, src }) => (
             <div key={key} className="flex flex-col gap-3">
-              <div className="flex aspect-video items-center justify-center rounded-lg border border-dashed bg-muted/30 text-muted-foreground">
-                <Icon className="size-8" />
-              </div>
+              <img
+                src={src}
+                alt={t(`operatorsPage.screenshots.${key}.title`)}
+                width={1100}
+                height={700}
+                loading="lazy"
+                className="w-full rounded-lg border shadow-sm"
+              />
               <div>
                 <h3 className="text-sm font-medium">{t(`operatorsPage.screenshots.${key}.title`)}</h3>
                 <p className="text-xs text-muted-foreground">
@@ -296,11 +349,7 @@ export function Operators() {
         </div>
 
         <div className="mx-auto mt-6 flex max-w-md items-center gap-3 rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
-          <img
-            src="https://www.toyyibpay.com/wp-content/uploads/2025/10/logo-colour-new.svg"
-            alt="ToyyibPay"
-            className="h-5 w-auto shrink-0"
-          />
+          <BillplzLogo className="h-4 w-auto shrink-0 text-foreground" />
           <span>{t('operatorsPage.pricing.gatewayNote')}</span>
         </div>
       </section>
@@ -310,15 +359,23 @@ export function Operators() {
           <h2 className="text-2xl font-medium">{t('operatorsPage.getStarted.title')}</h2>
           <p className="mt-1 text-muted-foreground">{t('operatorsPage.getStarted.subtitle')}</p>
         </div>
-        <div className="mx-auto max-w-md">
-          <OperatorAccessCard />
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            {t('operatorsPage.parentNudge')}{' '}
-            <Link to="/" className="font-medium text-foreground hover:text-primary">
-              {t('marketingNav.parents')}
-              <ArrowRight className="inline size-3.5 align-[-2px]" />
-            </Link>
-          </p>
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-14">
+          <img
+            src={opGetStartedBus}
+            alt={t('operatorsPage.images.bus')}
+            loading="lazy"
+            className="hidden aspect-[3/2] w-full rounded-2xl object-cover shadow-sm lg:block"
+          />
+          <div className="mx-auto w-full max-w-md">
+            <OperatorAccessCard />
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              {t('operatorsPage.parentNudge')}{' '}
+              <Link to="/" className="font-medium text-foreground hover:text-primary">
+                {t('marketingNav.parents')}
+                <ArrowRight className="inline size-3.5 align-[-2px]" />
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
 
@@ -340,6 +397,20 @@ export function Operators() {
           ))}
         </Accordion>
       </section>
+
+      <p className="border-t py-6 text-xs text-muted-foreground">
+        {t('operatorsPage.photoCredits')}{' '}
+        {photoCredits.map((c, i) => (
+          <span key={c.href}>
+            {i > 0 && ', '}
+            <a href={c.href} target="_blank" rel="noreferrer" className="underline hover:text-foreground">
+              {c.author}
+            </a>{' '}
+            ({c.license})
+          </span>
+        ))}
+        .
+      </p>
     </div>
   )
 }

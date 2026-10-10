@@ -25,6 +25,17 @@ class Payment extends Model
         'payment_date' => 'date',
     ];
 
+    protected $appends = ['receipt_number'];
+
+    /**
+     * Every payment is its own receipt, so the payment's id is the receipt's
+     * number — unique, and stable for as long as the payment exists.
+     */
+    public function getReceiptNumberAttribute(): string
+    {
+        return 'R-'.str_pad((string) $this->id, 6, '0', STR_PAD_LEFT);
+    }
+
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);

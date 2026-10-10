@@ -17,7 +17,7 @@ export function Privacy() {
   const { t } = useTranslation()
 
   return (
-    <div className="mx-auto max-w-5xl px-6">
+    <div className="mx-auto max-w-content px-4 lg:px-8">
       <section className="flex flex-col gap-2 py-20">
         <h1 className="text-3xl font-medium sm:text-4xl">{t('privacy.title')}</h1>
         <p className="text-sm text-muted-foreground">{t('legal.lastUpdated')}</p>

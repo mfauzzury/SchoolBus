@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
+import { TabBar } from '@/components/TabBar'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
@@ -17,13 +16,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -31,12 +23,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Pagination } from '@/components/ui/pagination'
-import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useRoutes } from '@/hooks/useRoutes'
-import { useDashboardSummary, useInvoices, useRecordPayment } from '@/hooks/useFinances'
+import { useDashboardSummary, useInvoices } from '@/hooks/useFinances'
+import { OutstandingTab } from '@/components/finances/OutstandingTab'
+import { TransactionsTab } from '@/components/finances/TransactionsTab'
 import { usePagination } from '@/hooks/usePagination'
-import { invoicesExportUrl, receiptUrl, type LedgerInvoice } from '@/api/finances'
-import { cn, formatMoney, formatPeriod } from '@/lib/utils'
+import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { invoicesExportUrl, type LedgerInvoice } from '@/api/finances'
+import { cn, formatMoney, formatPeriod, isInvoiceOverdue } from '@/lib/utils'
 
 const ALL = 'all'
 
@@ -55,141 +49,31 @@ const statusVariant: Record<LedgerInvoice['status'], 'success' | 'info' | 'outli
   issued: 'info',
   paid: 'success',
   overdue: 'destructive',
+  void: 'outline',
 }
 
-const paymentSchema = z.object({
-  method: z.enum(['cash', 'bank_transfer', 'fpx', 'online']),
-  reference_number: z.string().optional(),
-  payment_date: z.string().min(1),
-  amount_paid: z.string().refine((v) => Number(v) > 0),
-})
-
-type PaymentForm = z.infer<typeof paymentSchema>
-
-function toFormValues(invoice?: LedgerInvoice): PaymentForm {
-  return {
-    method: 'cash',
-    reference_number: '',
-    payment_date: new Date().toISOString().slice(0, 10),
-    amount_paid: invoice ? invoice.final_amount : '0',
-  }
+// 'overdue' is never stored: it is an issued bill past its due date.
+function displayStatus(invoice: LedgerInvoice): LedgerInvoice['status'] {
+  return isInvoiceOverdue(invoice) ? 'overdue' : invoice.status
 }
 
-function RecordPaymentDialog({
-  invoice,
-  open,
-  onOpenChange,
-}: {
-  invoice?: LedgerInvoice
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
-  const { t } = useTranslation()
-  const recordPayment = useRecordPayment()
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<PaymentForm>({
-    resolver: zodResolver(paymentSchema),
-    defaultValues: toFormValues(invoice),
-  })
+type Tab = 'bills' | 'transactions' | 'outstanding'
+const TABS: Tab[] = ['bills', 'transactions', 'outstanding']
 
-  useEffect(() => {
-    if (open) reset(toFormValues(invoice))
-  }, [open, invoice, reset])
-
-  const method = watch('method')
-
-  const onSubmit = (values: PaymentForm) => {
-    if (!invoice) return
-    recordPayment.mutate(
-      { invoiceId: invoice.id, input: { ...values, amount_paid: Number(values.amount_paid) } },
-      {
-        onSuccess: () => {
-          onOpenChange(false)
-          reset()
-        },
-      },
-    )
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {t('operator.finances.recordPaymentFor', { name: invoice?.student.full_name })}
-          </DialogTitle>
-        </DialogHeader>
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-1.5">
-            <Label>{t('operator.finances.method')}</Label>
-            <Select
-              items={{
-                cash: t('operator.finances.cash'),
-                bank_transfer: t('operator.finances.bankTransfer'),
-                fpx: t('operator.finances.fpx'),
-                online: t('operator.finances.online'),
-              }}
-              value={method}
-              onValueChange={(v) => setValue('method', v as PaymentForm['method'])}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cash">{t('operator.finances.cash')}</SelectItem>
-                <SelectItem value="bank_transfer">{t('operator.finances.bankTransfer')}</SelectItem>
-                <SelectItem value="fpx">{t('operator.finances.fpx')}</SelectItem>
-                <SelectItem value="online">{t('operator.finances.online')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="reference_number">{t('operator.finances.referenceNumber')}</Label>
-            <Input id="reference_number" {...register('reference_number')} />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="payment_date">{t('operator.finances.paymentDate')}</Label>
-            <Input id="payment_date" type="date" {...register('payment_date')} />
-            {errors.payment_date && (
-              <p className="text-sm text-destructive">{errors.payment_date.message}</p>
-            )}
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="amount_paid">{t('operator.finances.amountPaid')}</Label>
-            <Input id="amount_paid" type="number" step="0.01" {...register('amount_paid')} />
-            {errors.amount_paid && (
-              <p className="text-sm text-destructive">{errors.amount_paid.message}</p>
-            )}
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={recordPayment.isPending}>
-              {recordPayment.isPending ? t('common.saving') : t('operator.finances.recordPayment')}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-export function Finances() {
+/** The invoice ledger: what was billed, what is still owed, and the actions on a bill. */
+function BillsTab() {
   const { t, i18n } = useTranslation()
-  const isAdmin = useIsOperatorAdmin()
   const { data: routes } = useRoutes()
   const [routeId, setRouteId] = useState(ALL)
   const [year, setYear] = useState(ALL)
   const [month, setMonth] = useState(ALL)
   const [status, setStatus] = useState(ALL)
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [selectedInvoice, setSelectedInvoice] = useState<LedgerInvoice | undefined>(undefined)
+  const [search, setSearch] = useState('')
+
+  const debouncedSearch = useDebouncedValue(search.trim())
 
   const filters = {
+    search: debouncedSearch || undefined,
     route_id: routeId !== ALL ? Number(routeId) : undefined,
     year: year !== ALL ? Number(year) : undefined,
     month: year !== ALL && month !== ALL ? Number(month) : undefined,
@@ -202,22 +86,10 @@ export function Finances() {
 
   useEffect(() => {
     setPage(1)
-  }, [routeId, year, month, status, setPage])
-
-  const openPaymentDialog = (invoice: LedgerInvoice) => {
-    setSelectedInvoice(invoice)
-    setDialogOpen(true)
-  }
+  }, [routeId, year, month, status, debouncedSearch, setPage])
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-medium">{t('operator.finances.title')}</h1>
-        <a href={invoicesExportUrl(invoiceFilters)} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}>
-          {t('operator.finances.exportCsv')}
-        </a>
-      </div>
-
+    <>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Card>
           <CardHeader>
@@ -262,6 +134,16 @@ export function Finances() {
       <Card>
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-wrap items-end gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="bill_search">{t('common.search')}</Label>
+              <Input
+                id="bill_search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t('operator.finances.searchPlaceholder')}
+                className="w-56"
+              />
+            </div>
             <div className="flex flex-col gap-1.5">
               <Label>{t('operator.finances.route')}</Label>
               <Select
@@ -338,6 +220,7 @@ export function Finances() {
                   issued: t('operator.finances.issued'),
                   paid: t('operator.finances.paid'),
                   overdue: t('operator.finances.overdue'),
+                  void: t('operator.finances.void'),
                 }}
                 value={status}
                 onValueChange={(v) => setStatus(v ?? ALL)}
@@ -351,13 +234,24 @@ export function Finances() {
                   <SelectItem value="issued">{t('operator.finances.issued')}</SelectItem>
                   <SelectItem value="paid">{t('operator.finances.paid')}</SelectItem>
                   <SelectItem value="overdue">{t('operator.finances.overdue')}</SelectItem>
+                  <SelectItem value="void">{t('operator.finances.void')}</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="ml-auto flex gap-2">
+              <a
+                href={invoicesExportUrl(invoiceFilters)}
+                className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+              >
+                {t('operator.finances.exportCsv')}
+              </a>
             </div>
           </div>
 
           {isLoading ? (
             <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+          ) : !invoices?.length ? (
+            <p className="text-sm text-muted-foreground">{t('operator.finances.noBills')}</p>
           ) : (
             <Table>
               <TableHeader>
@@ -368,38 +262,45 @@ export function Finances() {
                   <TableHead>{t('operator.finances.amount')}</TableHead>
                   <TableHead>{t('operator.finances.dueDate')}</TableHead>
                   <TableHead>{t('operator.finances.status')}</TableHead>
-                  {isAdmin && <TableHead className="text-right">{t('operator.finances.actions')}</TableHead>}
+                  <TableHead className="text-right">{t('operator.finances.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {pagedInvoices.map((invoice) => (
                   <TableRow key={invoice.id}>
-                    <TableCell>{invoice.student.full_name}</TableCell>
+                    <TableCell>
+                      <Link to={`/operator/students/${invoice.student.id}`} className="hover:text-primary">
+                        {invoice.student.full_name}
+                      </Link>
+                    </TableCell>
                     <TableCell>{invoice.route?.name ?? '—'}</TableCell>
                     <TableCell>{formatPeriod(invoice.period_start, i18n.language)}</TableCell>
-                    <TableCell>RM {formatMoney(invoice.final_amount)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span>RM {formatMoney(invoice.final_amount)}</span>
+                        {invoice.status === 'issued' && Number(invoice.amount_paid) > 0 && (
+                          <span className="text-xs text-muted-foreground">
+                            {t('operator.finances.balance')} RM {formatMoney(invoice.balance)}
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>{invoice.due_date.slice(0, 10)}</TableCell>
                     <TableCell>
-                      <Badge variant={statusVariant[invoice.status]}>
-                        {t(`operator.finances.${invoice.status}`)}
+                      <Badge variant={statusVariant[displayStatus(invoice)]}>
+                        {t(`operator.finances.${displayStatus(invoice)}`)}
                       </Badge>
                     </TableCell>
-                    {isAdmin && (
-                      <TableCell className="text-right">
-                        {invoice.status === 'paid' ? (
-                          <a
-                            href={receiptUrl(invoice.id)}
-                            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-                          >
-                            {t('common.downloadReceipt')}
-                          </a>
-                        ) : (
-                          <Button size="sm" onClick={() => openPaymentDialog(invoice)}>
-                            {t('operator.finances.recordPayment')}
-                          </Button>
-                        )}
-                      </TableCell>
-                    )}
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Link
+                          to={`/operator/finances/bills/${invoice.id}`}
+                          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+                        >
+                          {t('operator.finances.openBill')}
+                        </Link>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -409,7 +310,29 @@ export function Finances() {
         </CardContent>
       </Card>
 
-      <RecordPaymentDialog invoice={selectedInvoice} open={dialogOpen} onOpenChange={setDialogOpen} />
+    </>
+  )
+}
+
+export function Finances() {
+  const { t } = useTranslation()
+  const [tab, setTab] = useState<Tab>('bills')
+
+  const tabLabels: Record<Tab, string> = {
+    bills: t('operator.finances.tabBills'),
+    transactions: t('operator.finances.tabTransactions'),
+    outstanding: t('operator.finances.tabOutstanding'),
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <h1 className="text-xl font-medium">{t('operator.finances.title')}</h1>
+
+      <TabBar tabs={TABS.map((value) => ({ value, label: tabLabels[value] }))} value={tab} onChange={setTab} />
+
+      {tab === 'bills' && <BillsTab />}
+      {tab === 'transactions' && <TransactionsTab />}
+      {tab === 'outstanding' && <OutstandingTab />}
     </div>
   )
 }

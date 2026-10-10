@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\BillingPeriod;
+use App\Enums\InvoiceItemType;
 use App\Enums\InvoiceStatus;
 use App\Enums\PackageType;
 use App\Models\BusOperator;
@@ -31,6 +32,31 @@ class InvoiceFactory extends Factory
             'due_date' => now()->addDays(7)->toDateString(),
             'issued_at' => now(),
         ];
+    }
+
+    /**
+     * Real invoices always carry the items their totals are derived from, so
+     * factory ones get items matching whatever amounts the test asked for.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Invoice $invoice) {
+            $invoice->items()->create([
+                'tenant_id' => $invoice->tenant_id,
+                'type' => InvoiceItemType::Fee,
+                'description' => 'Bus fee',
+                'amount' => $invoice->amount_before_discount,
+            ]);
+
+            if ((float) $invoice->discount_amount > 0) {
+                $invoice->items()->create([
+                    'tenant_id' => $invoice->tenant_id,
+                    'type' => InvoiceItemType::Discount,
+                    'description' => 'Discount',
+                    'amount' => -1 * (float) $invoice->discount_amount,
+                ]);
+            }
+        });
     }
 
     public function paid(): static

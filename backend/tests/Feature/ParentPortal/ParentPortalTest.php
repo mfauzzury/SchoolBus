@@ -26,22 +26,25 @@ class ParentPortalTest extends TestCase
             ->assertJsonCount(1, '0.stops');
     }
 
-    public function test_quote_matches_the_spec_worked_example(): void
+    public function test_quote_prices_the_route_by_package_with_the_sibling_discount(): void
     {
         $tenant = $this->createTenant();
-        [$parentUser] = $this->createParent($tenant);
-        $route = Route::factory()->create(['tenant_id' => $tenant->id, 'base_monthly_fee' => 150]);
+        [$parentUser, $parent] = $this->createParent($tenant);
+        $route = Route::factory()->create(['tenant_id' => $tenant->id, 'base_monthly_fee' => 150, 'one_way_monthly_fee' => 90]);
 
-        // Route A, Return package, RM150/month, Yearly => RM150 x 12 x 0.85 = RM1,530
-        $response = $this->actingAs($parentUser)->postJson('/api/parent/quote', [
-            'route_id' => $route->id,
-            'billing_period' => 'yearly',
-        ]);
+        $this->actingAs($parentUser)->postJson('/api/parent/quote', ['route_id' => $route->id, 'package_type' => 'return'])
+            ->assertOk()
+            ->assertJsonPath('final_amount', 150);
+
+        // With one child already enrolled, the next is the second: 10% off the one-way fee.
+        Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id, 'route_id' => $route->id]);
+
+        $response = $this->actingAs($parentUser)->postJson('/api/parent/quote', ['route_id' => $route->id, 'package_type' => 'one_way']);
 
         $response->assertOk();
-        $this->assertEquals(1800.0, $response->json('amount_before_discount'));
-        $this->assertEquals(270.0, $response->json('discount_amount'));
-        $this->assertEquals(1530.0, $response->json('final_amount'));
+        $this->assertEquals(90.0, $response->json('amount_before_discount'));
+        $this->assertEquals(9.0, $response->json('discount_amount'));
+        $this->assertEquals(81.0, $response->json('final_amount'));
     }
 
     public function test_quote_rejects_a_route_id_belonging_to_another_tenant(): void
@@ -53,7 +56,7 @@ class ParentPortalTest extends TestCase
 
         $this->actingAs($parentUser)->postJson('/api/parent/quote', [
             'route_id' => $otherRoute->id,
-            'billing_period' => 'monthly',
+            'package_type' => 'return',
         ])->assertStatus(422)->assertJsonValidationErrors(['route_id']);
     }
 
@@ -67,7 +70,6 @@ class ParentPortalTest extends TestCase
             'date_of_birth' => '2015-01-01',
             'school_name' => 'SK Demo',
             'package_type' => 'return',
-            'billing_period' => 'monthly',
         ]);
 
         $response->assertCreated()
@@ -77,6 +79,7 @@ class ParentPortalTest extends TestCase
             'full_name' => 'Child One',
             'status' => 'pending',
             'route_id' => null,
+            'billing_period' => 'monthly',
         ]);
         $this->assertDatabaseMissing('students', ['full_name' => 'Child One']);
     }
@@ -102,11 +105,36 @@ class ParentPortalTest extends TestCase
         [$parentUser, $parent] = $this->createParent($tenant);
         $route = Route::factory()->create(['tenant_id' => $tenant->id, 'base_monthly_fee' => 100]);
         $student = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id, 'route_id' => $route->id]);
-        \App\Models\Invoice::factory()->create(['tenant_id' => $tenant->id, 'student_id' => $student->id]);
+        $invoice = \App\Models\Invoice::factory()->create(['tenant_id' => $tenant->id, 'student_id' => $student->id]);
+        $invoice->payments()->create([
+            'tenant_id' => $tenant->id,
+            'method' => 'cash',
+            'payment_date' => now()->toDateString(),
+            'amount_paid' => 50,
+        ]);
 
         $response = $this->actingAs($parentUser)->getJson('/api/parent/invoices');
 
-        $response->assertOk()->assertJsonCount(1);
+        // Itemised, and what's owed is the balance — not the face value.
+        $response->assertOk()->assertJsonCount(1)
+            ->assertJsonCount(1, '0.items')
+            ->assertJsonPath('0.items.0.type', 'fee')
+            ->assertJsonPath('0.amount_paid', '50.00')
+            ->assertJsonPath('0.balance', '100.00');
+    }
+
+    public function test_parent_never_sees_a_cancelled_bill(): void
+    {
+        $tenant = $this->createTenant();
+        [$parentUser, $parent] = $this->createParent($tenant);
+        $student = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id]);
+        \App\Models\Invoice::factory()->create([
+            'tenant_id' => $tenant->id,
+            'student_id' => $student->id,
+            'status' => \App\Enums\InvoiceStatus::Void,
+        ]);
+
+        $this->actingAs($parentUser)->getJson('/api/parent/invoices')->assertOk()->assertJsonCount(0);
     }
 
     public function test_an_operator_admin_cannot_access_parent_portal_endpoints(): void

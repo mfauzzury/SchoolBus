@@ -6,6 +6,7 @@ import { MarketingLayout } from '@/layouts/MarketingLayout'
 import { ParentLayout } from '@/layouts/ParentLayout'
 import { SaasAdminLayout } from '@/layouts/SaasAdminLayout'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { FEATURES } from '@/lib/features'
 import { Landing } from '@/pages/Landing'
 import { Operators } from '@/pages/Operators'
 import { About } from '@/pages/About'
@@ -18,19 +19,27 @@ import { ResetPassword } from '@/pages/ResetPassword'
 import { Register } from '@/pages/Register'
 import { OperatorSignup } from '@/pages/OperatorSignup'
 import { OperatorDashboard } from '@/pages/operator/Dashboard'
+import { OperatorLive } from '@/pages/operator/Live'
 import { Buses } from '@/pages/operator/Buses'
 import { Staff } from '@/pages/operator/Staff'
 import { Students } from '@/pages/operator/Students'
+import { StudentDetail } from '@/pages/operator/StudentDetail'
 import { Applications } from '@/pages/operator/Applications'
 import { ApplicationReview } from '@/pages/operator/ApplicationReview'
 import { Routes as RoutesPage } from '@/pages/operator/Routes'
 import { Finances } from '@/pages/operator/Finances'
+import { BillDetail } from '@/pages/operator/BillDetail'
 import { Settings } from '@/pages/operator/Settings'
+import { BillingSettings } from '@/pages/operator/BillingSettings'
 import { ParentDashboard } from '@/pages/parent/Dashboard'
+import { ParentTrack } from '@/pages/parent/Track'
 import { ParentInvoices } from '@/pages/parent/Invoices'
+import { ParentInvoiceDetail } from '@/pages/parent/InvoiceDetail'
 import { ParentProfilePage } from '@/pages/parent/Profile'
 import { EnrollChild } from '@/pages/parent/EnrollChild'
+import { ChildProfile } from '@/pages/parent/ChildProfile'
 import { PayInvoices } from '@/pages/parent/PayInvoices'
+import { PayReturn } from '@/pages/parent/PayReturn'
 import { AdminDashboard } from '@/pages/admin/Dashboard'
 import { AdminOperators } from '@/pages/admin/Operators'
 import { AdminOperatorPage } from '@/pages/admin/OperatorDetail'
@@ -60,12 +69,19 @@ function App() {
         <Route element={<ProtectedRoute role="operator" />}>
           <Route element={<OperatorLayout />}>
             <Route path="/operator/dashboard" element={<OperatorDashboard />} />
+            <Route
+              path="/operator/live"
+              element={FEATURES.operatorLive ? <OperatorLive /> : <Navigate to="/operator/dashboard" replace />}
+            />
             <Route path="/operator/students" element={<Students />} />
+            <Route path="/operator/students/:id" element={<StudentDetail />} />
             <Route path="/operator/applications" element={<Applications />} />
             <Route path="/operator/applications/:id" element={<ApplicationReview />} />
             <Route path="/operator/finances" element={<Finances />} />
+            <Route path="/operator/finances/bills/:id" element={<BillDetail />} />
             <Route path="/operator/settings" element={<SettingsLayout />}>
               <Route index element={<Settings />} />
+              <Route path="billing" element={<BillingSettings />} />
               <Route path="routes" element={<RoutesPage />} />
               <Route path="buses" element={<Buses />} />
               <Route path="staff" element={<Staff />} />
@@ -79,10 +95,17 @@ function App() {
         <Route element={<ProtectedRoute role="parent" />}>
           <Route element={<ParentLayout />}>
             <Route path="/parent/dashboard" element={<ParentDashboard />} />
+            <Route
+              path="/parent/track"
+              element={FEATURES.parentTrack ? <ParentTrack /> : <Navigate to="/parent/dashboard" replace />}
+            />
             <Route path="/parent/invoices" element={<ParentInvoices />} />
+            <Route path="/parent/invoices/:id" element={<ParentInvoiceDetail />} />
             <Route path="/parent/profile" element={<ParentProfilePage />} />
             <Route path="/parent/enroll" element={<EnrollChild />} />
+            <Route path="/parent/children/:id" element={<ChildProfile />} />
             <Route path="/parent/invoices/pay" element={<PayInvoices />} />
+            <Route path="/parent/invoices/pay/return/:attemptId" element={<PayReturn />} />
           </Route>
         </Route>
 
