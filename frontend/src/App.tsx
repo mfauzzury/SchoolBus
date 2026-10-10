@@ -45,6 +45,8 @@ import { AdminOperators } from '@/pages/admin/Operators'
 import { AdminOperatorPage } from '@/pages/admin/OperatorDetail'
 import { AdminTransactions } from '@/pages/admin/Transactions'
 import { AdminOperatorEdit } from '@/pages/admin/OperatorEdit'
+import { AdminPlans } from '@/pages/admin/Plans'
+import { AdminPlanEdit } from '@/pages/admin/PlanEdit'
 import { AdminTeam } from '@/pages/admin/Team'
 import { AdminTeamAdd } from '@/pages/admin/TeamAdd'
 import { AdminActivityLog } from '@/pages/admin/ActivityLog'
@@ -120,6 +122,9 @@ function App() {
             <Route path="/admin/operators/:id" element={<AdminOperatorPage />} />
             <Route path="/admin/operators/:id/edit" element={<AdminOperatorEdit />} />
             <Route path="/admin/transactions" element={<AdminTransactions />} />
+            <Route path="/admin/plans" element={<AdminPlans />} />
+            <Route path="/admin/plans/new" element={<AdminPlanEdit />} />
+            <Route path="/admin/plans/:id" element={<AdminPlanEdit />} />
             <Route path="/admin/team" element={<AdminTeam />} />
             <Route path="/admin/team/new" element={<AdminTeamAdd />} />
             <Route path="/admin/activity" element={<AdminActivityLog />} />

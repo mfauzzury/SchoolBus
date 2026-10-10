@@ -15,7 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useAdminOperators } from '@/hooks/useAdmin'
+import { useAdminOperators, usePlans } from '@/hooks/useAdmin'
+import { planUsage } from '@/lib/plans'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { OperatorFilters } from '@/api/admin'
 
@@ -29,19 +30,24 @@ export function AdminOperators() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState(ALL)
   const [billplz, setBillplz] = useState(ALL)
+  const [planId, setPlanId] = useState(ALL)
+  const [overLimit, setOverLimit] = useState(ALL)
+  const { data: plans } = usePlans()
   const [sort, setSort] = useState<SortKey>('company_name')
   const [page, setPage] = useState(1)
   const debouncedSearch = useDebouncedValue(search.trim())
 
   useEffect(() => {
     setPage(1)
-  }, [debouncedSearch, status, billplz, sort])
+  }, [debouncedSearch, status, billplz, planId, overLimit, sort])
 
   const filters: OperatorFilters = {
     page,
     search: debouncedSearch || undefined,
     status: status !== ALL ? (status as OperatorFilters['status']) : undefined,
     billplz: billplz !== ALL ? (billplz as OperatorFilters['billplz']) : undefined,
+    plan_id: planId !== ALL ? Number(planId) : undefined,
+    over_limit: overLimit === 'yes' ? true : undefined,
     sort,
   }
   const { data: operators, isLoading } = useAdminOperators(filters)
@@ -62,6 +68,14 @@ export function AdminOperators() {
     [ALL]: t('admin.operators.billplzAll'),
     connected: t('admin.operators.billplzConnected'),
     none: t('admin.operators.billplzNone'),
+  }
+  const planItems: Record<string, string> = {
+    [ALL]: t('admin.operators.planAll'),
+    ...Object.fromEntries((plans ?? []).map((p) => [String(p.id), p.name])),
+  }
+  const limitItems = {
+    [ALL]: t('admin.operators.limitAll'),
+    yes: t('admin.operators.limitOver'),
   }
   const sortItems = {
     company_name: t('admin.operators.sortName'),
@@ -113,6 +127,8 @@ export function AdminOperators() {
             </div>
             {filterSelect(t('admin.operators.status'), statusItems, status, setStatus)}
             {filterSelect(t('admin.operators.billplz'), billplzItems, billplz, setBillplz)}
+            {filterSelect(t('admin.operators.plan'), planItems, planId, setPlanId)}
+            {filterSelect(t('admin.operators.studentLimit'), limitItems, overLimit, setOverLimit)}
             {filterSelect(t('admin.operators.sortBy'), sortItems, sort, (v) => setSort(v as SortKey))}
           </div>
 
@@ -129,6 +145,7 @@ export function AdminOperators() {
                     <TableHead>{t('admin.operators.company')}</TableHead>
                     <TableHead>{t('admin.operators.code')}</TableHead>
                     <TableHead>{t('admin.operators.contact')}</TableHead>
+                    <TableHead>{t('admin.operators.plan')}</TableHead>
                     <TableHead>{t('admin.operators.students')}</TableHead>
                     <TableHead>{t('admin.operators.buses')}</TableHead>
                     <TableHead>{t('admin.operators.joined')}</TableHead>
@@ -151,7 +168,24 @@ export function AdminOperators() {
                           <span className="text-xs text-muted-foreground">{operator.email}</span>
                         </div>
                       </TableCell>
-                      <TableCell>{operator.students_count}</TableCell>
+                      <TableCell>{operator.plan?.name ?? '—'}</TableCell>
+                      <TableCell>
+                        {(() => {
+                          const usage = planUsage(operator)
+                          return (
+                            <div className="flex flex-wrap items-center gap-1">
+                              <span>
+                                {usage.limit === null
+                                  ? usage.used
+                                  : `${usage.used} / ${usage.limit}`}
+                              </span>
+                              {usage.over && (
+                                <Badge variant="destructive">{t('admin.plans.overLimit')}</Badge>
+                              )}
+                            </div>
+                          )
+                        })()}
+                      </TableCell>
                       <TableCell>{operator.buses_count}</TableCell>
                       <TableCell className="whitespace-nowrap">{date(operator.created_at)}</TableCell>
                       <TableCell className="whitespace-nowrap">{date(operator.last_login_at)}</TableCell>
@@ -179,7 +213,7 @@ export function AdminOperators() {
             </>
           ) : (
             <p className="text-sm text-muted-foreground">
-              {debouncedSearch || status !== ALL || billplz !== ALL
+              {debouncedSearch || status !== ALL || billplz !== ALL || planId !== ALL || overLimit !== ALL
                 ? t('admin.operators.noMatches')
                 : t('admin.operators.noOperators')}
             </p>

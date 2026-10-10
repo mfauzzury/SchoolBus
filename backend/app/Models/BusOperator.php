@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,7 +21,7 @@ class BusOperator extends Model
         'email',
         'bank_details',
         'logo_path',
-        'subscription_plan',
+        'plan_id',
         'discount_config',
         'billing_config',
     ];
@@ -98,6 +99,11 @@ class BusOperator extends Model
             if (empty($operator->operator_code)) {
                 $operator->operator_code = $operator->generateUniqueOperatorCode();
             }
+
+            // Every operator is on a plan; new ones start on the default.
+            if (empty($operator->plan_id)) {
+                $operator->plan_id = Plan::default()?->id;
+            }
         });
     }
 
@@ -160,6 +166,11 @@ class BusOperator extends Model
             'due_day' => (int) ($config['due_day'] ?? self::DEFAULT_BILLING_CONFIG['due_day']),
             'billed_months' => array_values(array_unique($months)),
         ];
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
     }
 
     public function notes(): HasMany

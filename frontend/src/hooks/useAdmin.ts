@@ -1,6 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   addOperatorNote,
+  assignOperatorPlan,
+  createPlan,
+  deletePlan,
+  listPlans,
+  updatePlan,
   addTeamMember,
   changeTeamLevel,
   deactivateTeamMember,
@@ -28,6 +33,7 @@ import {
   type BillplzSettingsInput,
   type OperatorDetailsInput,
   type OperatorFilters,
+  type PlanInput,
   type TeamMemberInput,
   type TransactionFilters,
 } from '@/api/admin'
@@ -191,4 +197,42 @@ export function useStartImpersonation() {
 
 export function useStopImpersonation() {
   return useMutation({ mutationFn: () => stopImpersonation() })
+}
+
+export function usePlans() {
+  return useQuery({ queryKey: ['admin-plans'], queryFn: listPlans })
+}
+
+export function useSavePlan(planId?: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: PlanInput) => (planId ? updatePlan(planId, input) : createPlan(input)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-plans'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-operators'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
+  })
+}
+
+export function useDeletePlan() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => deletePlan(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-plans'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
+  })
+}
+
+export function useAssignOperatorPlan(operatorId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (planId: number) => assignOperatorPlan(operatorId, planId),
+    onSuccess: () => {
+      refreshOperator(queryClient, operatorId)
+      queryClient.invalidateQueries({ queryKey: ['admin-plans'] })
+    },
+  })
 }

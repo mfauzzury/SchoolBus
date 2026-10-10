@@ -29,6 +29,8 @@ import { BackLink } from '@/components/BackLink'
 import { OperatorActions } from '@/components/admin/OperatorActions'
 import { OperatorActivity } from '@/components/admin/OperatorActivity'
 import { OperatorNotes } from '@/components/admin/OperatorNotes'
+import { OperatorPlanCard } from '@/components/admin/OperatorPlanCard'
+import { planUsage } from '@/lib/plans'
 import { useCan } from '@/hooks/useAuth'
 
 type TabKey =
@@ -128,8 +130,11 @@ export function AdminOperatorPage() {
               {operator.status === 'suspended' && (
                 <Badge variant="destructive">{t('admin.operators.statusSuspended')}</Badge>
               )}
-              <Badge variant="outline" className="w-fit capitalize">
-                {operator.subscription_plan}
+              {planUsage(operator).over && (
+                <Badge variant="destructive">{t('admin.plans.overLimit')}</Badge>
+              )}
+              <Badge variant="outline" className="w-fit">
+                {operator.plan?.name ?? '—'}
               </Badge>
             </div>
             <OperatorActions operator={operator} />
@@ -186,10 +191,6 @@ export function AdminOperatorPage() {
                 <DetailItem label={t('admin.operatorDetail.company.contactPerson')} value={operator.contact_person} />
                 <DetailItem label={t('admin.operatorDetail.company.phone')} value={operator.contact_phone} />
                 <DetailItem label={t('admin.operatorDetail.company.email')} value={operator.email} />
-                <DetailItem
-                  label={t('admin.operatorDetail.company.plan')}
-                  value={<span className="capitalize">{operator.subscription_plan}</span>}
-                />
                 <DetailItem label={t('admin.operatorDetail.company.parents')} value={operator.parents_count} />
                 <DetailItem
                   label={t('admin.operators.joined')}
@@ -212,6 +213,8 @@ export function AdminOperatorPage() {
               </dl>
             </CardContent>
           </Card>
+
+          <OperatorPlanCard operator={operator} />
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <Card>

@@ -24,12 +24,16 @@ class OperatorController extends Controller
         $request->validate([
             'status' => ['nullable', Rule::in(['active', 'suspended'])],
             'billplz' => ['nullable', Rule::in(['connected', 'none'])],
+            'plan_id' => ['nullable', 'integer'],
+            'over_limit' => ['nullable', 'boolean'],
             'sort' => ['nullable', Rule::in(self::SORTABLE)],
             'direction' => ['nullable', Rule::in(['asc', 'desc'])],
         ]);
 
         $query = BusOperator::query()
+            ->with('plan:id,name,code,student_limit')
             ->withCount(['students', 'buses', 'staff', 'routes', 'parents'])
+            ->withCount(['students as active_students_count' => fn (Builder $s) => $s->where('enrollment_status', 'active')])
             // Only the operator's own owner logins count — parents logging in is not "the operator is active".
             ->withMax(['users as last_login_at' => fn (Builder $users) => $users->operatorOwners()], 'last_login_at');
 
@@ -48,6 +52,20 @@ class OperatorController extends Controller
                 ->whereNull('billplz_secret_key')
                 ->orWhereNull('billplz_x_signature_key')
                 ->orWhereNull('billplz_collection_id'));
+        }
+
+        if ($request->filled('plan_id')) {
+            $query->where('plan_id', $request->integer('plan_id'));
+        }
+
+        // More active students than the plan's limit (plans with no limit never qualify).
+        if ($request->boolean('over_limit')) {
+            $query->whereHas('plan', fn (Builder $plan) => $plan
+                ->whereNotNull('student_limit')
+                ->whereRaw(
+                    '(select count(*) from students where students.tenant_id = bus_operators.id and students.enrollment_status = ?) > plans.student_limit',
+                    ['active'],
+                ));
         }
 
         $sort = $request->input('sort', 'company_name');
@@ -71,7 +89,9 @@ class OperatorController extends Controller
     public function show(BusOperator $operator)
     {
         $operator->loadCount(['students', 'buses', 'staff', 'routes', 'parents']);
+        $operator->loadCount(['students as active_students_count' => fn (Builder $s) => $s->where('enrollment_status', 'active')]);
         $operator->load([
+            'plan:id,name,code,student_limit',
             'buses' => fn ($query) => $query->orderBy('plate_number'),
             'staff' => fn ($query) => $query->orderBy('full_name'),
             'routes' => fn ($query) => $query

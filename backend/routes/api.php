@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardControll
 use App\Http\Controllers\Api\Admin\ImpersonationController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
 use App\Http\Controllers\Api\Admin\OperatorNoteController;
+use App\Http\Controllers\Api\Admin\PlanController;
 use App\Http\Controllers\Api\Admin\TeamController;
 use App\Http\Controllers\Api\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Api\AuthController;
@@ -73,6 +74,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('operators/options', [AdminOperatorController::class, 'options']);
         Route::get('operators/{operator}', [AdminOperatorController::class, 'show']);
         Route::get('transactions', [AdminTransactionController::class, 'index']);
+
+        Route::get('plans', [PlanController::class, 'index']);
+
+        Route::middleware('permission:plans.manage')->group(function () {
+            Route::post('plans', [PlanController::class, 'store']);
+            Route::put('plans/{plan}', [PlanController::class, 'update']);
+            Route::delete('plans/{plan}', [PlanController::class, 'destroy']);
+            Route::put('operators/{operator}/plan', [PlanController::class, 'assign']);
+        });
 
         Route::middleware('permission:operators.edit')->group(function () {
             Route::put('operators/{operator}', [AdminOperatorController::class, 'update']);

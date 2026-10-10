@@ -592,7 +592,8 @@
       "groupMoney": "Money",
       "groupSettings": "Settings",
       "team": "Team",
-      "activity": "Activity log"
+      "activity": "Activity log",
+      "plans": "Plans"
     },
     "dashboard": {
       "welcome": "Welcome, {{name}}",
@@ -629,7 +630,11 @@
       "count_other": "{{count}} operators",
       "joined": "Joined",
       "lastLogin": "Last login",
-      "noMatches": "No operators match."
+      "noMatches": "No operators match.",
+      "planAll": "All plans",
+      "studentLimit": "Student limit",
+      "limitAll": "All",
+      "limitOver": "Over the plan limit"
     },
     "transactions": {
       "title": "Transactions",
@@ -695,7 +700,11 @@
         "operator_reactivated": "Reactivated an operator",
         "operator_password_reset_sent": "Sent an operator a password reset",
         "impersonation_started": "Logged in as an operator",
-        "impersonation_stopped": "Returned from an operator login"
+        "impersonation_stopped": "Returned from an operator login",
+        "plan_created": "Created a plan",
+        "plan_updated": "Edited a plan",
+        "plan_deleted": "Deleted a plan",
+        "operator_plan_changed": "Changed an operator's plan"
         }
       },
       "notes": {
@@ -726,6 +735,42 @@
         "title": "Edit company details",
         "emailHelp": "The login email is the owner's login, so it cannot be changed here.",
         "error": "Could not save. Please check the details and try again."
+      },
+      "plans": {
+        "title": "Plans",
+        "add": "Add plan",
+        "back": "Back to Plans",
+        "editTitle": "Edit plan",
+        "intro": "Plans group operators by size. For now they only show who has outgrown their plan; nothing is charged or blocked.",
+        "notChargedYet": "Prices are for your reference. Operators are not charged yet.",
+        "name": "Name",
+        "code": "Code",
+        "codeHelp": "Short and without spaces, for example standard.",
+        "limit": "Student limit",
+        "limitHelp": "Leave empty for no limit.",
+        "unlimited": "Unlimited",
+        "upTo_one": "Up to {{count}} student",
+        "upTo_other": "Up to {{count}} students",
+        "price": "Price",
+        "perMonth": "per month",
+        "perStudent": "per student",
+        "monthlyPrice": "Monthly price (RM)",
+        "pricePerStudent": "Price per student (RM)",
+        "operators": "Operators",
+        "default": "Default",
+        "inactive": "Not in use",
+        "makeDefault": "New operators start on this plan",
+        "defaultHelp": "There is always exactly one default plan.",
+        "active": "Available to choose",
+        "activeHelp": "Turn off to stop putting operators on this plan. Operators already on it stay.",
+        "deleteConfirm": "Delete the plan {{name}}?",
+        "notFound": "This plan was not found.",
+        "operatorCardTitle": "Plan",
+        "overLimit": "Over limit",
+        "changePlan": "Change plan",
+        "usage": "{{used}} of {{limit}} active students",
+        "usageUnlimited": "{{used}} active students (no limit)",
+        "error": "Something went wrong. Please check the details and try again."
       },
     "operatorDetail": {
       "back": "Back to Operators",

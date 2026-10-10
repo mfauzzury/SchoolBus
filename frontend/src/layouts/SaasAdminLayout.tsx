@@ -24,6 +24,7 @@ export function SaasAdminLayout() {
   const logout = useLogout()
   const [mobileOpen, setMobileOpen] = useState(false)
   const canManageTeam = useCan('team.manage')
+  const canManagePlans = useCan('plans.manage')
 
   // Groups with nothing in them (a level may not see Settings at all) are dropped.
   const groups: NavGroup[] = [
@@ -37,7 +38,10 @@ export function SaasAdminLayout() {
     },
     {
       title: t('admin.nav.groupMoney'),
-      items: [{ to: '/admin/transactions', label: t('admin.nav.transactions') }],
+      items: [
+        { to: '/admin/transactions', label: t('admin.nav.transactions') },
+        ...(canManagePlans ? [{ to: '/admin/plans', label: t('admin.nav.plans') }] : []),
+      ],
     },
     {
       title: t('admin.nav.groupSettings'),

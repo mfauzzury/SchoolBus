@@ -19,7 +19,6 @@ class BusOperatorFactory extends Factory
             'contact_person' => fake()->name(),
             'contact_phone' => fake()->phoneNumber(),
             'email' => fake()->unique()->companyEmail(),
-            'subscription_plan' => 'free',
         ];
     }
 }

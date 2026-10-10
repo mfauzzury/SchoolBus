@@ -16,7 +16,6 @@ class DemoTenantSeeder extends Seeder
             'contact_person' => 'Demo Admin',
             'contact_phone' => '+60123456789',
             'email' => 'contact@demobusco.test',
-            'subscription_plan' => 'free',
         ]);
 
         $admin = User::create([

@@ -28,7 +28,6 @@ class OperatorRegistrationController extends Controller
                 'contact_person' => $data['contact_person'],
                 'contact_phone' => $data['contact_phone'],
                 'email' => $data['email'],
-                'subscription_plan' => 'free',
             ]);
 
             $user = User::create([

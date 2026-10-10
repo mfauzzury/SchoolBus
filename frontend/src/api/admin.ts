@@ -10,6 +10,14 @@ export interface PlatformSummary {
   total_outstanding: number
 }
 
+export interface PlanSummary {
+  id: number
+  name: string
+  code: string
+  /** null = unlimited */
+  student_limit: number | null
+}
+
 export interface AdminOperator {
   id: number
   company_name: string
@@ -17,12 +25,14 @@ export interface AdminOperator {
   contact_person: string
   contact_phone: string
   email: string
-  subscription_plan: string
+  plan: PlanSummary | null
   status: 'active' | 'suspended'
   created_at: string
   last_login_at: string | null
   billplz_enabled: boolean
   students_count: number
+  /** Students currently enrolled and active — what a plan's limit is measured against. */
+  active_students_count: number
   buses_count: number
   staff_count: number
   routes_count: number
@@ -39,6 +49,8 @@ export interface OperatorFilters {
   search?: string
   status?: 'active' | 'suspended'
   billplz?: 'connected' | 'none'
+  plan_id?: number
+  over_limit?: boolean
   sort?: 'company_name' | 'created_at' | 'students_count' | 'last_login_at'
   direction?: 'asc' | 'desc'
 }
@@ -327,5 +339,51 @@ export async function startImpersonation(id: number): Promise<void> {
 
 export async function stopImpersonation(): Promise<{ operator_id?: number }> {
   const { data } = await apiClient.post<{ operator_id?: number }>('/api/impersonation/stop')
+  return data
+}
+
+export interface Plan extends PlanSummary {
+  monthly_price: string
+  price_per_student: string
+  is_default: boolean
+  is_active: boolean
+  sort_order: number
+  operators_count: number
+}
+
+export interface PlanInput {
+  name: string
+  code: string
+  student_limit: number | null
+  monthly_price: number
+  price_per_student: number
+  is_default: boolean
+  is_active: boolean
+  sort_order: number
+}
+
+export async function listPlans(): Promise<Plan[]> {
+  const { data } = await apiClient.get<Plan[]>('/api/admin/plans')
+  return data
+}
+
+export async function createPlan(input: PlanInput): Promise<Plan> {
+  const { data } = await apiClient.post<Plan>('/api/admin/plans', input)
+  return data
+}
+
+export async function updatePlan(id: number, input: PlanInput): Promise<Plan> {
+  const { data } = await apiClient.put<Plan>(`/api/admin/plans/${id}`, input)
+  return data
+}
+
+export async function deletePlan(id: number): Promise<void> {
+  await apiClient.delete(`/api/admin/plans/${id}`)
+}
+
+export async function assignOperatorPlan(operatorId: number, planId: number): Promise<PlanSummary> {
+  const { data } = await apiClient.put<PlanSummary>(`/api/admin/operators/${operatorId}/plan`, {
+    plan_id: planId,
+  })
   return data
 }
