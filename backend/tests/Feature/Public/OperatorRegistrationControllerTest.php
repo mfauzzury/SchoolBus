@@ -31,7 +31,7 @@ class OperatorRegistrationControllerTest extends TestCase
         $this->assertNotNull($user);
         $this->assertTrue($user->hasRole('operator_admin'));
         $this->assertNotNull($user->busOperator->operator_code);
-        $this->assertSame(4, strlen($user->busOperator->operator_code));
+        $this->assertSame(5, strlen($user->busOperator->operator_code));
     }
 
     public function test_email_must_be_unique_across_users_and_tenants(): void
@@ -70,5 +70,17 @@ class OperatorRegistrationControllerTest extends TestCase
         $codeB = User::where('email', 'b@test.com')->first()->busOperator->operator_code;
 
         $this->assertNotSame($codeA, $codeB);
+    }
+
+    public function test_password_must_contain_a_letter_and_a_number(): void
+    {
+        foreach (['abcdefghij', '1234567890'] as $password) {
+            $this->postJson('/api/register-operator', [
+                'company_name' => 'Weak Co', 'contact_person' => 'Weak', 'contact_phone' => '012',
+                'email' => 'weak@test.com', 'password' => $password,
+            ])->assertStatus(422)->assertJsonValidationErrors(['password']);
+        }
+
+        $this->assertDatabaseMissing('users', ['email' => 'weak@test.com']);
     }
 }

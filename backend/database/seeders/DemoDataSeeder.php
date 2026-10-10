@@ -19,7 +19,7 @@ class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
-        $tenant = BusOperator::where('operator_code', '1000')->firstOrFail();
+        $tenant = BusOperator::where('operator_code', '10000')->firstOrFail();
 
         $buses = collect([
             ['plate_number' => 'WXX 1234', 'capacity' => 40],
@@ -38,9 +38,9 @@ class DemoDataSeeder extends Seeder
         ])->map(fn ($attrs) => $tenant->staff()->create($attrs + ['role' => 'conductor', 'status' => 'active']));
 
         $routeDefs = [
-            ['name' => 'Route A - Taman Melati', 'zone' => 'North', 'school_destination' => 'SK Taman Melati', 'base_monthly_fee' => 150, 'stops' => ['Taman Melati Utama', 'Jalan Melati 5', 'Melati LRT Station']],
-            ['name' => 'Route B - Bandar Baru', 'zone' => 'South', 'school_destination' => 'SJK(C) Bandar Baru', 'base_monthly_fee' => 130, 'stops' => ['Bandar Baru Fasa 1', 'Bandar Baru Fasa 2']],
-            ['name' => 'Route C - Sri Damansara', 'zone' => 'West', 'school_destination' => 'SMK Sri Damansara', 'base_monthly_fee' => 170, 'stops' => ['Sri Damansara Club', 'Damansara Perdana', 'Sungai Buloh Junction']],
+            ['name' => 'Route A - Taman Melati', 'zone' => 'North', 'school_destination' => 'SK Taman Melati', 'base_monthly_fee' => 150, 'one_way_monthly_fee' => 90, 'stops' => ['Taman Melati Utama', 'Jalan Melati 5', 'Melati LRT Station']],
+            ['name' => 'Route B - Bandar Baru', 'zone' => 'South', 'school_destination' => 'SJK(C) Bandar Baru', 'base_monthly_fee' => 130, 'one_way_monthly_fee' => 80, 'stops' => ['Bandar Baru Fasa 1', 'Bandar Baru Fasa 2']],
+            ['name' => 'Route C - Sri Damansara', 'zone' => 'West', 'school_destination' => 'SMK Sri Damansara', 'base_monthly_fee' => 170, 'one_way_monthly_fee' => 100, 'stops' => ['Sri Damansara Club', 'Damansara Perdana', 'Sungai Buloh Junction']],
         ];
 
         $routes = collect($routeDefs)->map(function ($def, $i) use ($tenant, $buses, $drivers, $conductors) {
@@ -49,6 +49,7 @@ class DemoDataSeeder extends Seeder
                 'zone' => $def['zone'],
                 'school_destination' => $def['school_destination'],
                 'base_monthly_fee' => $def['base_monthly_fee'],
+                'one_way_monthly_fee' => $def['one_way_monthly_fee'],
                 'bus_id' => $buses[$i % $buses->count()]->id,
                 'driver_id' => $drivers[$i % $drivers->count()]->id,
                 'conductor_id' => $conductors[$i % $conductors->count()]->id,
@@ -129,7 +130,7 @@ class DemoDataSeeder extends Seeder
                     'enrollment_status' => 'active',
                 ]);
 
-                $invoice = $invoiceGenerator->generate($student);
+                $invoice = $invoiceGenerator->generateForMonth($student, InvoiceGenerator::currentMonth());
                 $studentsCreated[] = ['student' => $student, 'invoice' => $invoice];
             }
 

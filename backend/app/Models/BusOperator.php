@@ -22,20 +22,64 @@ class BusOperator extends Model
         'logo_path',
         'subscription_plan',
         'discount_config',
+        'billing_config',
+    ];
+
+    /**
+     * Never serialised: BusOperator is returned wholesale by /me (to every role,
+     * parents included) and by the public registration lookup.
+     */
+    protected $hidden = [
+        'billplz_secret_key',
+        'billplz_x_signature_key',
     ];
 
     protected $casts = [
         'bank_details' => 'array',
         'discount_config' => 'array',
+        'billing_config' => 'array',
+        'billplz_secret_key' => 'encrypted',
+        'billplz_x_signature_key' => 'encrypted',
+        'billplz_sandbox' => 'boolean',
     ];
 
-    protected $appends = ['logo_url'];
+    protected $appends = ['logo_url', 'billplz_enabled'];
 
     protected function logoUrl(): Attribute
     {
         return Attribute::get(
             fn () => $this->logo_path ? Storage::disk('public')->url($this->logo_path) : null,
         );
+    }
+
+    /**
+     * Parents can only pay online once the platform admin has entered all three
+     * Billplz credentials for this operator (money goes straight to their account).
+     */
+    public function hasBillplz(): bool
+    {
+        return filled($this->billplz_secret_key)
+            && filled($this->billplz_x_signature_key)
+            && filled($this->billplz_collection_id);
+    }
+
+    protected function billplzEnabled(): Attribute
+    {
+        return Attribute::get(fn () => $this->hasBillplz());
+    }
+
+    /**
+     * What the admin UI may know about the credentials — presence only, never the keys.
+     */
+    public function billplzSummary(): array
+    {
+        return [
+            'enabled' => $this->hasBillplz(),
+            'sandbox' => (bool) $this->billplz_sandbox,
+            'collection_id' => $this->billplz_collection_id,
+            'has_secret_key' => filled($this->billplz_secret_key),
+            'has_x_signature_key' => filled($this->billplz_x_signature_key),
+        ];
     }
 
     protected static function boot(): void
@@ -50,25 +94,19 @@ class BusOperator extends Model
     }
 
     /**
-     * The 4-digit code parents enter on the landing page to find their operator
+     * The 5-digit code parents enter on the landing page to find their operator
      * (spec §6.2 step 1's "registration link" made human-shareable — no URL to send).
      */
     private function generateUniqueOperatorCode(): string
     {
         do {
-            $code = str_pad((string) random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+            $code = str_pad((string) random_int(0, 99999), 5, '0', STR_PAD_LEFT);
         } while (self::where('operator_code', $code)->exists());
 
         return $code;
     }
 
     public const DEFAULT_DISCOUNT_CONFIG = [
-        'billing_periods' => [
-            'monthly' => 0,
-            'quarterly' => 5,
-            'half_year' => 10,
-            'yearly' => 15,
-        ],
         'sibling_discounts' => [
             '1' => 0,
             '2' => 10,
@@ -85,16 +123,34 @@ class BusOperator extends Model
         $config = $this->discount_config ?? [];
 
         return [
-            'billing_periods' => array_replace(
-                self::DEFAULT_DISCOUNT_CONFIG['billing_periods'],
-                $config['billing_periods'] ?? [],
-            ),
             // array_replace (not array_merge) — sibling tier keys ('1','2','3') are
             // numeric strings, and array_merge silently reindexes numeric keys from 0.
             'sibling_discounts' => array_replace(
                 self::DEFAULT_DISCOUNT_CONFIG['sibling_discounts'],
                 $config['sibling_discounts'] ?? [],
             ),
+        ];
+    }
+
+    public const DEFAULT_BILLING_CONFIG = [
+        'due_day' => 7,
+        'billed_months' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    ];
+
+    /**
+     * When bills are due and which months of the year are billed at all
+     * (operators untick school-holiday months). Defaults to every month.
+     */
+    public function resolvedBillingConfig(): array
+    {
+        $config = $this->billing_config ?? [];
+
+        $months = array_map('intval', $config['billed_months'] ?? self::DEFAULT_BILLING_CONFIG['billed_months']);
+        sort($months);
+
+        return [
+            'due_day' => (int) ($config['due_day'] ?? self::DEFAULT_BILLING_CONFIG['due_day']),
+            'billed_months' => array_values(array_unique($months)),
         ];
     }
 

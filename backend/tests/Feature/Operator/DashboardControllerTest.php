@@ -19,7 +19,8 @@ class DashboardControllerTest extends TestCase
         $admin = $this->createOperatorAdmin($tenant);
 
         Invoice::factory()->create(['tenant_id' => $tenant->id, 'final_amount' => 100, 'status' => InvoiceStatus::Issued]);
-        Invoice::factory()->create(['tenant_id' => $tenant->id, 'final_amount' => 200, 'status' => InvoiceStatus::Paid]);
+        $paid = Invoice::factory()->create(['tenant_id' => $tenant->id, 'final_amount' => 200, 'status' => InvoiceStatus::Paid]);
+        $this->pay($paid, 200);
 
         $response = $this->actingAs($admin)->getJson('/api/operator/dashboard/summary');
 
@@ -27,6 +28,46 @@ class DashboardControllerTest extends TestCase
             ->assertJsonPath('total_expected', 300)
             ->assertJsonPath('total_collected', 200)
             ->assertJsonPath('total_outstanding', 100);
+    }
+
+    public function test_a_part_payment_counts_as_collected_for_what_was_paid(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+
+        $invoice = Invoice::factory()->create(['tenant_id' => $tenant->id, 'final_amount' => 150]);
+        $this->pay($invoice, 60);
+
+        $this->actingAs($admin)->getJson('/api/operator/dashboard/summary')
+            ->assertOk()
+            ->assertJsonPath('total_expected', 150)
+            ->assertJsonPath('total_collected', 60)
+            ->assertJsonPath('total_outstanding', 90);
+    }
+
+    public function test_cancelled_bills_are_left_out_of_every_total(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+
+        Invoice::factory()->create(['tenant_id' => $tenant->id, 'final_amount' => 100]);
+        Invoice::factory()->overdue()->create(['tenant_id' => $tenant->id, 'final_amount' => 500, 'status' => InvoiceStatus::Void]);
+
+        $this->actingAs($admin)->getJson('/api/operator/dashboard/summary')
+            ->assertOk()
+            ->assertJsonPath('total_expected', 100)
+            ->assertJsonPath('total_outstanding', 100)
+            ->assertJsonPath('overdue_count', 0);
+    }
+
+    private function pay(Invoice $invoice, float $amount): void
+    {
+        $invoice->payments()->create([
+            'tenant_id' => $invoice->tenant_id,
+            'method' => 'cash',
+            'payment_date' => now()->toDateString(),
+            'amount_paid' => $amount,
+        ]);
     }
 
     public function test_overdue_count_only_counts_issued_invoices_past_due_date(): void

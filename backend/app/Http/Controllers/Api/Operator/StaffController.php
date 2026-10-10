@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\Operator;
 
 use App\Http\Controllers\Controller;
 use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class StaffController extends Controller
 {
@@ -60,6 +62,44 @@ class StaffController extends Controller
         $staff->delete();
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Provision (or reset) a driver-app login for this staff member. Idempotent:
+     * calling it again on an already-provisioned driver just resets the PIN —
+     * this doubles as the MVP "forgot PIN" flow, since there's no self-service
+     * reset or WhatsApp/email automation to relay a reset link through yet.
+     * The operator relays the PIN to the driver out-of-band (call/WhatsApp/SMS).
+     */
+    public function provisionLogin(Request $request, Staff $staff)
+    {
+        if ($staff->role !== 'driver') {
+            throw ValidationException::withMessages([
+                'role' => 'Only staff with the driver role can be given a mobile login.',
+            ]);
+        }
+
+        $data = $request->validate([
+            'pin' => 'required|digits:4',
+        ]);
+
+        $user = $staff->user;
+        $isNewLogin = ! $user;
+
+        if ($isNewLogin) {
+            $user = User::create([
+                'tenant_id' => $staff->tenant_id,
+                'name' => $staff->full_name,
+                'email' => "staff{$staff->id}@tenant{$staff->tenant_id}.drivers.bassekolah.internal",
+                'password' => $data['pin'],
+            ]);
+            $user->assignRole('driver');
+            $staff->update(['user_id' => $user->id]);
+        } else {
+            $user->update(['password' => $data['pin']]);
+        }
+
+        return response()->json(['message' => 'Driver login provisioned.'], $isNewLogin ? 201 : 200);
     }
 
     public function uploadAvatar(Request $request, Staff $staff)

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\ParentPortal;
 
-use App\Enums\BillingPeriod;
+use App\Enums\PackageType;
 use App\Http\Controllers\Controller;
 use App\Models\Route;
 use App\Services\FeeCalculator;
@@ -21,12 +21,12 @@ class QuoteController extends Controller
             // Tenant-scoped (see ParentPortal\StudentController for why the
             // plain 'exists:routes,id' string is unsafe here).
             'route_id' => ['required', Rule::exists('routes', 'id')->where('tenant_id', $request->user()->tenant_id)],
-            'billing_period' => 'required|in:monthly,quarterly,half_year,yearly',
+            'package_type' => ['required', Rule::in(['one_way', 'return'])],
         ]);
 
-        $route = Route::findOrFail($data['route_id']);
+        $monthlyFee = Route::findOrFail($data['route_id'])->feeFor(PackageType::from($data['package_type']));
 
-        if ($route->base_monthly_fee === null) {
+        if ($monthlyFee === null) {
             return response()->json(['message' => 'This route has no rate card configured yet.'], 422);
         }
 
@@ -35,8 +35,7 @@ class QuoteController extends Controller
 
         return $this->feeCalculator->calculate(
             tenant: $request->user()->busOperator,
-            baseMonthlyFee: (float) $route->base_monthly_fee,
-            billingPeriod: BillingPeriod::from($data['billing_period']),
+            monthlyFee: $monthlyFee,
             childPosition: $childPosition,
         );
     }

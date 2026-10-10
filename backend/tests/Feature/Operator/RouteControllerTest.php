@@ -38,6 +38,24 @@ class RouteControllerTest extends TestCase
         $this->assertSame('Stop 1', $response->json('stops.0.name'));
     }
 
+    public function test_a_route_has_a_return_fee_and_a_separate_one_way_fee(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+
+        $response = $this->actingAs($admin)->postJson('/api/operator/routes', [
+            'name' => 'Route A',
+            'base_monthly_fee' => 150,
+            'one_way_monthly_fee' => 90,
+        ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseHas('routes', ['name' => 'Route A', 'base_monthly_fee' => 150, 'one_way_monthly_fee' => 90]);
+
+        $this->actingAs($admin)->putJson('/api/operator/routes/'.$response->json('id'), ['one_way_monthly_fee' => null])->assertOk();
+        $this->assertDatabaseHas('routes', ['name' => 'Route A', 'one_way_monthly_fee' => null]);
+    }
+
     public function test_a_route_cannot_be_assigned_a_bus_from_another_tenant(): void
     {
         $tenantA = $this->createTenant();

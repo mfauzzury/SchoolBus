@@ -76,4 +76,59 @@ class StaffControllerTest extends TestCase
             'full_name' => 'X', 'ic_number' => '1', 'phone' => '1', 'role' => 'driver',
         ])->assertStatus(403);
     }
+
+    public function test_admin_can_provision_a_driver_login(): void
+    {
+        $this->ensureRole('driver');
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+        $staff = Staff::factory()->driver()->create(['tenant_id' => $tenant->id]);
+
+        $response = $this->actingAs($admin)->postJson("/api/operator/staff/{$staff->id}/login", ['pin' => '1234']);
+
+        $response->assertCreated();
+        $staff->refresh();
+        $this->assertNotNull($staff->user_id);
+        $this->assertTrue($staff->user->hasRole('driver'));
+        $this->assertSame($tenant->id, $staff->user->tenant_id);
+    }
+
+    public function test_provisioning_login_twice_resets_the_pin_instead_of_duplicating(): void
+    {
+        $this->ensureRole('driver');
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+        $staff = Staff::factory()->driver()->create(['tenant_id' => $tenant->id]);
+
+        $this->actingAs($admin)->postJson("/api/operator/staff/{$staff->id}/login", ['pin' => '1111'])
+            ->assertCreated();
+        $firstUserId = $staff->fresh()->user_id;
+
+        $response = $this->actingAs($admin)->postJson("/api/operator/staff/{$staff->id}/login", ['pin' => '2222']);
+
+        $response->assertOk();
+        $this->assertSame($firstUserId, $staff->fresh()->user_id);
+        $this->assertSame(1, \App\Models\User::where('id', $firstUserId)->count());
+    }
+
+    public function test_cannot_provision_a_login_for_a_conductor(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+        $staff = Staff::factory()->conductor()->create(['tenant_id' => $tenant->id]);
+
+        $this->actingAs($admin)->postJson("/api/operator/staff/{$staff->id}/login", ['pin' => '1234'])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['role']);
+    }
+
+    public function test_staff_role_cannot_provision_a_driver_login(): void
+    {
+        $tenant = $this->createTenant();
+        $staffUser = $this->createOperatorStaff($tenant);
+        $staff = Staff::factory()->driver()->create(['tenant_id' => $tenant->id]);
+
+        $this->actingAs($staffUser)->postJson("/api/operator/staff/{$staff->id}/login", ['pin' => '1234'])
+            ->assertStatus(403);
+    }
 }

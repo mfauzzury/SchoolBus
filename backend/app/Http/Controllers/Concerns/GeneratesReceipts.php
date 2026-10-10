@@ -2,31 +2,23 @@
 
 namespace App\Http\Controllers\Concerns;
 
-use App\Enums\InvoiceStatus;
-use App\Models\Invoice;
+use App\Models\Payment;
+use App\Services\ReceiptBuilder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Shared PDF receipt generation, used by both the operator ledger and the
  * parent portal (each with their own authorization check before calling in).
+ * A receipt is issued per payment, so a part-payment is acknowledged as soon
+ * as it is made rather than only when the bill is settled.
  */
 trait GeneratesReceipts
 {
-    private function receiptResponse(Invoice $invoice): Response
+    private function receiptResponse(Payment $payment): Response
     {
-        abort_unless($invoice->status === InvoiceStatus::Paid, 404, 'Receipts are only available for paid invoices.');
+        $data = app(ReceiptBuilder::class)->viewData($payment);
 
-        $invoice->loadMissing(['student.parentProfile', 'route', 'payments', 'busOperator']);
-
-        $pdf = Pdf::loadView('receipts.invoice', [
-            'invoice' => $invoice,
-            'tenant' => $invoice->busOperator,
-            'student' => $invoice->student,
-            'parentProfile' => $invoice->student->parentProfile,
-            'payment' => $invoice->payments->last(),
-        ]);
-
-        return $pdf->download("receipt-invoice-{$invoice->id}.pdf");
+        return Pdf::loadView('receipts.payment', $data)->download("receipt-{$payment->receipt_number}.pdf");
     }
 }

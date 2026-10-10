@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class RegistrationController extends Controller
 {
@@ -41,7 +42,7 @@ class RegistrationController extends Controller
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_relationship' => 'nullable|string|max:255',
             'emergency_contact_phone' => 'nullable|string|max:255',
-            'password' => 'required|string|min:8',
+            'password' => ['required', 'string', Password::min(8)->letters()->numbers()],
         ]);
 
         $user = DB::transaction(function () use ($tenant, $data) {

@@ -5,6 +5,8 @@ namespace Tests\Concerns;
 use App\Models\BusOperator;
 use App\Models\Invoice;
 use App\Models\ParentProfile;
+use App\Models\Route;
+use App\Models\Staff;
 use App\Models\Student;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
@@ -53,6 +55,24 @@ trait CreatesTestData
     }
 
     /**
+     * @return array{0: User, 1: Staff}
+     */
+    protected function createDriver(BusOperator $tenant, array $userAttributes = [], array $staffAttributes = []): array
+    {
+        $this->ensureRole('driver');
+        $user = User::factory()->create([...$userAttributes, 'tenant_id' => $tenant->id]);
+        $user->assignRole('driver');
+
+        $staff = Staff::factory()->driver()->create([
+            ...$staffAttributes,
+            'tenant_id' => $tenant->id,
+            'user_id' => $user->id,
+        ]);
+
+        return [$user, $staff];
+    }
+
+    /**
      * @return array{0: User, 1: ParentProfile}
      */
     protected function createParent(BusOperator $tenant, array $userAttributes = [], array $profileAttributes = []): array
@@ -68,6 +88,22 @@ trait CreatesTestData
         ]);
 
         return [$user, $profile];
+    }
+
+    /**
+     * An active student on a priced route — everything a bill needs.
+     * Pass 'parent_id' to add a sibling under an existing parent.
+     */
+    protected function createBillableStudent(BusOperator $tenant, array $studentOverrides = [], array $routeOverrides = []): Student
+    {
+        if (! isset($studentOverrides['parent_id'])) {
+            [, $parent] = $this->createParent($tenant);
+            $studentOverrides['parent_id'] = $parent->id;
+        }
+
+        $route = Route::factory()->create(['base_monthly_fee' => 150, ...$routeOverrides, 'tenant_id' => $tenant->id]);
+
+        return Student::factory()->create(['route_id' => $route->id, ...$studentOverrides, 'tenant_id' => $tenant->id]);
     }
 
     /**

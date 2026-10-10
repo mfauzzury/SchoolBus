@@ -12,7 +12,7 @@ class DemoTenantSeeder extends Seeder
     {
         $operator = BusOperator::create([
             'company_name' => 'Demo Bus Co',
-            'operator_code' => '1000',
+            'operator_code' => '10000',
             'contact_person' => 'Demo Admin',
             'contact_phone' => '+60123456789',
             'email' => 'contact@demobusco.test',

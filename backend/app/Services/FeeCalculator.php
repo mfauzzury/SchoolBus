@@ -2,41 +2,34 @@
 
 namespace App\Services;
 
-use App\Enums\BillingPeriod;
 use App\Models\BusOperator;
 
 class FeeCalculator
 {
     /**
-     * Final Amount = Base Monthly Fee x Months x (1 - Billing Discount) x (1 - Sibling Discount)
+     * Final Amount = Monthly Fee x (1 - Sibling Discount)
      *
-     * Sibling discount stacks multiplicatively on top of the billing period discount,
-     * both expressed as tenant-configurable percentages (spec §3.2-3.4).
+     * The sibling discount is a tenant-configurable percentage (spec §3.4).
+     * A fee the operator set by hand for one child is charged exactly as
+     * entered — no discount is taken off it a second time.
      *
      * @param  int  $childPosition  1st, 2nd, 3rd+ child of the same parent (1-indexed)
      */
     public function calculate(
         BusOperator $tenant,
-        float $baseMonthlyFee,
-        BillingPeriod $billingPeriod,
+        float $monthlyFee,
         int $childPosition = 1,
+        bool $isCustomFee = false,
     ): array {
-        $config = $tenant->resolvedDiscountConfig();
+        $siblingDiscountRate = $isCustomFee
+            ? 0.0
+            : $this->siblingDiscountRate($tenant->resolvedDiscountConfig(), $childPosition);
 
-        $months = $billingPeriod->months();
-        $billingDiscountRate = (float) ($config['billing_periods'][$billingPeriod->value] ?? 0);
-        $siblingDiscountRate = $this->siblingDiscountRate($config, $childPosition);
-
-        $amountBeforeDiscount = round($baseMonthlyFee * $months, 2);
-        $finalAmount = round(
-            $amountBeforeDiscount * (1 - $billingDiscountRate / 100) * (1 - $siblingDiscountRate / 100),
-            2,
-        );
+        $amountBeforeDiscount = round($monthlyFee, 2);
+        $finalAmount = round($amountBeforeDiscount * (1 - $siblingDiscountRate / 100), 2);
         $discountAmount = round($amountBeforeDiscount - $finalAmount, 2);
 
         return [
-            'months' => $months,
-            'billing_discount_rate' => $billingDiscountRate,
             'sibling_discount_rate' => $siblingDiscountRate,
             'amount_before_discount' => $amountBeforeDiscount,
             'discount_amount' => $discountAmount,

@@ -43,4 +43,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(ParentProfile::class, 'user_id');
     }
+
+    public function staff(): HasOne
+    {
+        return $this->hasOne(Staff::class, 'user_id');
+    }
 }

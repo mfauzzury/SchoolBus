@@ -75,6 +75,7 @@ class RouteController extends Controller
             'driver_id' => ['nullable', Rule::exists('staff', 'id')->where('tenant_id', $tenantId)],
             'conductor_id' => ['nullable', Rule::exists('staff', 'id')->where('tenant_id', $tenantId)],
             'base_monthly_fee' => 'nullable|numeric|min:0',
+            'one_way_monthly_fee' => 'nullable|numeric|min:0',
             'stops' => 'sometimes|array',
             'stops.*.name' => 'required_with:stops|string|max:255',
             'stops.*.sequence' => 'required_with:stops|integer|min:0',
@@ -84,7 +85,7 @@ class RouteController extends Controller
     private function routeAttributes(array $data): array
     {
         return array_intersect_key($data, array_flip([
-            'name', 'zone', 'school_destination', 'bus_id', 'driver_id', 'conductor_id', 'base_monthly_fee',
+            'name', 'zone', 'school_destination', 'bus_id', 'driver_id', 'conductor_id', 'base_monthly_fee', 'one_way_monthly_fee',
         ]));
     }
 
