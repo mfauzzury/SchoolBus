@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -166,6 +167,58 @@ class BusOperator extends Model
             'due_day' => (int) ($config['due_day'] ?? self::DEFAULT_BILLING_CONFIG['due_day']),
             'billed_months' => array_values(array_unique($months)),
         ];
+    }
+
+    /** The things the dashboard's "needs attention" list (and the matching list filter) is made of. */
+    public const ATTENTION = ['new', 'no_billplz', 'no_students', 'over_limit', 'inactive'];
+
+    public function scopeBillplzConnected(Builder $query): void
+    {
+        $query->whereNotNull('bus_operators.billplz_secret_key')
+            ->whereNotNull('bus_operators.billplz_x_signature_key')
+            ->whereNotNull('bus_operators.billplz_collection_id');
+    }
+
+    public function scopeBillplzMissing(Builder $query): void
+    {
+        $query->where(fn (Builder $q) => $q
+            ->whereNull('bus_operators.billplz_secret_key')
+            ->orWhereNull('bus_operators.billplz_x_signature_key')
+            ->orWhereNull('bus_operators.billplz_collection_id'));
+    }
+
+    /** More active students than the plan's limit; plans with no limit never qualify. */
+    public function scopeOverPlanLimit(Builder $query): void
+    {
+        $query->whereHas('plan', fn (Builder $plan) => $plan
+            ->whereNotNull('student_limit')
+            ->whereRaw(
+                '(select count(*) from students where students.tenant_id = bus_operators.id and students.enrollment_status = ?) > plans.student_limit',
+                ['active'],
+            ));
+    }
+
+    /**
+     * One "needs a look" reason. Suspended operators are excluded: they have
+     * already been dealt with.
+     */
+    public function scopeAttention(Builder $query, string $kind): void
+    {
+        $query->where('bus_operators.status', 'active');
+
+        match ($kind) {
+            'new' => $query->where('bus_operators.created_at', '>=', now()->subDays(7)),
+            'no_billplz' => $query->billplzMissing(),
+            'no_students' => $query
+                ->where('bus_operators.created_at', '<=', now()->subDays(7))
+                ->whereDoesntHave('students'),
+            'over_limit' => $query->overPlanLimit(),
+            'inactive' => $query
+                ->where('bus_operators.created_at', '<=', now()->subDays(30))
+                ->whereDoesntHave('users', fn (Builder $users) => $users
+                    ->operatorOwners()
+                    ->where('last_login_at', '>=', now()->subDays(30))),
+        };
     }
 
     public function plan(): BelongsTo

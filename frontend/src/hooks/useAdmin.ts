@@ -4,6 +4,9 @@ import {
   assignOperatorPlan,
   createPlan,
   deletePlan,
+  getAttention,
+  getTrends,
+  listPaymentAttempts,
   listPlans,
   updatePlan,
   addTeamMember,
@@ -33,6 +36,7 @@ import {
   type BillplzSettingsInput,
   type OperatorDetailsInput,
   type OperatorFilters,
+  type PaymentAttemptFilters,
   type PlanInput,
   type TeamMemberInput,
   type TransactionFilters,
@@ -63,7 +67,24 @@ export function useAdminTransactions(filters: TransactionFilters) {
   return useQuery({
     queryKey: ['admin-transactions', filters],
     queryFn: () => listTransactions(filters),
+    placeholderData: (previous) => previous,
   })
+}
+
+export function usePaymentAttempts(filters: PaymentAttemptFilters) {
+  return useQuery({
+    queryKey: ['admin-payment-attempts', filters],
+    queryFn: () => listPaymentAttempts(filters),
+    placeholderData: (previous) => previous,
+  })
+}
+
+export function usePlatformTrends() {
+  return useQuery({ queryKey: ['admin-dashboard-trends'], queryFn: getTrends })
+}
+
+export function usePlatformAttention() {
+  return useQuery({ queryKey: ['admin-dashboard-attention'], queryFn: getAttention })
 }
 
 export function useUpdateBillplzSettings(operatorId: number) {

@@ -26,6 +26,7 @@ class OperatorController extends Controller
             'billplz' => ['nullable', Rule::in(['connected', 'none'])],
             'plan_id' => ['nullable', 'integer'],
             'over_limit' => ['nullable', 'boolean'],
+            'attention' => ['nullable', Rule::in(BusOperator::ATTENTION)],
             'sort' => ['nullable', Rule::in(self::SORTABLE)],
             'direction' => ['nullable', Rule::in(['asc', 'desc'])],
         ]);
@@ -44,28 +45,22 @@ class OperatorController extends Controller
         }
 
         if ($request->input('billplz') === 'connected') {
-            $query->whereNotNull('billplz_secret_key')
-                ->whereNotNull('billplz_x_signature_key')
-                ->whereNotNull('billplz_collection_id');
+            $query->billplzConnected();
         } elseif ($request->input('billplz') === 'none') {
-            $query->where(fn (Builder $q) => $q
-                ->whereNull('billplz_secret_key')
-                ->orWhereNull('billplz_x_signature_key')
-                ->orWhereNull('billplz_collection_id'));
+            $query->billplzMissing();
+        }
+
+        // Same definitions the dashboard's "needs attention" counts use.
+        if ($request->filled('attention')) {
+            $query->attention($request->input('attention'));
         }
 
         if ($request->filled('plan_id')) {
             $query->where('plan_id', $request->integer('plan_id'));
         }
 
-        // More active students than the plan's limit (plans with no limit never qualify).
         if ($request->boolean('over_limit')) {
-            $query->whereHas('plan', fn (Builder $plan) => $plan
-                ->whereNotNull('student_limit')
-                ->whereRaw(
-                    '(select count(*) from students where students.tenant_id = bus_operators.id and students.enrollment_status = ?) > plans.student_limit',
-                    ['active'],
-                ));
+            $query->overPlanLimit();
         }
 
         $sort = $request->input('sort', 'company_name');

@@ -41,6 +41,10 @@ class OperatorRegistrationController extends Controller
             return $user;
         });
 
+        // They are logged in right now, so count it as a login (the dashboard's
+        // "no login in 30 days" would otherwise flag every brand-new operator).
+        $user->forceFill(['last_login_at' => now()])->save();
+
         Auth::login($user);
         $request->session()->regenerate();
 

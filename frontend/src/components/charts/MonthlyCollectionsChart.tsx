@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { LedgerInvoice } from '@/api/finances'
+import { compactMoney, niceCeil } from '@/lib/chart'
 import { cn, formatMoney } from '@/lib/utils'
 
 type SeriesKey = 'collected' | 'pending' | 'overdue'
@@ -22,23 +23,6 @@ interface MonthBucket {
 
 const MAX_MONTHS = 6
 const GRID_STEPS = 4
-
-/** Round a max value up to a "nice" axis ceiling (1, 2, 2.5, 5, 10 × 10^n). */
-function niceCeil(value: number): number {
-  if (value <= 0) return 1
-  const exp = Math.pow(10, Math.floor(Math.log10(value)))
-  const f = value / exp
-  const nice = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10
-  return nice * exp
-}
-
-function compactMoney(value: number): string {
-  if (value >= 1000) {
-    const k = value / 1000
-    return `${Number.isInteger(k) ? k : k.toFixed(1)}K`
-  }
-  return String(value)
-}
 
 // Mirrors the backend: 'overdue' is never stored, it is an issued invoice past its due
 // date. Drafts count as awaiting payment so the three series add up to the dashboard's

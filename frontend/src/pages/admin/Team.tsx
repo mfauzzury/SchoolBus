@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   AlertDialog,
@@ -51,7 +52,7 @@ export function AdminTeam() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-medium">{t('admin.team.title')}</h1>
-        <Link to="/admin/team/new" className={buttonVariants()}>
+        <Link to="/admin/team/new" className={cn(buttonVariants())}>
           {t('admin.team.add')}
         </Link>
       </div>

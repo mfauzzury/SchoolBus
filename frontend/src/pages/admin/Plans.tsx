@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   AlertDialog,
@@ -36,7 +37,7 @@ export function AdminPlans() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-medium">{t('admin.plans.title')}</h1>
         {canManage && (
-          <Link to="/admin/plans/new" className={buttonVariants()}>
+          <Link to="/admin/plans/new" className={cn(buttonVariants())}>
             {t('admin.plans.add')}
           </Link>
         )}
@@ -94,7 +95,7 @@ export function AdminPlans() {
                         <div className="flex justify-end gap-2">
                           <Link
                             to={`/admin/plans/${plan.id}`}
-                            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
                           >
                             {t('common.edit')}
                           </Link>

@@ -600,7 +600,49 @@
       "totalOperators": "Jumlah Pengendali",
       "totalStudents": "Jumlah Pelajar",
       "totalBuses": "Jumlah Bas",
-      "totalParents": "Jumlah Ibu Bapa"
+      "totalParents": "Jumlah Ibu Bapa",
+      "thisMonth": "Bulan ini",
+      "collected": "Wang diterima",
+      "newOperators": "Pengendali baharu",
+      "newStudents": "Pelajar baharu",
+      "lastMonth": "Bulan lepas: {{value}}",
+      "attentionTitle": "Perlu perhatian",
+      "attentionNone": "Tiada apa yang perlu perhatian sekarang.",
+      "seeAll": "Lihat semua",
+      "andMore": "dan {{count}} lagi",
+      "platformTotals": "Keseluruhan setakat ini",
+      "charts": {
+        "empty": "Belum ada apa-apa untuk ditunjukkan.",
+        "collected": "Wang diterima, 12 bulan lepas",
+        "newOperators": "Pengendali baharu, 12 bulan lepas",
+        "newStudents": "Pelajar baharu, 12 bulan lepas"
+      },
+      "attention": {
+        "new": {
+          "title": "Baharu minggu ini",
+          "help": "Menyertai dalam 7 hari lepas. Masa yang baik untuk menyapa."
+        },
+        "no_billplz": {
+          "title": "Bayaran dalam talian belum disediakan",
+          "help": "Ibu bapa tidak boleh bayar dalam talian sehingga Billplz disambung untuk mereka."
+        },
+        "no_students": {
+          "title": "Belum ada pelajar",
+          "help": "Menyertai lebih seminggu lepas tetapi belum tambah pelajar."
+        },
+        "over_limit": {
+          "title": "Melebihi had pelan",
+          "help": "Pelajar aktif lebih daripada yang dibenarkan pelan mereka."
+        },
+        "inactive": {
+          "title": "Tidak log masuk 30 hari",
+          "help": "Pemilik tidak log masuk sebulan. Mereka mungkin perlu diingatkan."
+        },
+        "stuck_payments": {
+          "title": "Bayaran dalam talian tidak selesai",
+          "help": "Ibu bapa mula membayar lebih sejam lepas dan tidak pernah selesai."
+        }
+      }
     },
     "operators": {
       "title": "Pengendali",
@@ -633,7 +675,9 @@
       "planAll": "Semua pelan",
       "studentLimit": "Had pelajar",
       "limitAll": "Semua",
-      "limitOver": "Melebihi had pelan"
+      "limitOver": "Melebihi had pelan",
+      "attention": "Perlu perhatian",
+      "attentionAll": "Semua"
     },
     "transactions": {
       "title": "Transaksi",
@@ -644,7 +688,21 @@
       "date": "Tarikh",
       "dateFrom": "Dari",
       "dateTo": "Hingga",
-      "noTransactions": "Belum ada transaksi."
+      "noTransactions": "Belum ada transaksi.",
+      "tabReceived": "Bayaran diterima",
+      "tabOnline": "Pembayaran dalam talian",
+      "export": "Muat turun CSV",
+      "exporting": "Menyediakan…",
+      "exportError": "Tidak dapat muat turun. Sila cuba lagi.",
+      "onlineIntro": "Setiap pembayaran dalam talian (Billplz), termasuk yang dimulakan ibu bapa dan tidak diselesaikan.",
+      "attemptPaid": "Dibayar",
+      "attemptPending": "Menunggu",
+      "stuckOnly": "Yang tersangkut sahaja",
+      "started": "Dimulakan",
+      "parent": "Ibu bapa",
+      "bills": "Bil",
+      "stuck": "Tersangkut",
+      "noAttempts": "Tiada pembayaran dalam talian yang sepadan."
     },
       "team": {
         "title": "Pasukan",
@@ -703,7 +761,8 @@
         "plan_created": "Mencipta pelan",
         "plan_updated": "Mengubah pelan",
         "plan_deleted": "Memadam pelan",
-        "operator_plan_changed": "Menukar pelan pengendali"
+        "operator_plan_changed": "Menukar pelan pengendali",
+        "transactions_exported": "Memuat turun transaksi"
         }
       },
       "notes": {

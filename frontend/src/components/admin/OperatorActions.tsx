@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -50,7 +51,7 @@ export function OperatorActions({ operator }: { operator: AdminOperatorDetail })
         {canEdit && (
           <Link
             to={`/admin/operators/${operator.id}/edit`}
-            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
           >
             {t('common.edit')}
           </Link>

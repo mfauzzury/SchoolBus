@@ -1,6 +1,16 @@
 import { apiClient } from './client'
 
+export interface MonthFigures {
+  new_operators: number
+  new_students: number
+  /** Money received (payments by payment date), in ringgit. */
+  collected: number
+}
+
 export interface PlatformSummary {
+  /** This month so far, and the whole of last month. */
+  this_month: MonthFigures
+  last_month: MonthFigures
   total_operators: number
   total_students: number
   total_buses: number
@@ -44,8 +54,11 @@ export async function getPlatformSummary(): Promise<PlatformSummary> {
   return data
 }
 
+export type AttentionKind = 'new' | 'no_billplz' | 'no_students' | 'over_limit' | 'inactive'
+
 export interface OperatorFilters {
   page?: number
+  attention?: AttentionKind
   search?: string
   status?: 'active' | 'suspended'
   billplz?: 'connected' | 'none'
@@ -57,7 +70,8 @@ export interface OperatorFilters {
 
 export async function listOperators(filters: OperatorFilters): Promise<Paginated<AdminOperator>> {
   const { data } = await apiClient.get<Paginated<AdminOperator>>('/api/admin/operators', {
-    params: filters,
+    // Laravel's `boolean` rule accepts 1/0, not the string "true".
+    params: { ...filters, over_limit: filters.over_limit ? 1 : undefined },
   })
   return data
 }
@@ -195,16 +209,102 @@ export interface Transaction {
 }
 
 export interface TransactionFilters {
+  page?: number
   operator_id?: number
   method?: string
   date_from?: string
   date_to?: string
 }
 
-export async function listTransactions(filters: TransactionFilters): Promise<Transaction[]> {
-  const { data } = await apiClient.get<Transaction[]>('/api/admin/transactions', {
+export interface TransactionPage extends Paginated<Transaction> {
+  /** Cover everything the filters match, not just this page. */
+  totals: { count: number; amount: number }
+}
+
+export async function listTransactions(filters: TransactionFilters): Promise<TransactionPage> {
+  const { data } = await apiClient.get<TransactionPage>('/api/admin/transactions', {
     params: filters,
   })
+  return data
+}
+
+/** Downloads the filtered transactions as a CSV file in the browser. */
+export async function downloadTransactions(filters: Omit<TransactionFilters, 'page'>): Promise<void> {
+  const { data } = await apiClient.get<Blob>('/api/admin/transactions/export', {
+    params: filters,
+    responseType: 'blob',
+  })
+  const url = URL.createObjectURL(data)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'transactions.csv'
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+export interface PaymentAttempt {
+  id: number
+  amount: string
+  status: 'pending' | 'paid'
+  /** Pending for over an hour: probably an unfinished or failed checkout. */
+  stuck: boolean
+  created_at: string
+  paid_at: string | null
+  invoices_count: number
+  bus_operator: { id: number; company_name: string; operator_code: string } | null
+  user: { id: number; name: string } | null
+}
+
+export interface PaymentAttemptFilters {
+  page?: number
+  operator_id?: number
+  status?: 'pending' | 'paid'
+  stuck?: boolean
+}
+
+export async function listPaymentAttempts(
+  filters: PaymentAttemptFilters,
+): Promise<Paginated<PaymentAttempt>> {
+  const { data } = await apiClient.get<Paginated<PaymentAttempt>>('/api/admin/payment-attempts', {
+    params: { ...filters, stuck: filters.stuck ? 1 : undefined },
+  })
+  return data
+}
+
+export interface TrendMonth extends MonthFigures {
+  /** 'YYYY-MM' */
+  month: string
+}
+
+export async function getTrends(): Promise<TrendMonth[]> {
+  const { data } = await apiClient.get<{ months: TrendMonth[] }>('/api/admin/dashboard/trends')
+  return data.months
+}
+
+export interface AttentionList<TItem> {
+  count: number
+  items: TItem[]
+}
+
+export interface AttentionOperator {
+  id: number
+  company_name: string
+}
+
+export interface AttentionStuckPayment {
+  id: number
+  amount: string
+  created_at: string
+  operator_id: number
+  company_name: string | null
+}
+
+export type PlatformAttention = Record<AttentionKind, AttentionList<AttentionOperator>> & {
+  stuck_payments: AttentionList<AttentionStuckPayment>
+}
+
+export async function getAttention(): Promise<PlatformAttention> {
+  const { data } = await apiClient.get<PlatformAttention>('/api/admin/dashboard/attention')
   return data
 }
 

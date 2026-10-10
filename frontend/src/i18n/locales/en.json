@@ -600,7 +600,49 @@
       "totalOperators": "Total Operators",
       "totalStudents": "Total Students",
       "totalBuses": "Total Buses",
-      "totalParents": "Total Parents"
+      "totalParents": "Total Parents",
+      "thisMonth": "This month",
+      "collected": "Money collected",
+      "newOperators": "New operators",
+      "newStudents": "New students",
+      "lastMonth": "Last month: {{value}}",
+      "attentionTitle": "Needs attention",
+      "attentionNone": "Nothing needs attention right now.",
+      "seeAll": "See all",
+      "andMore": "and {{count}} more",
+      "platformTotals": "Everything so far",
+      "charts": {
+        "empty": "Nothing to show yet.",
+        "collected": "Money collected, last 12 months",
+        "newOperators": "New operators, last 12 months",
+        "newStudents": "New students, last 12 months"
+      },
+      "attention": {
+        "new": {
+          "title": "New this week",
+          "help": "Joined in the last 7 days. A good moment to say hello."
+        },
+        "no_billplz": {
+          "title": "No online payments set up",
+          "help": "Parents cannot pay online until Billplz is connected for them."
+        },
+        "no_students": {
+          "title": "No students yet",
+          "help": "Joined over a week ago but have not added any student."
+        },
+        "over_limit": {
+          "title": "Over their plan limit",
+          "help": "More active students than their plan allows."
+        },
+        "inactive": {
+          "title": "Not logged in for 30 days",
+          "help": "The owner has not logged in for a month. They may need a nudge."
+        },
+        "stuck_payments": {
+          "title": "Online payments not finished",
+          "help": "A parent started paying more than an hour ago and it never completed."
+        }
+      }
     },
     "operators": {
       "title": "Operators",
@@ -634,7 +676,9 @@
       "planAll": "All plans",
       "studentLimit": "Student limit",
       "limitAll": "All",
-      "limitOver": "Over the plan limit"
+      "limitOver": "Over the plan limit",
+      "attention": "Needs attention",
+      "attentionAll": "Everyone"
     },
     "transactions": {
       "title": "Transactions",
@@ -645,7 +689,21 @@
       "date": "Date",
       "dateFrom": "From",
       "dateTo": "To",
-      "noTransactions": "No transactions yet."
+      "noTransactions": "No transactions yet.",
+      "tabReceived": "Payments received",
+      "tabOnline": "Online checkouts",
+      "export": "Download CSV",
+      "exporting": "Preparing…",
+      "exportError": "Could not download. Please try again.",
+      "onlineIntro": "Every online (Billplz) checkout, including the ones parents started and never finished.",
+      "attemptPaid": "Paid",
+      "attemptPending": "Waiting",
+      "stuckOnly": "Only the stuck ones",
+      "started": "Started",
+      "parent": "Parent",
+      "bills": "Bills",
+      "stuck": "Stuck",
+      "noAttempts": "No online checkouts match."
     },
       "team": {
         "title": "Team",
@@ -704,7 +762,8 @@
         "plan_created": "Created a plan",
         "plan_updated": "Edited a plan",
         "plan_deleted": "Deleted a plan",
-        "operator_plan_changed": "Changed an operator's plan"
+        "operator_plan_changed": "Changed an operator's plan",
+        "transactions_exported": "Downloaded transactions"
         }
       },
       "notes": {

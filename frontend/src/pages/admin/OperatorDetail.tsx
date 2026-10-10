@@ -21,7 +21,6 @@ import type {
   AdminOperatorRoute,
   AdminOperatorStaff,
   AdminOperatorStudent,
-  Transaction,
 } from '@/api/admin'
 import { formatMoney } from '@/lib/utils'
 import { pillTabClass, pillTabListClass } from '@/lib/tabs'
@@ -30,6 +29,7 @@ import { OperatorActions } from '@/components/admin/OperatorActions'
 import { OperatorActivity } from '@/components/admin/OperatorActivity'
 import { OperatorNotes } from '@/components/admin/OperatorNotes'
 import { OperatorPlanCard } from '@/components/admin/OperatorPlanCard'
+import { OperatorTransactions } from '@/components/admin/OperatorTransactions'
 import { planUsage } from '@/lib/plans'
 import { useCan } from '@/hooks/useAuth'
 
@@ -76,7 +76,7 @@ export function AdminOperatorPage() {
     { key: 'buses', label: t('nav.buses'), count: operator?.buses_count ?? 0 },
     { key: 'staff', label: t('nav.staff'), count: operator?.staff_count ?? 0 },
     { key: 'routes', label: t('nav.routes'), count: operator?.routes_count ?? 0 },
-    { key: 'transactions', label: t('admin.nav.transactions'), count: transactions?.length ?? 0 },
+    { key: 'transactions', label: t('admin.nav.transactions'), count: transactions?.total ?? 0 },
     ...(canSeeGateway ? [{ key: 'gateway' as const, label: t('admin.operatorDetail.tabGateway') }] : []),
     ...(canSeeNotes ? [{ key: 'notes' as const, label: t('admin.notes.tab') }] : []),
     ...(canSeeActivity ? [{ key: 'activity' as const, label: t('admin.activity.title') }] : []),
@@ -91,7 +91,7 @@ export function AdminOperatorPage() {
     buses: operator?.buses ?? [],
     staff: operator?.staff ?? [],
     routes: operator?.routes ?? [],
-    transactions: transactions ?? [],
+    transactions: [],
   }
 
   const { page, setPage, pageCount, pageItems } = usePagination(listForTab[activeTab])
@@ -271,7 +271,9 @@ export function AdminOperatorPage() {
 
       {activeTab === 'activity' && canSeeActivity && <OperatorActivity operatorId={operatorId} />}
 
-      {!['details', 'gateway', 'notes', 'activity'].includes(activeTab) && (
+      {activeTab === 'transactions' && <OperatorTransactions operatorId={operatorId} />}
+
+      {!['details', 'gateway', 'notes', 'activity', 'transactions'].includes(activeTab) && (
         <Card>
           <CardContent className="flex flex-col gap-4">
             {activeTab === 'students' && (
@@ -382,33 +384,6 @@ export function AdminOperatorPage() {
               </Table>
             )}
 
-            {activeTab === 'transactions' && (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t('admin.transactions.date')}</TableHead>
-                    <TableHead>{t('operator.finances.student')}</TableHead>
-                    <TableHead>{t('operator.finances.route')}</TableHead>
-                    <TableHead>{t('operator.finances.method')}</TableHead>
-                    <TableHead>{t('operator.finances.referenceNumber')}</TableHead>
-                    <TableHead className="text-right">{t('operator.finances.amount')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(pageItems as Transaction[]).map((txn) => (
-                    <TableRow key={txn.id}>
-                      <TableCell>{txn.payment_date.slice(0, 10)}</TableCell>
-                      <TableCell>{txn.invoice.student.full_name}</TableCell>
-                      <TableCell>{txn.invoice.route?.name ?? '—'}</TableCell>
-                      <TableCell>{t(`operator.finances.${camelizeMethod(txn.method)}`)}</TableCell>
-                      <TableCell>{txn.reference_number ?? '—'}</TableCell>
-                      <TableCell className="text-right">RM {formatMoney(txn.amount_paid)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-
             {pageItems.length === 0 && (
               <p className="text-sm text-muted-foreground">{t('admin.operatorDetail.empty')}</p>
             )}
@@ -428,8 +403,4 @@ function DetailItem({ label, value, mono }: { label: string; value: React.ReactN
       <dd className={mono ? 'font-mono' : undefined}>{value || '—'}</dd>
     </div>
   )
-}
-
-function camelizeMethod(method: string): string {
-  return method === 'bank_transfer' ? 'bankTransfer' : method
 }

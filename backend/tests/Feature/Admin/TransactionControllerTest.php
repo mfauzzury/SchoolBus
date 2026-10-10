@@ -38,8 +38,8 @@ class TransactionControllerTest extends TestCase
 
         $response = $this->actingAs($admin)->getJson('/api/admin/transactions');
 
-        $response->assertOk()->assertJsonCount(2);
-        $companies = collect($response->json())->pluck('bus_operator.company_name')->all();
+        $response->assertOk()->assertJsonCount(2, 'data');
+        $companies = collect($response->json('data'))->pluck('bus_operator.company_name')->all();
         $this->assertContains('Alpha Buses', $companies);
         $this->assertContains('Beta Buses', $companies);
     }
@@ -67,14 +67,14 @@ class TransactionControllerTest extends TestCase
 
         $byOperator = $this->actingAs($admin)
             ->getJson("/api/admin/transactions?operator_id={$tenantA->id}");
-        $byOperator->assertOk()->assertJsonCount(2);
+        $byOperator->assertOk()->assertJsonCount(2, 'data');
 
         $byMethod = $this->actingAs($admin)->getJson('/api/admin/transactions?method=cash');
-        $byMethod->assertOk()->assertJsonCount(2);
+        $byMethod->assertOk()->assertJsonCount(2, 'data');
 
         $byDate = $this->actingAs($admin)
             ->getJson('/api/admin/transactions?date_from=2026-07-01&date_to=2026-07-31');
-        $byDate->assertOk()->assertJsonCount(2);
+        $byDate->assertOk()->assertJsonCount(2, 'data');
     }
 
     public function test_operator_admin_cannot_list_transactions(): void

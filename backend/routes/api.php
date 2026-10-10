@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardControll
 use App\Http\Controllers\Api\Admin\ImpersonationController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
 use App\Http\Controllers\Api\Admin\OperatorNoteController;
+use App\Http\Controllers\Api\Admin\PaymentAttemptController;
 use App\Http\Controllers\Api\Admin\PlanController;
 use App\Http\Controllers\Api\Admin\TeamController;
 use App\Http\Controllers\Api\Admin\TransactionController as AdminTransactionController;
@@ -70,10 +71,15 @@ Route::middleware('auth:sanctum')->group(function () {
     // what each level may change is gated per route by permission.
     Route::middleware('role:saas_admin|saas_finance|saas_support')->prefix('admin')->group(function () {
         Route::get('dashboard/summary', [AdminDashboardController::class, 'summary']);
+        Route::get('dashboard/trends', [AdminDashboardController::class, 'trends']);
+        Route::get('dashboard/attention', [AdminDashboardController::class, 'attention']);
         Route::get('operators', [AdminOperatorController::class, 'index']);
         Route::get('operators/options', [AdminOperatorController::class, 'options']);
         Route::get('operators/{operator}', [AdminOperatorController::class, 'show']);
         Route::get('transactions', [AdminTransactionController::class, 'index']);
+        Route::get('payment-attempts', [PaymentAttemptController::class, 'index']);
+        Route::get('transactions/export', [AdminTransactionController::class, 'export'])
+            ->middleware('permission:transactions.export');
 
         Route::get('plans', [PlanController::class, 'index']);
 

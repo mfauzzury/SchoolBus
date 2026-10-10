@@ -52,6 +52,8 @@
 :root {
     /* Chart series (dataviz palette slots 1-3, validated for light and dark). */
     --viz-collected: #2a78d6;
+    /* Single-series charts: categorical slot 1. */
+    --viz-primary: #2a78d6;
     --viz-overdue: #eb6834;
     --viz-pending: #1baf7a;
     --background: oklch(1 0 0);
@@ -90,6 +92,7 @@
 
 .dark {
     --viz-collected: #3987e5;
+    --viz-primary: #3987e5;
     --viz-overdue: #d95926;
     --viz-pending: #199e70;
     --background: oklch(0.145 0 0);
