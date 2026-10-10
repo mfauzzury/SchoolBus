@@ -32,6 +32,12 @@ class AuthController extends Controller
             ]);
         }
 
+        if ($user->busOperator?->isSuspended()) {
+            throw ValidationException::withMessages([
+                'email' => 'This service is not available right now.',
+            ]);
+        }
+
         $token = $user->createToken($data['device_name'] ?? 'parent-app')->plainTextToken;
 
         return response()->json([

@@ -14,7 +14,8 @@ class ActivityLog
     public static function record(string $action, ?int $tenantId = null, array $properties = []): ActivityLogEntry
     {
         return ActivityLogEntry::create([
-            'user_id' => auth()->id(),
+            // While "logged in as" an operator, actions still belong to the platform member.
+            'user_id' => (request()?->hasSession() ? session('impersonator_id') : null) ?? auth()->id(),
             'tenant_id' => $tenantId,
             'action' => $action,
             'properties' => $properties ?: null,

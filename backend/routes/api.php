@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\Admin\ActivityLogController;
 use App\Http\Controllers\Api\Admin\BillplzSettingsController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Api\Admin\ImpersonationController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
+use App\Http\Controllers\Api\Admin\OperatorNoteController;
 use App\Http\Controllers\Api\Admin\TeamController;
 use App\Http\Controllers\Api\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Api\AuthController;
@@ -60,13 +62,33 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
+    // Outside the admin group on purpose: while impersonating, the session is the operator's.
+    Route::post('/impersonation/stop', [ImpersonationController::class, 'stop']);
+
     // Platform team: Owner (saas_admin), Finance and Support. Everyone may look;
     // what each level may change is gated per route by permission.
     Route::middleware('role:saas_admin|saas_finance|saas_support')->prefix('admin')->group(function () {
         Route::get('dashboard/summary', [AdminDashboardController::class, 'summary']);
         Route::get('operators', [AdminOperatorController::class, 'index']);
+        Route::get('operators/options', [AdminOperatorController::class, 'options']);
         Route::get('operators/{operator}', [AdminOperatorController::class, 'show']);
         Route::get('transactions', [AdminTransactionController::class, 'index']);
+
+        Route::middleware('permission:operators.edit')->group(function () {
+            Route::put('operators/{operator}', [AdminOperatorController::class, 'update']);
+            Route::post('operators/{operator}/password-reset', [AdminOperatorController::class, 'sendPasswordReset']);
+            Route::get('operators/{operator}/notes', [OperatorNoteController::class, 'index']);
+            Route::post('operators/{operator}/notes', [OperatorNoteController::class, 'store']);
+            Route::delete('operators/{operator}/notes/{note}', [OperatorNoteController::class, 'destroy']);
+        });
+
+        Route::middleware('permission:operators.suspend')->group(function () {
+            Route::post('operators/{operator}/suspend', [AdminOperatorController::class, 'suspend']);
+            Route::post('operators/{operator}/reactivate', [AdminOperatorController::class, 'reactivate']);
+        });
+
+        Route::post('operators/{operator}/impersonate', [ImpersonationController::class, 'start'])
+            ->middleware('permission:operators.impersonate');
 
         Route::middleware('permission:gateway.manage')->group(function () {
             Route::put('operators/{operator}/billplz', [BillplzSettingsController::class, 'update']);

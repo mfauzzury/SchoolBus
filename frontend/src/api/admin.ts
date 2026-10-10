@@ -18,6 +18,10 @@ export interface AdminOperator {
   contact_phone: string
   email: string
   subscription_plan: string
+  status: 'active' | 'suspended'
+  created_at: string
+  last_login_at: string | null
+  billplz_enabled: boolean
   students_count: number
   buses_count: number
   staff_count: number
@@ -30,8 +34,29 @@ export async function getPlatformSummary(): Promise<PlatformSummary> {
   return data
 }
 
-export async function listOperators(): Promise<AdminOperator[]> {
-  const { data } = await apiClient.get<AdminOperator[]>('/api/admin/operators')
+export interface OperatorFilters {
+  page?: number
+  search?: string
+  status?: 'active' | 'suspended'
+  billplz?: 'connected' | 'none'
+  sort?: 'company_name' | 'created_at' | 'students_count' | 'last_login_at'
+  direction?: 'asc' | 'desc'
+}
+
+export async function listOperators(filters: OperatorFilters): Promise<Paginated<AdminOperator>> {
+  const { data } = await apiClient.get<Paginated<AdminOperator>>('/api/admin/operators', {
+    params: filters,
+  })
+  return data
+}
+
+export interface OperatorOption {
+  id: number
+  company_name: string
+}
+
+export async function listOperatorOptions(): Promise<OperatorOption[]> {
+  const { data } = await apiClient.get<OperatorOption[]>('/api/admin/operators/options')
   return data
 }
 
@@ -91,6 +116,8 @@ export interface BillplzSettingsInput {
 }
 
 export interface AdminOperatorDetail extends AdminOperator {
+  suspended_at: string | null
+  suspended_reason: string | null
   logo_url: string | null
   billplz: BillplzSettings
   buses: AdminOperatorBus[]
@@ -243,5 +270,62 @@ export async function listActivity(filters: ActivityFilters): Promise<Paginated<
 
 export async function listActivityActions(): Promise<string[]> {
   const { data } = await apiClient.get<string[]>('/api/admin/activity/actions')
+  return data
+}
+
+export interface OperatorDetailsInput {
+  company_name: string
+  contact_person: string
+  contact_phone: string
+}
+
+export async function updateOperator(id: number, input: OperatorDetailsInput) {
+  const { data } = await apiClient.put(`/api/admin/operators/${id}`, input)
+  return data
+}
+
+export async function suspendOperator(id: number, reason: string) {
+  const { data } = await apiClient.post(`/api/admin/operators/${id}/suspend`, { reason })
+  return data
+}
+
+export async function reactivateOperator(id: number) {
+  const { data } = await apiClient.post(`/api/admin/operators/${id}/reactivate`)
+  return data
+}
+
+export async function sendOperatorPasswordReset(id: number): Promise<{ email: string }> {
+  const { data } = await apiClient.post<{ email: string }>(`/api/admin/operators/${id}/password-reset`)
+  return data
+}
+
+export interface OperatorNote {
+  id: number
+  body: string
+  user_id: number | null
+  created_at: string
+  user: { id: number; name: string } | null
+}
+
+export async function listOperatorNotes(id: number): Promise<OperatorNote[]> {
+  const { data } = await apiClient.get<OperatorNote[]>(`/api/admin/operators/${id}/notes`)
+  return data
+}
+
+export async function addOperatorNote(id: number, body: string): Promise<OperatorNote> {
+  const { data } = await apiClient.post<OperatorNote>(`/api/admin/operators/${id}/notes`, { body })
+  return data
+}
+
+export async function deleteOperatorNote(id: number, noteId: number): Promise<void> {
+  await apiClient.delete(`/api/admin/operators/${id}/notes/${noteId}`)
+}
+
+export async function startImpersonation(id: number): Promise<void> {
+  await apiClient.post(`/api/admin/operators/${id}/impersonate`)
+}
+
+export async function stopImpersonation(): Promise<{ operator_id?: number }> {
+  const { data } = await apiClient.post<{ operator_id?: number }>('/api/impersonation/stop')
   return data
 }

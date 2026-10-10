@@ -21,6 +21,8 @@ export interface BusOperator {
   contact_phone: string
   email: string
   subscription_plan: string
+  /** 'suspended' locks everyone under this operator out until the platform team reactivates it. */
+  status: 'active' | 'suspended'
   bank_details: BankDetails | null
   logo_path: string | null
   logo_url: string | null
@@ -49,6 +51,8 @@ export interface MeResponse {
   tenant: BusOperator | null
   parentProfile: ParentProfile | null
   roles: string[]
+  /** Set while a platform-team member is logged in as this operator. */
+  impersonating: { admin_name: string } | null
   /** Platform team only: what this level may change (empty for everyone else). */
   permissions: string[]
 }

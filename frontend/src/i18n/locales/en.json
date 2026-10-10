@@ -571,6 +571,16 @@
       "hide": "Hide password"
     }
   },
+    "suspended": {
+      "operatorTitle": "Your account is on hold",
+      "operatorBody": "Please contact us so we can help you get back up and running.",
+      "parentTitle": "This bus service is not available right now",
+      "parentBody": "{{company}} cannot be reached through SchoolBus at the moment. Please contact the bus operator directly."
+    },
+    "impersonation": {
+      "viewingAs": "You are viewing as {{company}}",
+      "return": "Return to admin"
+    },
   "admin": {
     "nav": {
       "platformAdmin": "Platform Admin",
@@ -599,7 +609,27 @@
       "plan": "Plan",
       "students": "Students",
       "buses": "Buses",
-      "noOperators": "No operators yet."
+      "noOperators": "No operators yet.",
+      "searchPlaceholder": "Company, code, email or phone",
+      "never": "Never",
+      "statusActive": "Active",
+      "statusSuspended": "Suspended",
+      "status": "Status",
+      "billplz": "Online payments",
+      "billplzAll": "All",
+      "billplzConnected": "Connected",
+      "billplzNone": "Not connected",
+      "noBillplz": "No Billplz",
+      "sortBy": "Sort by",
+      "sortName": "Name",
+      "sortNewest": "Newest",
+      "sortStudents": "Most students",
+      "sortLastLogin": "Last login",
+      "count_one": "{{count}} operator",
+      "count_other": "{{count}} operators",
+      "joined": "Joined",
+      "lastLogin": "Last login",
+      "noMatches": "No operators match."
     },
     "transactions": {
       "title": "Transactions",
@@ -659,8 +689,43 @@
           "team_member_deactivated": "Removed a team member",
           "team_member_reactivated": "Restored a team member",
           "billplz_updated": "Saved Billplz settings",
-          "billplz_disabled": "Turned off Billplz"
+          "billplz_disabled": "Turned off Billplz",
+        "operator_updated": "Edited operator details",
+        "operator_suspended": "Suspended an operator",
+        "operator_reactivated": "Reactivated an operator",
+        "operator_password_reset_sent": "Sent an operator a password reset",
+        "impersonation_started": "Logged in as an operator",
+        "impersonation_stopped": "Returned from an operator login"
         }
+      },
+      "notes": {
+        "tab": "Notes",
+        "add": "Add a note",
+        "placeholder": "For example: called on Monday, will pay on Friday",
+        "save": "Save note",
+        "empty": "No notes yet.",
+        "error": "Could not save the note. Please try again."
+      },
+      "operatorActions": {
+        "logInAs": "Log in as operator",
+        "sendReset": "Send password reset",
+        "resetTitle": "Send a password reset email?",
+        "resetHelp": "A link to choose a new password is emailed to {{email}}.",
+        "resetSent": "Reset link sent to {{email}}.",
+        "suspend": "Suspend",
+        "reactivate": "Reactivate",
+        "suspendTitle": "Suspend {{name}}?",
+        "suspendHelp": "The operator, its staff, drivers and parents cannot use SchoolBus until you reactivate. Payments already made still go through.",
+        "reason": "Reason (only your team sees this)",
+        "reasonPlaceholder": "For example: unpaid, fraud check",
+        "suspendedSince": "Suspended on {{date}}",
+        "noOwnerLogin": "This operator has no owner login to use.",
+        "error": "Something went wrong. Please try again."
+      },
+      "operatorEdit": {
+        "title": "Edit company details",
+        "emailHelp": "The login email is the owner's login, so it cannot be changed here.",
+        "error": "Could not save. Please check the details and try again."
       },
     "operatorDetail": {
       "back": "Back to Operators",

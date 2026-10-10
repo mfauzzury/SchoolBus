@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import { Menu, Settings, X, type LucideIcon } from 'lucide-react'
+import { Eye, Menu, Settings, X, type LucideIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
 import { useStudentApplications } from '@/hooks/useStudentApplications'
+import { useStopImpersonation } from '@/hooks/useAdmin'
 import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { ThemeSwitcher } from '@/components/ThemeSwitcher'
@@ -16,6 +17,7 @@ export function OperatorLayout() {
   const logout = useLogout()
   const { data: pendingApplications } = useStudentApplications({ status: 'pending' })
   const [mobileOpen, setMobileOpen] = useState(false)
+  const stopImpersonation = useStopImpersonation()
 
   const navItems: { to: string; label: string; count: number; icon?: LucideIcon }[] = [
     { to: '/operator/dashboard', label: t('nav.dashboard'), count: 0 },
@@ -29,6 +31,29 @@ export function OperatorLayout() {
 
   return (
     <div className="min-h-screen">
+      {data?.impersonating && (
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-amber-100 px-4 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+          <span className="flex items-center gap-1.5">
+            <Eye className="size-4" aria-hidden />
+            {t('impersonation.viewingAs', { company: data.tenant?.company_name })}
+          </span>
+          <button
+            type="button"
+            className="font-medium underline underline-offset-2 disabled:opacity-50"
+            disabled={stopImpersonation.isPending}
+            onClick={() =>
+              stopImpersonation.mutate(undefined, {
+                onSuccess: (result) =>
+                  window.location.assign(
+                    result.operator_id ? `/admin/operators/${result.operator_id}` : '/login',
+                  ),
+              })
+            }
+          >
+            {t('impersonation.return')}
+          </button>
+        </div>
+      )}
       <header className="border-b">
         <div className="mx-auto flex max-w-content items-center justify-between px-4 py-4 lg:px-8">
           <Link to="/" className="flex min-w-0 items-center gap-2 hover:text-primary">

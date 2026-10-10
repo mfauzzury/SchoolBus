@@ -35,6 +35,12 @@ class AuthController extends Controller
             $invalid();
         }
 
+        if ($tenant->isSuspended()) {
+            throw ValidationException::withMessages([
+                'phone' => 'This service is not available right now.',
+            ]);
+        }
+
         // Compare digits only — drivers may type their number with or without
         // the dashes/spaces the operator originally entered when adding staff,
         // and staff.phone has no canonical stored format to match exactly against.

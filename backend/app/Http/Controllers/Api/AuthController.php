@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Support\PlatformAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,6 +53,17 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out']);
     }
 
+    private function impersonation(Request $request): ?array
+    {
+        if (! $request->hasSession() || ! $request->session()->has('impersonator_id')) {
+            return null;
+        }
+
+        $admin = User::find($request->session()->get('impersonator_id'));
+
+        return $admin ? ['admin_name' => $admin->name] : null;
+    }
+
     public function me(Request $request)
     {
         $user = $request->user();
@@ -62,6 +74,8 @@ class AuthController extends Controller
             'tenant' => $user->busOperator,
             'parentProfile' => $user->parentProfile,
             'roles' => $roles,
+            // Set while a platform-team member is "logged in as" this operator.
+            'impersonating' => $this->impersonation($request),
             // Platform team only: what this level may do, so the UI can hide the rest.
             'permissions' => $user->hasRole(PlatformAccess::OWNER)
                 ? PlatformAccess::PERMISSIONS

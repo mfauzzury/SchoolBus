@@ -571,6 +571,16 @@
       "hide": "Sembunyikan kata laluan"
     }
   },
+    "suspended": {
+      "operatorTitle": "Akaun anda sedang digantung",
+      "operatorBody": "Sila hubungi kami supaya kami boleh bantu anda mula semula.",
+      "parentTitle": "Perkhidmatan bas ini tidak tersedia sekarang",
+      "parentBody": "{{company}} tidak boleh dihubungi melalui SchoolBus buat masa ini. Sila hubungi pengendali bas terus."
+    },
+    "impersonation": {
+      "viewingAs": "Anda sedang melihat sebagai {{company}}",
+      "return": "Kembali ke admin"
+    },
   "admin": {
     "nav": {
       "platformAdmin": "Admin Platform",
@@ -599,7 +609,26 @@
       "plan": "Pelan",
       "students": "Pelajar",
       "buses": "Bas",
-      "noOperators": "Belum ada pengendali."
+      "noOperators": "Belum ada pengendali.",
+      "searchPlaceholder": "Syarikat, kod, e-mel atau telefon",
+      "never": "Tidak pernah",
+      "statusActive": "Aktif",
+      "statusSuspended": "Digantung",
+      "status": "Status",
+      "billplz": "Bayaran dalam talian",
+      "billplzAll": "Semua",
+      "billplzConnected": "Disambung",
+      "billplzNone": "Tidak disambung",
+      "noBillplz": "Tiada Billplz",
+      "sortBy": "Susun mengikut",
+      "sortName": "Nama",
+      "sortNewest": "Terbaharu",
+      "sortStudents": "Paling ramai pelajar",
+      "sortLastLogin": "Log masuk terakhir",
+      "count_other": "{{count}} pengendali",
+      "joined": "Menyertai",
+      "lastLogin": "Log masuk terakhir",
+      "noMatches": "Tiada pengendali yang sepadan."
     },
     "transactions": {
       "title": "Transaksi",
@@ -659,8 +688,43 @@
           "team_member_deactivated": "Membuang ahli pasukan",
           "team_member_reactivated": "Memulihkan ahli pasukan",
           "billplz_updated": "Menyimpan tetapan Billplz",
-          "billplz_disabled": "Menutup Billplz"
+          "billplz_disabled": "Menutup Billplz",
+        "operator_updated": "Mengubah butiran pengendali",
+        "operator_suspended": "Menggantung pengendali",
+        "operator_reactivated": "Mengaktifkan semula pengendali",
+        "operator_password_reset_sent": "Menghantar set semula kata laluan kepada pengendali",
+        "impersonation_started": "Log masuk sebagai pengendali",
+        "impersonation_stopped": "Kembali daripada log masuk pengendali"
         }
+      },
+      "notes": {
+        "tab": "Nota",
+        "add": "Tambah nota",
+        "placeholder": "Contoh: telefon hari Isnin, akan bayar hari Jumaat",
+        "save": "Simpan nota",
+        "empty": "Belum ada nota.",
+        "error": "Tidak dapat simpan nota. Sila cuba lagi."
+      },
+      "operatorActions": {
+        "logInAs": "Log masuk sebagai pengendali",
+        "sendReset": "Hantar set semula kata laluan",
+        "resetTitle": "Hantar e-mel set semula kata laluan?",
+        "resetHelp": "Pautan untuk memilih kata laluan baharu akan dihantar ke {{email}}.",
+        "resetSent": "Pautan set semula dihantar ke {{email}}.",
+        "suspend": "Gantung",
+        "reactivate": "Aktifkan semula",
+        "suspendTitle": "Gantung {{name}}?",
+        "suspendHelp": "Pengendali, kakitangan, pemandu dan ibu bapa tidak boleh guna SchoolBus sehingga anda aktifkan semula. Bayaran yang sudah dibuat tetap diproses.",
+        "reason": "Sebab (hanya pasukan anda nampak)",
+        "reasonPlaceholder": "Contoh: tidak bayar, semakan penipuan",
+        "suspendedSince": "Digantung pada {{date}}",
+        "noOwnerLogin": "Pengendali ini tiada log masuk pemilik untuk digunakan.",
+        "error": "Sesuatu tidak kena. Sila cuba lagi."
+      },
+      "operatorEdit": {
+        "title": "Ubah butiran syarikat",
+        "emailHelp": "E-mel log masuk ialah log masuk pemilik, jadi tidak boleh diubah di sini.",
+        "error": "Tidak dapat simpan. Sila semak butiran dan cuba lagi."
       },
     "operatorDetail": {
       "back": "Kembali ke Pengendali",

@@ -19,7 +19,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Pagination } from '@/components/ui/pagination'
-import { useAdminOperators, useAdminTransactions } from '@/hooks/useAdmin'
+import { useOperatorOptions, useAdminTransactions } from '@/hooks/useAdmin'
 import { usePagination } from '@/hooks/usePagination'
 import { formatMoney } from '@/lib/utils'
 
@@ -27,7 +27,7 @@ const ALL = 'all'
 
 export function AdminTransactions() {
   const { t } = useTranslation()
-  const { data: operators } = useAdminOperators()
+  const { data: operators } = useOperatorOptions()
   const [operatorId, setOperatorId] = useState(ALL)
   const [method, setMethod] = useState(ALL)
   const [dateFrom, setDateFrom] = useState('')

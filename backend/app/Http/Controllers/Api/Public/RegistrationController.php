@@ -18,6 +18,9 @@ class RegistrationController extends Controller
     {
         $tenant = BusOperator::where('operator_code', $operatorCode)->firstOrFail();
 
+        // A suspended operator is not taking new sign-ups: behave as if the code doesn't exist.
+        abort_if($tenant->isSuspended(), 404);
+
         return response()->json([
             'company_name' => $tenant->company_name,
             'logo_url' => $tenant->logo_url,
@@ -27,6 +30,9 @@ class RegistrationController extends Controller
     public function store(Request $request, string $operatorCode)
     {
         $tenant = BusOperator::where('operator_code', $operatorCode)->firstOrFail();
+
+        // A suspended operator is not taking new sign-ups: behave as if the code doesn't exist.
+        abort_if($tenant->isSuspended(), 404);
 
         $data = $request->validate([
             'full_name' => 'required|string|max:255',

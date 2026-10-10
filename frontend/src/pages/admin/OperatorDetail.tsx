@@ -26,8 +26,21 @@ import type {
 import { formatMoney } from '@/lib/utils'
 import { pillTabClass, pillTabListClass } from '@/lib/tabs'
 import { BackLink } from '@/components/BackLink'
+import { OperatorActions } from '@/components/admin/OperatorActions'
+import { OperatorActivity } from '@/components/admin/OperatorActivity'
+import { OperatorNotes } from '@/components/admin/OperatorNotes'
+import { useCan } from '@/hooks/useAuth'
 
-type TabKey = 'details' | 'students' | 'buses' | 'staff' | 'routes' | 'transactions' | 'gateway'
+type TabKey =
+  | 'details'
+  | 'students'
+  | 'buses'
+  | 'staff'
+  | 'routes'
+  | 'transactions'
+  | 'gateway'
+  | 'notes'
+  | 'activity'
 
 const busStatusVariant: Record<AdminOperatorBus['status'], 'success' | 'outline' | 'destructive'> = {
   active: 'success',
@@ -45,7 +58,10 @@ const enrollmentVariant: Record<
 }
 
 export function AdminOperatorPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const canSeeGateway = useCan('gateway.manage')
+  const canSeeNotes = useCan('operators.edit')
+  const canSeeActivity = useCan('team.manage')
   const { id } = useParams<{ id: string }>()
   const operatorId = Number(id)
   const { data: operator, isLoading } = useAdminOperator(operatorId)
@@ -59,12 +75,16 @@ export function AdminOperatorPage() {
     { key: 'staff', label: t('nav.staff'), count: operator?.staff_count ?? 0 },
     { key: 'routes', label: t('nav.routes'), count: operator?.routes_count ?? 0 },
     { key: 'transactions', label: t('admin.nav.transactions'), count: transactions?.length ?? 0 },
-    { key: 'gateway', label: t('admin.operatorDetail.tabGateway') },
+    ...(canSeeGateway ? [{ key: 'gateway' as const, label: t('admin.operatorDetail.tabGateway') }] : []),
+    ...(canSeeNotes ? [{ key: 'notes' as const, label: t('admin.notes.tab') }] : []),
+    ...(canSeeActivity ? [{ key: 'activity' as const, label: t('admin.activity.title') }] : []),
   ]
 
   const listForTab: Record<TabKey, unknown[]> = {
     details: [],
     gateway: [],
+    notes: [],
+    activity: [],
     students: operator?.students ?? [],
     buses: operator?.buses ?? [],
     staff: operator?.staff ?? [],
@@ -103,11 +123,38 @@ export function AdminOperatorPage() {
               </div>
             </div>
           </div>
-          <Badge variant="outline" className="w-fit capitalize">
-            {operator.subscription_plan}
-          </Badge>
+          <div className="flex flex-col items-start gap-2 sm:items-end">
+            <div className="flex gap-2">
+              {operator.status === 'suspended' && (
+                <Badge variant="destructive">{t('admin.operators.statusSuspended')}</Badge>
+              )}
+              <Badge variant="outline" className="w-fit capitalize">
+                {operator.subscription_plan}
+              </Badge>
+            </div>
+            <OperatorActions operator={operator} />
+          </div>
         </CardContent>
       </Card>
+
+      {operator.status === 'suspended' && (
+        <div
+          role="status"
+          className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-400"
+        >
+          <p className="font-medium">
+            {t('admin.operatorActions.suspendedSince', {
+              date: operator.suspended_at
+                ? new Date(operator.suspended_at).toLocaleDateString(
+                    i18n.language === 'ms' ? 'ms-MY' : 'en-MY',
+                    { dateStyle: 'medium' },
+                  )
+                : '—',
+            })}
+          </p>
+          {operator.suspended_reason && <p className="mt-1">{operator.suspended_reason}</p>}
+        </div>
+      )}
 
       <nav
         role="group"
@@ -144,6 +191,24 @@ export function AdminOperatorPage() {
                   value={<span className="capitalize">{operator.subscription_plan}</span>}
                 />
                 <DetailItem label={t('admin.operatorDetail.company.parents')} value={operator.parents_count} />
+                <DetailItem
+                  label={t('admin.operators.joined')}
+                  value={new Date(operator.created_at).toLocaleDateString(
+                    i18n.language === 'ms' ? 'ms-MY' : 'en-MY',
+                    { dateStyle: 'medium' },
+                  )}
+                />
+                <DetailItem
+                  label={t('admin.operators.lastLogin')}
+                  value={
+                    operator.last_login_at
+                      ? new Date(operator.last_login_at).toLocaleDateString(
+                          i18n.language === 'ms' ? 'ms-MY' : 'en-MY',
+                          { dateStyle: 'medium' },
+                        )
+                      : t('admin.operators.never')
+                  }
+                />
               </dl>
             </CardContent>
           </Card>
@@ -191,7 +256,7 @@ export function AdminOperatorPage() {
         </>
       )}
 
-      {activeTab === 'gateway' && (
+      {activeTab === 'gateway' && canSeeGateway && (
         <BillplzSettingsCard
           key={`${operator.billplz.enabled}-${operator.billplz.collection_id}-${operator.billplz.sandbox}`}
           operatorId={operatorId}
@@ -199,7 +264,11 @@ export function AdminOperatorPage() {
         />
       )}
 
-      {activeTab !== 'details' && activeTab !== 'gateway' && (
+      {activeTab === 'notes' && canSeeNotes && <OperatorNotes operatorId={operatorId} />}
+
+      {activeTab === 'activity' && canSeeActivity && <OperatorActivity operatorId={operatorId} />}
+
+      {!['details', 'gateway', 'notes', 'activity'].includes(activeTab) && (
         <Card>
           <CardContent className="flex flex-col gap-4">
             {activeTab === 'students' && (

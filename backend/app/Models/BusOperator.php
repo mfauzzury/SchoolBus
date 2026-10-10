@@ -32,6 +32,8 @@ class BusOperator extends Model
     protected $hidden = [
         'billplz_secret_key',
         'billplz_x_signature_key',
+        // Platform-team context; the operator/parents only need to know *that* they're suspended.
+        'suspended_reason',
     ];
 
     protected $casts = [
@@ -41,9 +43,15 @@ class BusOperator extends Model
         'billplz_secret_key' => 'encrypted',
         'billplz_x_signature_key' => 'encrypted',
         'billplz_sandbox' => 'boolean',
+        'suspended_at' => 'datetime',
     ];
 
     protected $appends = ['logo_url', 'billplz_enabled'];
+
+    public function isSuspended(): bool
+    {
+        return $this->status === 'suspended';
+    }
 
     protected function logoUrl(): Attribute
     {
@@ -152,6 +160,17 @@ class BusOperator extends Model
             'due_day' => (int) ($config['due_day'] ?? self::DEFAULT_BILLING_CONFIG['due_day']),
             'billed_months' => array_values(array_unique($months)),
         ];
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(OperatorNote::class, 'tenant_id');
+    }
+
+    /** The operator's owner login — who "log in as operator" and password resets act on. */
+    public function adminUser(): ?User
+    {
+        return $this->users()->operatorOwners()->orderBy('id')->first();
     }
 
     public function users(): HasMany
