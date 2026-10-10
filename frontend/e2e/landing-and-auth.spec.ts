@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { loginAs, unique } from './helpers'
 
 async function registerParentViaUi(page: import('@playwright/test').Page, email: string) {
-  await page.goto('/register/1000')
+  await page.goto('/register/10000')
   await page.fill('#full_name', 'E2E Parent')
   await page.fill('#ic_number', '900101-01-9999')
   await page.fill('#phone', '0123456789')
@@ -13,10 +13,10 @@ async function registerParentViaUi(page: import('@playwright/test').Page, email:
 }
 
 test.describe('Landing page', () => {
-  test('shows the operator/parent split when logged out', async ({ page }) => {
+  test('shows the parent code entry and a path for operators when logged out', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByText("I'm an operator")).toBeVisible()
     await expect(page.getByText("I'm a parent")).toBeVisible()
+    await expect(page.getByRole('link', { name: 'For Operators' }).first()).toBeVisible()
   })
 
   test('resolves a valid operator code and rejects an invalid one', async ({ page }) => {
@@ -24,15 +24,15 @@ test.describe('Landing page', () => {
     const otpInput = page.locator('input[data-input-otp]')
 
     await otpInput.click({ force: true })
-    await page.keyboard.type('9999')
+    await page.keyboard.type('99999')
     await expect(page.getByText('No operator found with that ID')).toBeVisible()
 
-    for (let i = 0; i < 4; i++) await page.keyboard.press('Backspace')
-    await page.keyboard.type('1000')
+    for (let i = 0; i < 5; i++) await page.keyboard.press('Backspace')
+    await page.keyboard.type('10000')
     await expect(page.getByText('Demo Bus Co')).toBeVisible()
 
     await page.click('button:has-text("Continue")')
-    await expect(page).toHaveURL(/\/register\/1000/)
+    await expect(page).toHaveURL(/\/register\/10000/)
   })
 
   test('unknown routes redirect back to the landing page', async ({ page }) => {

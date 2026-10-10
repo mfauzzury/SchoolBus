@@ -162,7 +162,7 @@ function StaffFormDialog({
               value={role}
               onValueChange={(v) => setValue('role', v as StaffForm['role'])}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('operator.staff.selectRole')} />
               </SelectTrigger>
               <SelectContent>
@@ -188,7 +188,7 @@ function StaffFormDialog({
               value={status}
               onValueChange={(v) => setValue('status', v as StaffForm['status'])}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('operator.staff.selectStatus')} />
               </SelectTrigger>
               <SelectContent>

@@ -9,14 +9,17 @@ test.describe.serial('Operator workflow', () => {
   test('sign up creates a workspace and shows an operator ID', async ({ page }) => {
     await page.goto('/signup')
     await page.fill('#company_name', companyName)
+    await page.click('button:has-text("Next")')
     await page.fill('#contact_person', 'E2E Operator')
     await page.fill('#contact_phone', '0123456789')
     await page.fill('#email', email)
+    await page.click('button:has-text("Next")')
     await page.fill('#password', 'password123')
     await page.click('button[type="submit"]:has-text("Start free")')
 
     await expect(page).toHaveURL(/\/operator\/dashboard/)
     await expect(page.getByText('Your Operator ID')).toBeVisible()
+    await expect(page.getByTestId('registration-link')).toHaveText(/\/register\/\d{5}$/)
   })
 
   test('can create a bus, staff member, and route with stops', async ({ page }) => {
@@ -25,6 +28,9 @@ test.describe.serial('Operator workflow', () => {
     await page.fill('#password', 'password123')
     await page.click('button[type="submit"]')
     await expect(page).toHaveURL(/\/operator\/dashboard/)
+
+    // Fleet pages (buses, staff, routes) live under Settings
+    await page.click('a[aria-label="Settings"]')
 
     // Bus
     await page.click('a:has-text("Buses")')

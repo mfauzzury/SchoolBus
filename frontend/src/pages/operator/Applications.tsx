@@ -116,12 +116,7 @@ export function Applications() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col">
-                          <span>{t(`common.package.${application.package_type}`)}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {t(`common.billingPeriod.${application.billing_period}`)}
-                          </span>
-                        </div>
+                        {t(`common.package.${application.package_type}`)}
                       </TableCell>
                       <TableCell>{application.created_at.slice(0, 10)}</TableCell>
                       <TableCell>

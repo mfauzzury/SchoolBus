@@ -58,7 +58,6 @@ export function EnrollChild() {
         date_of_birth: values.date_of_birth,
         school_name: values.school_name,
         package_type: values.package_type,
-        billing_period: 'monthly',
       },
       { onSuccess: () => setSubmitted(true) },
     )
@@ -118,7 +117,7 @@ export function EnrollChild() {
               value={packageType}
               onValueChange={(v) => setValue('package_type', v as ApplyForm['package_type'])}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

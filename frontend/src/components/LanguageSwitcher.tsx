@@ -14,7 +14,7 @@ export function LanguageSwitcher() {
     <div
       role="group"
       aria-label="Language"
-      className="inline-flex items-center rounded-full border p-0.5 text-sm"
+      className="inline-flex h-6 items-stretch rounded-full border p-0.5 text-xs"
     >
       {LANGUAGES.map((lng) => (
         <button
@@ -23,7 +23,7 @@ export function LanguageSwitcher() {
           aria-pressed={current === lng.code}
           onClick={() => i18n.changeLanguage(lng.code)}
           className={cn(
-            'rounded-full px-2.5 py-1 font-medium transition-colors',
+            'inline-flex items-center rounded-full px-2 font-medium transition-colors',
             current === lng.code
               ? 'bg-primary text-primary-foreground'
               : 'text-muted-foreground hover:text-foreground',

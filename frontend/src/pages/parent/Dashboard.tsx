@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { BusFront, Receipt } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -23,10 +24,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Pagination } from '@/components/ui/pagination'
 import { useMe } from '@/hooks/useAuth'
-import { useMyStudentApplications, useMyStudents } from '@/hooks/useParentPortal'
-import { calculateGrade } from '@/lib/utils'
+import { usePagination } from '@/hooks/usePagination'
+import { useMyInvoices, useMyStudentApplications, useMyStudents } from '@/hooks/useParentPortal'
+import { useParentTrips } from '@/hooks/useTracking'
+import { calculateGrade, cn, formatMoney, invoiceBalance, isInvoiceOverdue } from '@/lib/utils'
 import type { Student } from '@/api/parentPortal'
+import { FEATURES } from '@/lib/features'
 
 const enrollmentStatusVariant: Record<'active' | 'suspended' | 'withdrawn', 'success' | 'outline' | 'destructive'> = {
   active: 'success',
@@ -44,14 +49,106 @@ export function ParentDashboard() {
   const { data } = useMe()
   const { data: students, isLoading: studentsLoading } = useMyStudents()
   const { data: applications } = useMyStudentApplications()
+  const { data: invoices } = useMyInvoices()
+  const { data: trips } = useParentTrips()
+  const riders = (trips ?? [])
+    .filter((trip) => trip.status === 'active')
+    .flatMap((trip) => trip.students.filter((student) => !student.alighted_at))
   const pendingOrRejected = (applications ?? []).filter((app) => app.status !== 'approved')
   const [detailStudent, setDetailStudent] = useState<Student | null>(null)
+  const studentsPager = usePagination(students ?? [])
+  const applicationsPager = usePagination(pendingOrRejected)
+
+  const unpaidInvoices = (invoices ?? []).filter((inv) => inv.status === 'issued' || inv.status === 'overdue')
+  const hasOverdue = unpaidInvoices.some(isInvoiceOverdue)
+  const totalOutstanding = unpaidInvoices.reduce((sum, inv) => sum + invoiceBalance(inv), 0)
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-xl font-medium">
         {t('parent.dashboard.welcome', { name: data?.user.name })}
       </h1>
+
+      {FEATURES.parentTrack && riders.length > 0 && (
+        <Card>
+          <CardContent className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                <BusFront className="size-5" />
+                <span className="absolute top-0 right-0 size-2.5 rounded-full border-2 border-card bg-green-500" />
+              </span>
+              <p className="min-w-0 font-medium">
+                {t('tracking.dashboardCard.onTheWay', {
+                  name: riders.map((student) => student.full_name.split(' ')[0]).join(' & '),
+                })}
+              </p>
+            </div>
+            <Link to="/parent/track" className={buttonVariants({ size: 'sm' })}>
+              {t('tracking.dashboardCard.track')}
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+
+      {unpaidInvoices.length > 0 && (
+        <Card
+          size="sm"
+          className={cn(
+            hasOverdue
+              ? 'bg-red-50 text-red-950 ring-red-300/70 dark:bg-red-400/10 dark:text-red-100 dark:ring-red-400/30'
+              : 'bg-amber-50 text-amber-950 ring-amber-300/70 dark:bg-amber-400/10 dark:text-amber-100 dark:ring-amber-400/30',
+          )}
+        >
+          <CardContent className="flex flex-wrap items-center gap-x-4 gap-y-3">
+            <span
+              className={cn(
+                'flex size-10 shrink-0 items-center justify-center rounded-full',
+                hasOverdue
+                  ? 'bg-red-200 text-red-900 dark:bg-red-400/20 dark:text-red-200'
+                  : 'bg-amber-200 text-amber-900 dark:bg-amber-400/20 dark:text-amber-200',
+              )}
+            >
+              <Receipt className="size-5" />
+            </span>
+            <div className="flex min-w-40 flex-1 flex-col">
+              <span
+                className={cn(
+                  'text-xs',
+                  hasOverdue
+                    ? 'text-red-900/70 dark:text-red-200/70'
+                    : 'text-amber-900/70 dark:text-amber-200/70',
+                )}
+              >
+                {t(hasOverdue ? 'parent.dashboard.reminderOverdueTitle' : 'parent.dashboard.reminderDueTitle')}
+              </span>
+              <span className="flex flex-wrap items-baseline gap-x-2">
+                <span className="text-xl font-medium">RM {formatMoney(totalOutstanding)}</span>
+                <span
+                  className={cn(
+                    'text-sm',
+                    hasOverdue
+                      ? 'text-red-900/80 dark:text-red-100/80'
+                      : 'text-amber-900/80 dark:text-amber-100/80',
+                  )}
+                >
+                  {t('parent.dashboard.reminderUnpaid')}
+                </span>
+              </span>
+            </div>
+            <Link
+              to="/parent/invoices/pay"
+              className={cn(
+                buttonVariants({ size: 'sm' }),
+                hasOverdue
+                  ? 'bg-red-600 text-white hover:bg-red-500'
+                  : 'bg-amber-500 text-amber-950 hover:bg-amber-400',
+              )}
+            >
+              {t('parent.dashboard.payNow')}
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
@@ -77,9 +174,27 @@ export function ParentDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {students.map((student) => (
+                {studentsPager.pageItems.map((student) => (
                   <TableRow key={student.id}>
-                    <TableCell>{student.full_name}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/parent/children/${student.id}`}
+                        className="flex items-center gap-2 hover:underline"
+                      >
+                        {student.avatar_url ? (
+                          <img
+                            src={student.avatar_url}
+                            alt=""
+                            className="size-8 shrink-0 rounded-full border object-cover"
+                          />
+                        ) : (
+                          <span className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted/50 text-xs text-muted-foreground">
+                            {student.full_name.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                        <span>{student.full_name}</span>
+                      </Link>
+                    </TableCell>
                     <TableCell>{student.school_name}</TableCell>
                     <TableCell>
                       <div className="flex flex-col">
@@ -99,11 +214,19 @@ export function ParentDashboard() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      {student.route && (
-                        <Button variant="outline" size="sm" onClick={() => setDetailStudent(student)}>
-                          {t('parent.dashboard.details')}
-                        </Button>
-                      )}
+                      <div className="flex justify-end gap-2">
+                        <Link
+                          to={`/parent/children/${student.id}`}
+                          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+                        >
+                          {t('parent.child.edit')}
+                        </Link>
+                        {student.route && (
+                          <Button variant="outline" size="sm" onClick={() => setDetailStudent(student)}>
+                            {t('parent.dashboard.details')}
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -112,6 +235,11 @@ export function ParentDashboard() {
           ) : (
             <p className="text-sm text-muted-foreground">{t('parent.dashboard.noChildren')}</p>
           )}
+          <Pagination
+            page={studentsPager.page}
+            pageCount={studentsPager.pageCount}
+            onPageChange={studentsPager.setPage}
+          />
         </CardContent>
       </Card>
 
@@ -164,7 +292,7 @@ export function ParentDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pendingOrRejected.map((application) => (
+                {applicationsPager.pageItems.map((application) => (
                   <TableRow key={application.id}>
                     <TableCell>{application.full_name}</TableCell>
                     <TableCell>{application.school_name}</TableCell>
@@ -184,6 +312,11 @@ export function ParentDashboard() {
                 ))}
               </TableBody>
             </Table>
+            <Pagination
+              page={applicationsPager.page}
+              pageCount={applicationsPager.pageCount}
+              onPageChange={applicationsPager.setPage}
+            />
           </CardContent>
         </Card>
       )}

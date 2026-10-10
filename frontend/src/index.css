@@ -6,6 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+    --container-content: 1240px;
     --font-heading: var(--font-sans);
     --font-sans: 'Geist Variable', sans-serif;
     --color-sidebar-ring: var(--sidebar-ring);
@@ -49,6 +50,10 @@
 }
 
 :root {
+    /* Chart series (dataviz palette slots 1-3, validated for light and dark). */
+    --viz-collected: #2a78d6;
+    --viz-overdue: #eb6834;
+    --viz-pending: #1baf7a;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
@@ -84,6 +89,9 @@
 }
 
 .dark {
+    --viz-collected: #3987e5;
+    --viz-overdue: #d95926;
+    --viz-pending: #199e70;
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
@@ -126,5 +134,131 @@
     }
   html {
     @apply font-sans;
+    font-size: 106.25%;
     }
+  @media (min-width: 1024px) {
+    html {
+      font-size: 112.5%;
+    }
+  }
+}
+/* ---- Live bus tracking map (components/BusMap.tsx) ---- */
+
+.leaflet-container {
+  font-family: inherit;
+  background: var(--muted);
+}
+
+/* OSM raster tiles only come in a light style — invert them for dark mode. */
+.dark .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.6);
+}
+.dark .leaflet-control-attribution {
+  background: rgb(0 0 0 / 0.6);
+  color: var(--muted-foreground);
+}
+.dark .leaflet-control-attribution a {
+  color: var(--foreground);
+}
+
+.bus-marker-icon {
+  background: none;
+  border: none;
+}
+
+.bus-marker {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bus-marker-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: var(--primary);
+  color: #1c1917;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+}
+
+/* Direction-of-travel wedge, rotated to the GPS heading around the marker centre. */
+.bus-marker-heading {
+  position: absolute;
+  inset: 0;
+}
+.bus-marker-heading::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -7px;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 10px solid var(--primary);
+  filter: drop-shadow(0 -1px 1px rgb(0 0 0 / 0.25));
+}
+
+/* Pulsing halo while the signal is live. */
+.bus-marker--live::after {
+  content: '';
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: var(--primary);
+  opacity: 0.45;
+  animation: bus-marker-pulse 2s ease-out infinite;
+}
+@keyframes bus-marker-pulse {
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bus-marker--live::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+.bus-marker--stale .bus-marker-body {
+  background: #f59e0b;
+  filter: saturate(0.6);
+}
+.bus-marker--lost .bus-marker-body {
+  background: #9ca3af;
+  color: #fff;
+}
+
+.bus-marker--selected .bus-marker-body {
+  outline: 3px solid var(--foreground);
+  outline-offset: 1px;
+}
+
+.bus-marker-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 2px;
+  z-index: 1;
+  white-space: nowrap;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
 }

@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, Settings, X, type LucideIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
 import { useStudentApplications } from '@/hooks/useStudentApplications'
 import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { ThemeSwitcher } from '@/components/ThemeSwitcher'
 import { cn } from '@/lib/utils'
+import { FEATURES } from '@/lib/features'
 
 export function OperatorLayout() {
   const { t } = useTranslation()
@@ -15,18 +17,20 @@ export function OperatorLayout() {
   const { data: pendingApplications } = useStudentApplications({ status: 'pending' })
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const navItems = [
+  const navItems: { to: string; label: string; count: number; icon?: LucideIcon }[] = [
     { to: '/operator/dashboard', label: t('nav.dashboard'), count: 0 },
+    ...(FEATURES.operatorLive ? [{ to: '/operator/live', label: t('nav.live'), count: 0 }] : []),
     { to: '/operator/students', label: t('nav.students'), count: 0 },
     { to: '/operator/applications', label: t('nav.applications'), count: pendingApplications?.length ?? 0 },
     { to: '/operator/finances', label: t('nav.finances'), count: 0 },
-    { to: '/operator/settings', label: t('nav.settings'), count: 0 },
+    // Icon-only in the desktop bar; the label stays for screen readers and the mobile menu.
+    { to: '/operator/settings', label: t('nav.settings'), count: 0, icon: Settings },
   ]
 
   return (
     <div className="min-h-screen">
       <header className="border-b">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-content items-center justify-between px-4 py-4 lg:px-8">
           <Link to="/" className="flex min-w-0 items-center gap-2 hover:text-primary">
             {data?.tenant?.logo_url && (
               <img src={data.tenant.logo_url} alt="" className="size-6 shrink-0 rounded object-cover" />
@@ -39,14 +43,17 @@ export function OperatorLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
+                title={item.icon ? item.label : undefined}
+                aria-label={item.icon ? item.label : undefined}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground',
-                    isActive && 'font-medium text-foreground',
+                    'relative flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground',
+                    isActive &&
+                      'font-medium text-foreground after:absolute after:inset-x-0 after:-bottom-1.5 after:h-0.5 after:rounded-full after:bg-primary',
                   )
                 }
               >
-                {item.label}
+                {item.icon ? <item.icon className="size-4" /> : item.label}
                 {item.count > 0 && (
                   <span className="inline-flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
                     {item.count}
@@ -56,10 +63,15 @@ export function OperatorLayout() {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-3 lg:flex">
+            <ThemeSwitcher />
             <LanguageSwitcher />
-            <span className="text-sm text-muted-foreground">{data?.user.name}</span>
-            <Button variant="outline" size="sm" onClick={() => logout.mutate()}>
+            <Button
+              variant="outline"
+              size="sm"
+              title={data?.user.name}
+              onClick={() => logout.mutate()}
+            >
               {t('common.logOut')}
             </Button>
           </div>
@@ -90,6 +102,7 @@ export function OperatorLayout() {
                     )
                   }
                 >
+                  {item.icon && <item.icon className="size-4" />}
                   {item.label}
                   {item.count > 0 && (
                     <span className="inline-flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
@@ -99,19 +112,22 @@ export function OperatorLayout() {
                 </NavLink>
               ))}
             </nav>
-            <div className="mt-3 flex flex-col gap-3 border-t pt-3">
+            <div className="mt-3 flex items-center gap-3 border-t pt-3">
+              <ThemeSwitcher />
               <LanguageSwitcher />
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">{data?.user.name}</span>
-                <Button variant="outline" size="sm" onClick={() => logout.mutate()}>
-                  {t('common.logOut')}
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-auto"
+                onClick={() => logout.mutate()}
+              >
+                {t('common.logOut')}
+              </Button>
             </div>
           </div>
         )}
       </header>
-      <main className="mx-auto max-w-5xl p-4 sm:p-6">
+      <main className="mx-auto max-w-content p-4 sm:py-6 lg:px-8">
         <Outlet />
       </main>
     </div>

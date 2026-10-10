@@ -1,4 +1,4 @@
-import { apiClient } from './client'
+import { apiBaseUrl, apiClient } from './client'
 import type { ParentProfile } from './auth'
 
 export interface ParentRouteStop {
@@ -27,6 +27,7 @@ export interface ParentRoute {
   zone: string | null
   school_destination: string | null
   base_monthly_fee: string | null
+  one_way_monthly_fee: string | null
   stops: ParentRouteStop[]
   bus?: ParentRouteBus | null
   driver?: ParentRouteContact | null
@@ -34,8 +35,6 @@ export interface ParentRoute {
 }
 
 export interface Quote {
-  months: number
-  billing_discount_rate: number
   sibling_discount_rate: number
   amount_before_discount: number
   discount_amount: number
@@ -44,14 +43,30 @@ export interface Quote {
 
 export interface QuoteInput {
   route_id: number
-  billing_period: 'monthly' | 'quarterly' | 'half_year' | 'yearly'
+  package_type: 'one_way' | 'return'
+}
+
+export interface InvoiceItem {
+  id: number
+  type: 'fee' | 'discount' | 'adjustment'
+  description: string
+  // Signed: discounts and reductions are negative.
+  amount: string
+}
+
+export interface PaymentRecord {
+  id: number
+  receipt_number: string
+  method: 'cash' | 'bank_transfer' | 'fpx' | 'online'
+  reference_number: string | null
+  payment_date: string
+  amount_paid: string
 }
 
 export interface Invoice {
   id: number
   student_id: number
   package_type: 'one_way' | 'return'
-  billing_period: string
   period_start: string
   period_end: string
   amount_before_discount: string
@@ -61,17 +76,27 @@ export interface Invoice {
   due_date: string
   issued_at: string | null
   paid_at: string | null
+  // Only on the invoice list (GET /parent/invoices), not on invoices nested in a student.
+  amount_paid?: string
+  balance?: string
+  items?: InvoiceItem[]
+  payments?: PaymentRecord[]
+  route?: { id: number; name: string } | null
 }
 
 export interface Student {
   id: number
   full_name: string
   date_of_birth: string
+  gender: 'male' | 'female' | null
+  avatar_url: string | null
   school_name: string
+  teacher_name: string | null
+  class_name: string | null
+  school_phone: string | null
   route_id: number | null
   pickup_stop_id: number | null
   package_type: 'one_way' | 'return'
-  billing_period: string
   enrollment_status: 'active' | 'suspended' | 'withdrawn'
   route: ParentRoute | null
   pickup_stop: ParentRouteStop | null
@@ -84,7 +109,6 @@ export interface MyStudentApplication {
   date_of_birth: string
   school_name: string
   package_type: 'one_way' | 'return'
-  billing_period: string
   status: 'pending' | 'approved' | 'rejected'
   rejection_reason: string | null
   created_at: string
@@ -95,7 +119,6 @@ export interface ApplyInput {
   date_of_birth: string
   school_name: string
   package_type: 'one_way' | 'return'
-  billing_period: 'monthly' | 'quarterly' | 'half_year' | 'yearly'
 }
 
 export async function listParentRoutes(): Promise<ParentRoute[]> {
@@ -110,6 +133,29 @@ export async function getQuote(input: QuoteInput): Promise<Quote> {
 
 export async function listMyStudents(): Promise<Student[]> {
   const { data } = await apiClient.get<Student[]>('/api/parent/students')
+  return data
+}
+
+export interface UpdateMyStudentInput {
+  full_name: string
+  date_of_birth: string
+  gender: 'male' | 'female' | null
+  teacher_name: string | null
+  class_name: string | null
+  school_phone: string | null
+}
+
+export async function updateMyStudent(id: number, input: UpdateMyStudentInput): Promise<Student> {
+  const { data } = await apiClient.put<Student>(`/api/parent/students/${id}`, input)
+  return data
+}
+
+export async function uploadMyStudentAvatar(id: number, file: File): Promise<Student> {
+  const formData = new FormData()
+  formData.append('avatar', file)
+  const { data } = await apiClient.post<Student>(`/api/parent/students/${id}/avatar`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
   return data
 }
 
@@ -128,8 +174,61 @@ export async function listMyInvoices(): Promise<Invoice[]> {
   return data
 }
 
-export function receiptUrl(invoiceId: number): string {
-  return `${import.meta.env.VITE_API_URL}/api/parent/invoices/${invoiceId}/receipt`
+export interface PaymentAttempt {
+  id: number
+  status: 'pending' | 'paid'
+  amount: string
+  paid_at: string | null
+  /** Billplz page to retry on; only present while the attempt is still unpaid. */
+  bill_url: string | null
+  /** One per invoice paid; empty until the attempt is paid. */
+  receipts: PaymentReceipt[]
+}
+
+export interface PaymentReceipt {
+  payment_id: number
+  receipt_number: string
+  amount: string
+  student_name: string
+}
+
+export async function getPaymentConfig(): Promise<{ enabled: boolean }> {
+  const { data } = await apiClient.get<{ enabled: boolean }>('/api/parent/payments/config')
+  return data
+}
+
+export async function startPayment(invoiceIds: number[]): Promise<{ id: number; url: string }> {
+  const { data } = await apiClient.post<{ id: number; url: string }>('/api/parent/payments', {
+    invoice_ids: invoiceIds,
+  })
+  return data
+}
+
+export async function getPaymentAttempt(id: number): Promise<PaymentAttempt> {
+  const { data } = await apiClient.get<PaymentAttempt>(`/api/parent/payments/${id}`)
+  return data
+}
+
+export interface BillplzRedirectParams {
+  id: string
+  paid: string
+  paid_at?: string
+  x_signature: string
+}
+
+export async function confirmPayment(
+  id: number,
+  billplz: BillplzRedirectParams,
+): Promise<PaymentAttempt> {
+  const { data } = await apiClient.post<PaymentAttempt>(`/api/parent/payments/${id}/confirm`, {
+    billplz,
+  })
+  return data
+}
+
+/** The receipt for one payment (a receipt is issued per payment, not per bill). */
+export function receiptUrl(paymentId: number): string {
+  return `${apiBaseUrl}/api/parent/payments/${paymentId}/receipt`
 }
 
 export interface UpdateParentProfileInput {
@@ -160,4 +259,14 @@ export async function uploadParentAvatar(file: File): Promise<ParentProfile> {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
   return data
+}
+
+export interface UpdatePasswordInput {
+  current_password: string
+  password: string
+  password_confirmation: string
+}
+
+export async function updateParentPassword(input: UpdatePasswordInput): Promise<void> {
+  await apiClient.put('/api/parent/profile/password', input)
 }

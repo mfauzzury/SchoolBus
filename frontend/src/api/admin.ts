@@ -69,14 +69,30 @@ export interface AdminOperatorStudent {
   id: number
   full_name: string
   package_type: string
-  billing_period: string
   enrollment_status: 'active' | 'suspended' | 'withdrawn'
   parent_profile: { id: number; full_name: string; phone: string; email: string } | null
   route: { id: number; name: string } | null
 }
 
+export interface BillplzSettings {
+  enabled: boolean
+  sandbox: boolean
+  collection_id: string | null
+  has_secret_key: boolean
+  has_x_signature_key: boolean
+}
+
+export interface BillplzSettingsInput {
+  /** Omit/blank to keep the stored key — keys are never sent back to the browser. */
+  secret_key?: string
+  x_signature_key?: string
+  collection_id: string
+  sandbox: boolean
+}
+
 export interface AdminOperatorDetail extends AdminOperator {
   logo_url: string | null
+  billplz: BillplzSettings
   buses: AdminOperatorBus[]
   staff: AdminOperatorStaff[]
   routes: AdminOperatorRoute[]
@@ -91,6 +107,33 @@ export interface AdminOperatorDetail extends AdminOperator {
 
 export async function getOperator(id: number): Promise<AdminOperatorDetail> {
   const { data } = await apiClient.get<AdminOperatorDetail>(`/api/admin/operators/${id}`)
+  return data
+}
+
+export async function updateBillplzSettings(
+  id: number,
+  input: BillplzSettingsInput,
+): Promise<BillplzSettings> {
+  const { data } = await apiClient.put<BillplzSettings>(`/api/admin/operators/${id}/billplz`, input)
+  return data
+}
+
+export interface BillplzConnectionResult {
+  ok: boolean
+  reason: 'ok' | 'unauthorized' | 'collection_not_found' | 'unreachable'
+  collection_title: string | null
+  warnings: 'x_signature_same_as_secret'[]
+}
+
+export async function testBillplzConnection(id: number): Promise<BillplzConnectionResult> {
+  const { data } = await apiClient.post<BillplzConnectionResult>(
+    `/api/admin/operators/${id}/billplz/test`,
+  )
+  return data
+}
+
+export async function disableBillplz(id: number): Promise<BillplzSettings> {
+  const { data } = await apiClient.delete<BillplzSettings>(`/api/admin/operators/${id}/billplz`)
   return data
 }
 

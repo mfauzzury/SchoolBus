@@ -1,9 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  disableBillplz,
   getOperator,
   getPlatformSummary,
   listOperators,
   listTransactions,
+  testBillplzConnection,
+  updateBillplzSettings,
+  type BillplzSettingsInput,
   type TransactionFilters,
 } from '@/api/admin'
 
@@ -24,4 +28,24 @@ export function useAdminTransactions(filters: TransactionFilters) {
     queryKey: ['admin-transactions', filters],
     queryFn: () => listTransactions(filters),
   })
+}
+
+export function useUpdateBillplzSettings(operatorId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: BillplzSettingsInput) => updateBillplzSettings(operatorId, input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-operator', operatorId] }),
+  })
+}
+
+export function useDisableBillplz(operatorId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => disableBillplz(operatorId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-operator', operatorId] }),
+  })
+}
+
+export function useTestBillplzConnection(operatorId: number) {
+  return useMutation({ mutationFn: () => testBillplzConnection(operatorId) })
 }
