@@ -168,3 +168,80 @@ export async function listTransactions(filters: TransactionFilters): Promise<Tra
   })
   return data
 }
+
+export interface TeamMember {
+  id: number
+  name: string
+  email: string
+  level: 'owner' | 'finance' | 'support' | null
+  last_login_at: string | null
+  deactivated_at: string | null
+  created_at: string
+}
+
+export interface TeamMemberInput {
+  name: string
+  email: string
+  level: 'owner' | 'finance' | 'support'
+}
+
+export async function listTeam(): Promise<TeamMember[]> {
+  const { data } = await apiClient.get<TeamMember[]>('/api/admin/team')
+  return data
+}
+
+export async function addTeamMember(input: TeamMemberInput): Promise<TeamMember> {
+  const { data } = await apiClient.post<TeamMember>('/api/admin/team', input)
+  return data
+}
+
+export async function changeTeamLevel(id: number, level: TeamMemberInput['level']): Promise<TeamMember> {
+  const { data } = await apiClient.put<TeamMember>(`/api/admin/team/${id}`, { level })
+  return data
+}
+
+export async function deactivateTeamMember(id: number): Promise<TeamMember> {
+  const { data } = await apiClient.post<TeamMember>(`/api/admin/team/${id}/deactivate`)
+  return data
+}
+
+export async function reactivateTeamMember(id: number): Promise<TeamMember> {
+  const { data } = await apiClient.post<TeamMember>(`/api/admin/team/${id}/reactivate`)
+  return data
+}
+
+export interface ActivityEntry {
+  id: number
+  action: string
+  properties: Record<string, string | number | boolean | null> | null
+  ip_address: string | null
+  created_at: string
+  user: { id: number; name: string } | null
+  bus_operator: { id: number; company_name: string } | null
+}
+
+export interface ActivityFilters {
+  page?: number
+  user_id?: number
+  tenant_id?: number
+  action?: string
+}
+
+export interface Paginated<T> {
+  data: T[]
+  current_page: number
+  last_page: number
+  total: number
+}
+
+export async function listActivity(filters: ActivityFilters): Promise<Paginated<ActivityEntry>> {
+  const { data } = await apiClient.get<Paginated<ActivityEntry>>('/api/admin/activity', {
+    params: filters,
+  })
+  return data
+}
+
+export async function listActivityActions(): Promise<string[]> {
+  const { data } = await apiClient.get<string[]>('/api/admin/activity/actions')
+  return data
+}

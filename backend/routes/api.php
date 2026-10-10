@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\ActivityLogController;
 use App\Http\Controllers\Api\Admin\BillplzSettingsController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
+use App\Http\Controllers\Api\Admin\TeamController;
 use App\Http\Controllers\Api\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Driver\AuthController as DriverAuthController;
@@ -58,14 +60,29 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    Route::middleware('role:saas_admin')->prefix('admin')->group(function () {
+    // Platform team: Owner (saas_admin), Finance and Support. Everyone may look;
+    // what each level may change is gated per route by permission.
+    Route::middleware('role:saas_admin|saas_finance|saas_support')->prefix('admin')->group(function () {
         Route::get('dashboard/summary', [AdminDashboardController::class, 'summary']);
         Route::get('operators', [AdminOperatorController::class, 'index']);
         Route::get('operators/{operator}', [AdminOperatorController::class, 'show']);
-        Route::put('operators/{operator}/billplz', [BillplzSettingsController::class, 'update']);
-        Route::post('operators/{operator}/billplz/test', [BillplzSettingsController::class, 'test']);
-        Route::delete('operators/{operator}/billplz', [BillplzSettingsController::class, 'destroy']);
         Route::get('transactions', [AdminTransactionController::class, 'index']);
+
+        Route::middleware('permission:gateway.manage')->group(function () {
+            Route::put('operators/{operator}/billplz', [BillplzSettingsController::class, 'update']);
+            Route::post('operators/{operator}/billplz/test', [BillplzSettingsController::class, 'test']);
+            Route::delete('operators/{operator}/billplz', [BillplzSettingsController::class, 'destroy']);
+        });
+
+        Route::middleware('permission:team.manage')->group(function () {
+            Route::get('team', [TeamController::class, 'index']);
+            Route::post('team', [TeamController::class, 'store']);
+            Route::put('team/{user}', [TeamController::class, 'update']);
+            Route::post('team/{user}/deactivate', [TeamController::class, 'deactivate']);
+            Route::post('team/{user}/reactivate', [TeamController::class, 'reactivate']);
+            Route::get('activity', [ActivityLogController::class, 'index']);
+            Route::get('activity/actions', [ActivityLogController::class, 'actions']);
+        });
     });
 
     Route::middleware('tenant')->group(function () {

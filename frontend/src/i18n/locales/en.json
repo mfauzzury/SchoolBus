@@ -576,7 +576,13 @@
       "platformAdmin": "Platform Admin",
       "dashboard": "Dashboard",
       "operators": "Operators",
-      "transactions": "Transactions"
+      "transactions": "Transactions",
+      "groupOverview": "Overview",
+      "groupOperators": "Operators",
+      "groupMoney": "Money",
+      "groupSettings": "Settings",
+      "team": "Team",
+      "activity": "Activity log"
     },
     "dashboard": {
       "welcome": "Welcome, {{name}}",
@@ -606,6 +612,56 @@
       "dateTo": "To",
       "noTransactions": "No transactions yet."
     },
+      "team": {
+        "title": "Team",
+        "add": "Add team member",
+        "back": "Back to Team",
+        "addHelp": "They get an email with a link to choose their own password.",
+        "levelsTitle": "What each level can do",
+        "levels": {
+          "owner": "Owner",
+          "finance": "Finance",
+          "support": "Support"
+        },
+        "levelHelp": {
+          "owner": "Everything, including adding people, suspending operators and the activity log.",
+          "finance": "Sees everything. Can set up online payments (Billplz), plans and download transactions.",
+          "support": "Sees everything. Can help operators: edit details, send password reset and read messages."
+        },
+        "name": "Name",
+        "email": "Email",
+        "level": "Level",
+        "lastLogin": "Last login",
+        "status": "Status",
+        "neverLoggedIn": "Not yet",
+        "you": "(you)",
+        "removed": "Removed",
+        "remove": "Remove",
+        "restore": "Restore",
+        "removeConfirm": "Remove {{name}}?",
+        "removeHelp": "They are logged out straight away and cannot log in again. You can restore them later.",
+        "sendInvite": "Send invite",
+        "emailTaken": "This email is already used by another login.",
+        "error": "Something went wrong. Please try again."
+      },
+      "activity": {
+        "title": "Activity log",
+        "person": "Person",
+        "what": "What",
+        "when": "When",
+        "operator": "Operator",
+        "everyone": "Everyone",
+        "allActions": "All actions",
+        "empty": "Nothing has been recorded yet.",
+        "actions": {
+          "team_member_created": "Added a team member",
+          "team_member_level_changed": "Changed a team member's level",
+          "team_member_deactivated": "Removed a team member",
+          "team_member_reactivated": "Restored a team member",
+          "billplz_updated": "Saved Billplz settings",
+          "billplz_disabled": "Turned off Billplz"
+        }
+      },
     "operatorDetail": {
       "back": "Back to Operators",
       "empty": "Nothing here yet.",

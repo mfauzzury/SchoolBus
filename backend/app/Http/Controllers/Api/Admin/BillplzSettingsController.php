@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BusOperator;
 use App\Services\BillplzService;
+use App\Support\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -37,6 +38,12 @@ class BillplzSettingsController extends Controller
 
         $operator->save();
 
+        // Only that it changed and which collection — never the keys themselves.
+        ActivityLog::record('billplz_updated', $operator->id, [
+            'collection_id' => $operator->billplz_collection_id,
+            'sandbox' => (bool) $operator->billplz_sandbox,
+        ]);
+
         return $operator->billplzSummary();
     }
 
@@ -59,6 +66,8 @@ class BillplzSettingsController extends Controller
             'billplz_collection_id' => null,
             'billplz_sandbox' => false,
         ])->save();
+
+        ActivityLog::record('billplz_disabled', $operator->id);
 
         return $operator->billplzSummary();
     }

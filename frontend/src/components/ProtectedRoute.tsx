@@ -1,7 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useMe } from '@/hooks/useAuth'
+import { isPlatformUser } from '@/lib/platform'
 
-export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'saas_admin' }) {
+export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'platform' }) {
   const { data, isLoading, isError } = useMe()
 
   if (isLoading) {
@@ -13,10 +14,10 @@ export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'saas_
   }
 
   const isParent = data.roles.includes('parent')
-  const isSaasAdmin = data.roles.includes('saas_admin')
-  const homePath = isSaasAdmin ? '/admin/dashboard' : isParent ? '/parent/dashboard' : '/operator/dashboard'
+  const isPlatform = isPlatformUser(data.roles)
+  const homePath = isPlatform ? '/admin/dashboard' : isParent ? '/parent/dashboard' : '/operator/dashboard'
 
-  if (role === 'saas_admin' && !isSaasAdmin) {
+  if (role === 'platform' && !isPlatform) {
     return <Navigate to={homePath} replace />
   }
 
@@ -24,7 +25,7 @@ export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'saas_
     return <Navigate to={homePath} replace />
   }
 
-  if (role === 'operator' && (isParent || isSaasAdmin)) {
+  if (role === 'operator' && (isParent || isPlatform)) {
     return <Navigate to={homePath} replace />
   }
 

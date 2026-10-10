@@ -9,6 +9,7 @@ use App\Models\Route;
 use App\Models\Staff;
 use App\Models\Student;
 use App\Models\User;
+use App\Support\PlatformAccess;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -32,6 +33,19 @@ trait CreatesTestData
         $this->ensureRole('saas_admin');
         $user = User::factory()->create([...$attributes, 'tenant_id' => null]);
         $user->assignRole('saas_admin');
+
+        return $user;
+    }
+
+    /**
+     * A platform-team member at the given level ('owner' | 'finance' | 'support'),
+     * with the real role/permission table applied.
+     */
+    protected function createPlatformUser(string $level, array $attributes = []): User
+    {
+        PlatformAccess::sync();
+        $user = User::factory()->create([...$attributes, 'tenant_id' => null]);
+        $user->assignRole(PlatformAccess::LEVELS[$level]);
 
         return $user;
     }

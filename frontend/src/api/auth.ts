@@ -49,6 +49,8 @@ export interface MeResponse {
   tenant: BusOperator | null
   parentProfile: ParentProfile | null
   roles: string[]
+  /** Platform team only: what this level may change (empty for everyone else). */
+  permissions: string[]
 }
 
 export async function getCsrfCookie() {

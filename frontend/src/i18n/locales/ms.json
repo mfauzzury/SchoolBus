@@ -576,7 +576,13 @@
       "platformAdmin": "Admin Platform",
       "dashboard": "Papan Pemuka",
       "operators": "Pengendali",
-      "transactions": "Transaksi"
+      "transactions": "Transaksi",
+      "groupOverview": "Gambaran",
+      "groupOperators": "Pengendali",
+      "groupMoney": "Wang",
+      "groupSettings": "Tetapan",
+      "team": "Pasukan",
+      "activity": "Log aktiviti"
     },
     "dashboard": {
       "welcome": "Selamat datang, {{name}}",
@@ -606,6 +612,56 @@
       "dateTo": "Hingga",
       "noTransactions": "Belum ada transaksi."
     },
+      "team": {
+        "title": "Pasukan",
+        "add": "Tambah ahli pasukan",
+        "back": "Kembali ke Pasukan",
+        "addHelp": "Mereka akan terima e-mel dengan pautan untuk memilih kata laluan sendiri.",
+        "levelsTitle": "Apa yang boleh dibuat setiap tahap",
+        "levels": {
+          "owner": "Pemilik",
+          "finance": "Kewangan",
+          "support": "Sokongan"
+        },
+        "levelHelp": {
+          "owner": "Semua perkara, termasuk tambah orang, gantung pengendali dan log aktiviti.",
+          "finance": "Boleh lihat semua. Boleh tetapkan bayaran dalam talian (Billplz), pelan dan muat turun transaksi.",
+          "support": "Boleh lihat semua. Boleh bantu pengendali: ubah butiran, hantar set semula kata laluan dan baca mesej."
+        },
+        "name": "Nama",
+        "email": "E-mel",
+        "level": "Tahap",
+        "lastLogin": "Log masuk terakhir",
+        "status": "Status",
+        "neverLoggedIn": "Belum lagi",
+        "you": "(anda)",
+        "removed": "Dibuang",
+        "remove": "Buang",
+        "restore": "Pulihkan",
+        "removeConfirm": "Buang {{name}}?",
+        "removeHelp": "Mereka dilog keluar serta-merta dan tidak boleh log masuk lagi. Anda boleh memulihkan mereka kemudian.",
+        "sendInvite": "Hantar jemputan",
+        "emailTaken": "E-mel ini sudah digunakan oleh log masuk lain.",
+        "error": "Sesuatu tidak kena. Sila cuba lagi."
+      },
+      "activity": {
+        "title": "Log aktiviti",
+        "person": "Orang",
+        "what": "Apa",
+        "when": "Bila",
+        "operator": "Pengendali",
+        "everyone": "Semua orang",
+        "allActions": "Semua tindakan",
+        "empty": "Belum ada apa-apa direkodkan.",
+        "actions": {
+          "team_member_created": "Menambah ahli pasukan",
+          "team_member_level_changed": "Menukar tahap ahli pasukan",
+          "team_member_deactivated": "Membuang ahli pasukan",
+          "team_member_reactivated": "Memulihkan ahli pasukan",
+          "billplz_updated": "Menyimpan tetapan Billplz",
+          "billplz_disabled": "Menutup Billplz"
+        }
+      },
     "operatorDetail": {
       "back": "Kembali ke Pengendali",
       "empty": "Belum ada apa-apa di sini.",
