@@ -1088,6 +1088,14 @@
         "empty": "Belum ada mesej."
       },
         "parentsReport": {
+        "parentsUnit": "ibu bapa",
+        "answeredHelp": "Ibu bapa yang mengisi soalan pilihan tentang keluarga.",
+        "otherShort": "Lain",
+        "noAnswerShort": "Tiada",
+        "childShort": {"0": "Tiada", "1": "1", "2": "2", "3": "3", "4_plus": "4+"},
+        "levelShort": {"preschool": "Pra", "year_1": "D1", "year_2": "D2", "year_3": "D3", "year_4": "D4", "year_5": "D5", "year_6": "D6", "form_1": "T1", "form_2": "T2", "form_3": "T3", "form_4": "T4", "form_5": "T5", "other": "Lain"},
+        "incomeShort": {"under_3000": "<3K", "3000_5000": "3-5K", "5000_8000": "5-8K", "8000_12000": "8-12K", "above_12000": "12K+", "prefer_not_to_say": "Tidak"},
+        "incomeNote": "Lebih gelap bermakna pendapatan lebih tinggi. Kelabu bermakna tidak diberi.",
           "title": "Ibu bapa",
           "intro": "Siapa ibu bapa kita, sebagai jumlah kumpulan sahaja. Tiada nama dipaparkan, dan kumpulan kurang daripada {{count}} ibu bapa disembunyikan.",
           "operator": "Pengendali",

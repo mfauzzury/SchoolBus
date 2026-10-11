@@ -1090,6 +1090,14 @@
         "empty": "No messages yet."
       },
         "parentsReport": {
+        "parentsUnit": "parents",
+        "answeredHelp": "Parents who filled in the optional family questions.",
+        "otherShort": "Other",
+        "noAnswerShort": "None",
+        "childShort": {"0": "None", "1": "1", "2": "2", "3": "3", "4_plus": "4+"},
+        "levelShort": {"preschool": "Pre", "year_1": "Y1", "year_2": "Y2", "year_3": "Y3", "year_4": "Y4", "year_5": "Y5", "year_6": "Y6", "form_1": "F1", "form_2": "F2", "form_3": "F3", "form_4": "F4", "form_5": "F5", "other": "Other"},
+        "incomeShort": {"under_3000": "<3K", "3000_5000": "3-5K", "5000_8000": "5-8K", "8000_12000": "8-12K", "above_12000": "12K+", "prefer_not_to_say": "Skip"},
+        "incomeNote": "Darker means higher income. Grey is not given.",
           "title": "Parents",
           "intro": "Who our parents are, as group totals only. No names are ever shown, and any group of fewer than {{count}} parents is hidden.",
           "operator": "Operator",
