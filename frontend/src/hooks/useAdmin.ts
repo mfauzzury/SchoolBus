@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   addOperatorNote,
+  getParentReport,
   getNotificationOverview,
   listNotificationLog,
   setNotificationEnabled,
@@ -413,6 +414,14 @@ export function useNotificationLog(filters: NotificationLogFilters) {
   return useQuery({
     queryKey: ['admin-notification-log', filters],
     queryFn: () => listNotificationLog(filters),
+    placeholderData: (previous) => previous,
+  })
+}
+
+export function useParentReport(operatorId?: number) {
+  return useQuery({
+    queryKey: ['admin-parent-report', operatorId ?? 'all'],
+    queryFn: () => getParentReport(operatorId),
     placeholderData: (previous) => previous,
   })
 }

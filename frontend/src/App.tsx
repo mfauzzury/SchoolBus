@@ -52,6 +52,7 @@ import { AdminAnnouncements } from '@/pages/admin/Announcements'
 import { AdminAnnouncementEdit } from '@/pages/admin/AnnouncementEdit'
 import { AdminSystem } from '@/pages/admin/System'
 import { AdminMessages } from '@/pages/admin/Messages'
+import { AdminParentsReport } from '@/pages/admin/ParentsReport'
 import { AdminPlans } from '@/pages/admin/Plans'
 import { AdminPlanEdit } from '@/pages/admin/PlanEdit'
 import { AdminTeam } from '@/pages/admin/Team'
@@ -142,6 +143,7 @@ function App() {
             <Route path="/admin/announcements/:id" element={<AdminAnnouncementEdit />} />
             <Route path="/admin/system" element={<AdminSystem />} />
             <Route path="/admin/messages" element={<AdminMessages />} />
+            <Route path="/admin/parents" element={<AdminParentsReport />} />
             <Route path="/admin/team" element={<AdminTeam />} />
             <Route path="/admin/team/new" element={<AdminTeamAdd />} />
             <Route path="/admin/activity" element={<AdminActivityLog />} />

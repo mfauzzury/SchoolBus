@@ -632,7 +632,8 @@
       "inbox": "Inbox",
       "announcements": "Announcements",
       "system": "System",
-      "messages": "Messages"
+      "messages": "Messages",
+      "parents": "Parents"
     },
     "dashboard": {
       "welcome": "Welcome, {{name}}",
@@ -1088,6 +1089,67 @@
         "notDelivered": "Not delivered: file-only mode",
         "empty": "No messages yet."
       },
+        "parentsReport": {
+          "title": "Parents",
+          "intro": "Who our parents are, as group totals only. No names are ever shown, and any group of fewer than {{count}} parents is hidden.",
+          "operator": "Operator",
+          "allOperators": "All operators",
+          "totalParents": "Parents",
+          "answered": "Answered \"About you\"",
+          "answeredOf": "{{done}} of {{total}} parents",
+          "notEnough": "There are not enough parents yet to describe them without pointing at individuals. This report appears once there are {{count}} or more.",
+          "nothing": "Nothing to show yet.",
+          "fewerThan": "fewer than {{count}}",
+          "notGiven": "Not given",
+          "notAnswered": "Did not answer",
+          "other": "Other (small groups)",
+          "sectionWho": "Who they are",
+          "sectionWhere": "Where they live",
+          "sectionFamily": "Their family",
+          "sectionWork": "Work and income",
+          "gender": "Gender",
+          "relationship": "Relationship to the child",
+          "age": "Age",
+          "ageNote": "Worked out from the date of birth in the IC number.",
+          "ageBands": {
+            "under_25": "Under 25",
+            "25_34": "25 to 34",
+            "35_44": "35 to 44",
+            "45_54": "45 to 54",
+            "55_plus": "55 and over"
+          },
+          "state": "State",
+          "stateNote": "Worked out from the postcode; a missing or unusual postcode counts as not given.",
+          "children": "Children enrolled",
+          "childCount": {
+            "0": "No child enrolled",
+            "1": "1 child",
+            "2": "2 children",
+            "3": "3 children",
+            "4_plus": "4 or more"
+          },
+          "schoolLevel": "Children by school level",
+          "level": {
+            "preschool": "Preschool",
+            "year_1": "Year 1",
+            "year_2": "Year 2",
+            "year_3": "Year 3",
+            "year_4": "Year 4",
+            "year_5": "Year 5",
+            "year_6": "Year 6",
+            "form_1": "Form 1",
+            "form_2": "Form 2",
+            "form_3": "Form 3",
+            "form_4": "Form 4",
+            "form_5": "Form 5",
+            "other": "Older than Form 5"
+          },
+          "income": "Household income per month",
+          "workingField": "Working field",
+          "profession": "Most common professions",
+          "professionNote": "{{count}} other answers are not shown because fewer than {{min}} parents gave them.",
+          "privacy": "Totals only. Answers are never linked to a name, and groups of fewer than {{count}} are hidden so no one can be picked out."
+        },
     "operatorDetail": {
       "back": "Back to Operators",
       "empty": "Nothing here yet.",

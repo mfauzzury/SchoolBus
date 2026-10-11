@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Admin\IntegrationSettingsController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
 use App\Http\Controllers\Api\Admin\NotificationController;
 use App\Http\Controllers\Api\Admin\OperatorNoteController;
+use App\Http\Controllers\Api\Admin\ParentReportController;
 use App\Http\Controllers\Api\Admin\PaymentAttemptController;
 use App\Http\Controllers\Api\Admin\PlanController;
 use App\Http\Controllers\Api\Admin\SystemController;
@@ -141,6 +142,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('whatsapp/test', [IntegrationSettingsController::class, 'testWhatsApp'])->middleware('throttle:10,1');
             Route::delete('{provider}', [IntegrationSettingsController::class, 'destroy']);
         });
+
+        // Owner only: group totals about parents (never individuals).
+        Route::get('reports/parents', [ParentReportController::class, 'show'])
+            ->middleware('permission:reports.view');
 
         // Owner only: which automatic messages are on, and what was sent.
         Route::middleware('permission:settings.manage')->prefix('notifications')->group(function () {

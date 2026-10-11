@@ -751,3 +751,45 @@ export async function listNotificationLog(
   })
   return data
 }
+
+export interface DistributionItem {
+  key: string
+  /** null = the group is too small to show a number. */
+  count: number | null
+}
+
+export interface Distribution {
+  /** Everyone counted in this breakdown, including the groups that are hidden. */
+  base: number
+  items: DistributionItem[]
+  /** Professions only: how many different answers were left out. */
+  hidden_titles?: number
+}
+
+export interface ParentReport {
+  min_group: number
+  total_parents: number
+  answered_about: number
+  enough_data: boolean
+  distributions: Partial<
+    Record<
+      | 'gender'
+      | 'relationship'
+      | 'age'
+      | 'state'
+      | 'children'
+      | 'school_level'
+      | 'income'
+      | 'working_field'
+      | 'profession',
+      Distribution
+    >
+  >
+}
+
+export async function getParentReport(operatorId?: number): Promise<ParentReport> {
+  const { data } = await apiClient.get<ParentReport>('/api/admin/reports/parents', {
+    params: { operator_id: operatorId },
+  })
+  return data
+}
