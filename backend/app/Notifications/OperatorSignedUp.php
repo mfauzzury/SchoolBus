@@ -29,6 +29,6 @@ class OperatorSignedUp extends PlatformNotification
             ->line('Contact: '.self::plain($this->contactPerson).', '.self::plain($this->phone))
             ->line('Email: '.self::plain($this->email))
             ->action('Open operator', self::url("/admin/operators/{$this->operatorId}"))
-            ->salutation('SchoolBus');
+            ->salutation(self::brand());
     }
 }

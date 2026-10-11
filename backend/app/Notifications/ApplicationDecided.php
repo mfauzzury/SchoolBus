@@ -35,7 +35,7 @@ class ApplicationDecided extends PlatformNotification
                 ->line("Permohonan untuk {$student} dengan {$operator} telah diluluskan.")
                 ->action('Lihat / View', self::url('/parent/dashboard'))
                 ->line("The application for {$student} with {$operator} has been approved.")
-                ->salutation('SchoolBus');
+                ->salutation(self::brand());
         }
 
         $mail->line("Maaf, permohonan untuk {$student} dengan {$operator} tidak dapat diluluskan.");
@@ -46,6 +46,6 @@ class ApplicationDecided extends PlatformNotification
         return $mail
             ->line("Sorry, the application for {$student} with {$operator} could not be approved.")
             ->line('Sila hubungi pengendali bas untuk maklumat lanjut. / Please contact the bus operator for more details.')
-            ->salutation('SchoolBus');
+            ->salutation(self::brand());
     }
 }

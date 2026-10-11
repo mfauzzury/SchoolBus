@@ -95,6 +95,7 @@ class NotificationSafetyTest extends TestCase
         $signup = fn (int $i) => $this->fromFrontend()->postJson('/api/register-operator', [
             'company_name' => "Spam Co {$i}", 'contact_person' => 'Bot', 'contact_phone' => '0123456789',
             'email' => "spam{$i}@example.test", 'password' => 'password1',
+            'email_token' => $this->verifyEmail("spam{$i}@example.test"),
         ]);
 
         // Signing up logs the visitor in. Staying logged in must not earn a fresh allowance.

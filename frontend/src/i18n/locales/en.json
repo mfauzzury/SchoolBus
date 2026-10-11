@@ -493,11 +493,17 @@
     },
     "forgotPassword": {
       "title": "Forgot password",
-      "description": "Enter your email and we'll send you a link to reset your password.",
-      "email": "Email",
-      "submit": "Send reset link",
-      "submitting": "Sending…",
-      "success": "If that email is registered, a reset link has been sent.",
+      "description": "Enter your email and we'll send you a code to confirm it's you.",
+      "newPasswordTitle": "Choose a new password",
+      "newPasswordDescription": "Your email is confirmed. Pick a new password for your account.",
+      "newPassword": "New password",
+      "next": "Next",
+      "submit": "Change password",
+      "submitting": "Saving…",
+      "failed": "Could not change your password. Please try again.",
+      "doneTitle": "Password changed",
+      "success": "Your password has been changed. You can now log in with it.",
+      "goToLogin": "Log in",
       "backToLogin": "Back to log in"
     },
     "resetPassword": {
@@ -550,7 +556,20 @@
       "postcodePlaceholder": "e.g. 40000",
       "emergencyContactNamePlaceholder": "e.g. Siti binti Ali",
       "emergencyContactRelationshipPlaceholder": "e.g. Grandmother",
-      "emergencyContactPhonePlaceholder": "e.g. 013-456 7890"
+      "emergencyContactPhonePlaceholder": "e.g. 013-456 7890",
+      "emergencyContactHint": "Someone we can call if we cannot reach you. You can skip this and add it later in your profile.",
+      "stepLabel": "Step {{current}} of {{total}}",
+      "steps": {
+        "verify": "Verify email",
+        "you": "About you",
+        "contact": "Contact",
+        "emergency": "Emergency contact",
+        "password": "Password"
+      },
+      "haveAccount": "Already have an account?",
+      "logIn": "Log in",
+      "next": "Next",
+      "back": "Back"
     },
     "operatorSignup": {
       "title": "Set up your workspace",
@@ -569,12 +588,43 @@
       "emailPlaceholder": "you@company.com",
       "stepLabel": "Step {{current}} of {{total}}",
       "steps": {
+        "verify": "Verify email",
         "company": "Company",
         "details": "Your details",
         "password": "Password"
       },
+      "haveAccount": "Already have an account?",
+      "logIn": "Log in",
       "next": "Next",
       "back": "Back"
+    },
+    "emailCode": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "hint": "We'll email you a 6-digit code to confirm it's really you.",
+      "sendCode": "Send code",
+      "sending": "Sending…",
+      "sentTo": "We sent a 6-digit code to {{email}}. It can take a minute to arrive; check your spam folder too.",
+      "sentToIfRegistered": "If {{email}} has an account, we sent a 6-digit code to it. It can take a minute to arrive.",
+      "codeLabel": "6-digit code",
+      "verify": "Verify",
+      "verifying": "Checking…",
+      "resend": "Send a new code",
+      "resendIn": "Send a new code in {{seconds}}s",
+      "resendInMinutes": "Send a new code in {{minutes}} min",
+      "changeEmail": "Use a different email",
+      "verified": "Email verified",
+      "errors": {
+        "invalid": "That code isn't right. Check it and try again.",
+        "expired": "That code has expired. Send a new code.",
+        "too_many_attempts": "Too many wrong tries. Send a new code.",
+        "locked": "Too many wrong codes for this email. Please try again tomorrow.",
+        "tooManyRequests": "Too many tries. Please wait a few minutes and try again.",
+        "emailTaken": "This email already has an account. Log in instead.",
+        "sendFailed": "We couldn't send the code. Please try again in a moment.",
+        "verifyFailed": "We couldn't check the code. Please try again.",
+        "verificationLost": "Please verify your email again to continue."
+      }
     },
     "validation": {
       "required": "This field is required",

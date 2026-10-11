@@ -9,6 +9,7 @@ use App\Models\Route;
 use App\Models\Staff;
 use App\Models\Student;
 use App\Models\User;
+use App\Support\EmailOtp;
 use App\Support\PlatformAccess;
 use Spatie\Permission\Models\Role;
 
@@ -18,6 +19,21 @@ use Spatie\Permission\Models\Role;
  */
 trait CreatesTestData
 {
+    /**
+     * Proves an email the way a person does (ask for a code, type it in) and
+     * returns the proof token to send as `email_token` with the sign-up or
+     * password-reset request.
+     */
+    protected function verifyEmail(string $email, string $purpose = EmailOtp::REGISTRATION): string
+    {
+        $otp = app(EmailOtp::class);
+        $code = $otp->issue($purpose, $email);
+        [$result, $token] = $otp->verify($purpose, $email, $code);
+        $this->assertSame(EmailOtp::OK, $result);
+
+        return $token;
+    }
+
     protected function createTenant(array $attributes = []): BusOperator
     {
         return BusOperator::factory()->create($attributes);

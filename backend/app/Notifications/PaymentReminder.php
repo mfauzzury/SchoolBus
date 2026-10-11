@@ -33,28 +33,23 @@ class PaymentReminder extends PlatformNotification
         $overdue = $this->kind === self::OVERDUE;
         $operator = self::plain($this->operator);
 
-        $mail = (new MailMessage)
+        $rows = array_map(
+            fn ($line) => [$line['student'], self::date($line['due_date']), self::money($line['amount'])],
+            $this->lines,
+        );
+
+        return (new MailMessage)
             ->subject($this->subjectLine())
             ->greeting('Salam '.self::plain($this->parent).',')
             ->line($overdue
                 ? "Bil berikut dengan {$operator} telah tamat tempoh:"
-                : "Peringatan mesra: bil berikut dengan {$operator} hampir tamat tempoh:");
-
-        foreach ($this->lines as $line) {
-            $mail->line(self::plain($line['student']).': '.self::money($line['amount']).' (tarikh akhir '.self::date($line['due_date']).')');
-        }
-
-        $mail->action('Bayar sekarang / Pay now', self::url('/parent/invoices'))
+                : "Peringatan mesra: bil berikut dengan {$operator} hampir tamat tempoh:")
+            ->line(self::table(['Murid / Student', 'Tarikh akhir / Due', 'Baki / Balance'], $rows))
+            ->action('Bayar sekarang / Pay now', self::url('/parent/invoices'))
             ->line($overdue
-                ? "These bills with {$operator} are now overdue:"
-                : "A friendly reminder: these bills with {$operator} are due soon:");
-
-        foreach ($this->lines as $line) {
-            $mail->line(self::plain($line['student']).': '.self::money($line['amount']).' (due '.self::date($line['due_date']).')');
-        }
-
-        $mail->line('Jika anda sudah membayar, sila abaikan e-mel ini. / If you have already paid, please ignore this email.');
-
-        return $mail->salutation('SchoolBus');
+                ? "The bills listed above with {$operator} are now overdue."
+                : "A friendly reminder: the bills listed above with {$operator} are due soon.")
+            ->line('Jika anda sudah membayar, sila abaikan e-mel ini. / If you have already paid, please ignore this email.')
+            ->salutation(self::brand());
     }
 }

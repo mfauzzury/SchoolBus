@@ -1,0 +1,386 @@
+/*
+ * The BasSekolah.my look for every email: the same yellow, near-black text,
+ * soft grey page and rounded white card as the web app. Laravel copies these
+ * rules onto each element when it builds the message, so plain class names
+ * are enough. System fonts only: mail apps do not load web fonts.
+ */
+
+/* Base */
+
+body,
+body *:not(html):not(style):not(br):not(tr):not(code) {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji';
+    position: relative;
+}
+
+body {
+    -webkit-text-size-adjust: none;
+    background-color: #f5f5f5;
+    color: #404040;
+    height: 100%;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    width: 100% !important;
+}
+
+p,
+ul,
+ol,
+blockquote {
+    line-height: 1.5;
+    text-align: start;
+}
+
+a {
+    color: #0a0a0a;
+    text-decoration: underline;
+}
+
+a img {
+    border: none;
+}
+
+/* Typography */
+
+h1 {
+    color: #0a0a0a;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 0;
+    margin-bottom: 16px;
+    text-align: start;
+}
+
+h2 {
+    color: #0a0a0a;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 0;
+    text-align: start;
+}
+
+h3 {
+    color: #0a0a0a;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 0;
+    text-align: start;
+}
+
+p {
+    color: #404040;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-top: 0;
+    margin-bottom: 14px;
+    text-align: start;
+}
+
+p.sub {
+    font-size: 12px;
+}
+
+strong {
+    color: #0a0a0a;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e5e5e5;
+    margin: 24px 0;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* Layout */
+
+.wrapper {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.content {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+/* Header: the brand mark and name, as at the top of the website */
+
+.header {
+    padding: 32px 0 20px;
+    text-align: center;
+}
+
+.header a {
+    color: #0a0a0a;
+    text-decoration: none;
+}
+
+.brand {
+    margin: 0 auto;
+}
+
+.brand-mark {
+    background-color: #ffce1b;
+    border-radius: 8px;
+    height: 32px;
+    width: 32px;
+}
+
+.brand-dot {
+    background-color: #0a0a0a;
+    border-radius: 50%;
+    font-size: 0;
+    height: 5px;
+    line-height: 0;
+    overflow: hidden;
+    width: 5px;
+}
+
+/* A thin bar inside its cell, so it stays thinner than the dots it joins. */
+.brand-line {
+    background-color: #0a0a0a;
+    border-radius: 1px;
+    font-size: 0;
+    height: 2px;
+    line-height: 0;
+    overflow: hidden;
+    width: 8px;
+}
+
+.brand-name {
+    color: #0a0a0a;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    padding-left: 10px;
+}
+
+/* Body: a white card with a yellow strip along the top */
+
+.body {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0 12px;
+    width: 100%;
+}
+
+.inner-body {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 570px;
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0;
+    width: 570px;
+}
+
+.accent {
+    background-color: #ffce1b;
+    font-size: 0;
+    height: 6px;
+    line-height: 0;
+}
+
+.content-cell {
+    max-width: 100vw;
+    padding: 32px;
+}
+
+/* Subcopy: the "button not working?" note under the message */
+
+.subcopy {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 24px;
+    padding-top: 20px;
+}
+
+.subcopy p {
+    color: #737373;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+.subcopy a {
+    color: #737373;
+}
+
+/* Footer */
+
+.footer {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 570px;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+    width: 570px;
+}
+
+.footer .content-cell {
+    padding: 24px 32px 32px;
+}
+
+.footer p {
+    color: #737373;
+    font-size: 12px;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.footer a {
+    color: #737373;
+    text-decoration: underline;
+}
+
+/* Tables */
+
+.table table {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+    margin: 24px auto;
+    width: 100%;
+}
+
+.table th {
+    border-bottom: 1px solid #e5e5e5;
+    color: #0a0a0a;
+    font-size: 13px;
+    margin: 0;
+    padding-bottom: 8px;
+    text-align: start;
+}
+
+.table td {
+    border-bottom: 1px solid #f5f5f5;
+    color: #404040;
+    font-size: 15px;
+    line-height: 18px;
+    margin: 0;
+    padding: 10px 0;
+}
+
+/* Buttons: yellow with dark text, like the app's main button */
+
+.action {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+    margin: 24px auto;
+    padding: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.button {
+    -webkit-text-size-adjust: none;
+    border-radius: 8px;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 600;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.button-primary,
+.button-blue,
+.button-success,
+.button-green {
+    background-color: #ffce1b;
+    border-bottom: 11px solid #ffce1b;
+    border-left: 22px solid #ffce1b;
+    border-right: 22px solid #ffce1b;
+    border-top: 11px solid #ffce1b;
+    color: #0a0a0a;
+}
+
+.button-error,
+.button-red {
+    background-color: #dc2626;
+    border-bottom: 11px solid #dc2626;
+    border-left: 22px solid #dc2626;
+    border-right: 22px solid #dc2626;
+    border-top: 11px solid #dc2626;
+    color: #ffffff;
+}
+
+/* Panels */
+
+.panel {
+    margin: 20px 0;
+}
+
+.panel-content {
+    background-color: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    color: #404040;
+    padding: 16px;
+}
+
+.panel-content p {
+    color: #404040;
+}
+
+.panel-item {
+    padding: 0;
+}
+
+.panel-item p:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* One-time code: big, spaced-out digits that are easy to read and copy */
+
+.code {
+    margin: 24px 0;
+}
+
+.code-box {
+    background-color: #fff8db;
+    border: 1px solid #ffce1b;
+    border-radius: 10px;
+    padding: 18px 12px;
+    text-align: center;
+}
+
+.code-digits {
+    color: #0a0a0a;
+    font-family: 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    line-height: 1.2;
+    margin: 0;
+    padding-left: 8px;
+    text-align: center;
+}
+
+/* Utilities */
+
+.break-all {
+    word-break: break-all;
+}

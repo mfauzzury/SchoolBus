@@ -493,11 +493,17 @@
     },
     "forgotPassword": {
       "title": "Lupa kata laluan",
-      "description": "Masukkan emel anda dan kami akan menghantar pautan untuk menetapkan semula kata laluan anda.",
-      "email": "Emel",
-      "submit": "Hantar pautan tetapan semula",
-      "submitting": "Menghantar…",
-      "success": "Jika emel itu berdaftar, pautan tetapan semula telah dihantar.",
+      "description": "Masukkan emel anda dan kami akan menghantar kod untuk mengesahkan ia memang anda.",
+      "newPasswordTitle": "Pilih kata laluan baharu",
+      "newPasswordDescription": "Emel anda telah disahkan. Pilih kata laluan baharu untuk akaun anda.",
+      "newPassword": "Kata laluan baharu",
+      "next": "Seterusnya",
+      "submit": "Tukar kata laluan",
+      "submitting": "Menyimpan…",
+      "failed": "Tidak dapat menukar kata laluan anda. Sila cuba lagi.",
+      "doneTitle": "Kata laluan telah ditukar",
+      "success": "Kata laluan anda telah ditukar. Anda kini boleh log masuk dengannya.",
+      "goToLogin": "Log masuk",
       "backToLogin": "Kembali ke log masuk"
     },
     "resetPassword": {
@@ -550,7 +556,20 @@
       "postcodePlaceholder": "cth. 40000",
       "emergencyContactNamePlaceholder": "cth. Siti binti Ali",
       "emergencyContactRelationshipPlaceholder": "cth. Nenek",
-      "emergencyContactPhonePlaceholder": "cth. 013-456 7890"
+      "emergencyContactPhonePlaceholder": "cth. 013-456 7890",
+      "emergencyContactHint": "Seseorang yang boleh kami hubungi jika kami tidak dapat menghubungi anda. Anda boleh langkau dan tambah kemudian dalam profil anda.",
+      "stepLabel": "Langkah {{current}} daripada {{total}}",
+      "steps": {
+        "verify": "Sahkan emel",
+        "you": "Tentang anda",
+        "contact": "Hubungan",
+        "emergency": "Kenalan kecemasan",
+        "password": "Kata laluan"
+      },
+      "haveAccount": "Sudah ada akaun?",
+      "logIn": "Log masuk",
+      "next": "Seterusnya",
+      "back": "Kembali"
     },
     "operatorSignup": {
       "title": "Sediakan ruang kerja anda",
@@ -569,12 +588,43 @@
       "emailPlaceholder": "anda@syarikat.com",
       "stepLabel": "Langkah {{current}} daripada {{total}}",
       "steps": {
+        "verify": "Sahkan emel",
         "company": "Syarikat",
         "details": "Maklumat anda",
         "password": "Kata laluan"
       },
+      "haveAccount": "Sudah ada akaun?",
+      "logIn": "Log masuk",
       "next": "Seterusnya",
       "back": "Kembali"
+    },
+    "emailCode": {
+      "emailLabel": "Emel",
+      "emailPlaceholder": "anda@contoh.com",
+      "hint": "Kami akan menghantar kod 6 digit ke emel anda untuk mengesahkan ia memang anda.",
+      "sendCode": "Hantar kod",
+      "sending": "Menghantar…",
+      "sentTo": "Kami telah menghantar kod 6 digit ke {{email}}. Ia mungkin mengambil masa seminit; semak juga folder spam.",
+      "sentToIfRegistered": "Jika {{email}} mempunyai akaun, kami telah menghantar kod 6 digit ke emel itu. Ia mungkin mengambil masa seminit.",
+      "codeLabel": "Kod 6 digit",
+      "verify": "Sahkan",
+      "verifying": "Menyemak…",
+      "resend": "Hantar kod baharu",
+      "resendIn": "Hantar kod baharu dalam {{seconds}}s",
+      "resendInMinutes": "Hantar kod baharu dalam {{minutes}} min",
+      "changeEmail": "Guna emel lain",
+      "verified": "Emel disahkan",
+      "errors": {
+        "invalid": "Kod itu tidak betul. Semak dan cuba lagi.",
+        "expired": "Kod itu telah tamat tempoh. Hantar kod baharu.",
+        "too_many_attempts": "Terlalu banyak percubaan salah. Hantar kod baharu.",
+        "locked": "Terlalu banyak kod salah untuk emel ini. Sila cuba lagi esok.",
+        "tooManyRequests": "Terlalu banyak percubaan. Sila tunggu beberapa minit dan cuba lagi.",
+        "emailTaken": "Emel ini sudah mempunyai akaun. Sila log masuk.",
+        "sendFailed": "Kami tidak dapat menghantar kod. Sila cuba lagi sebentar nanti.",
+        "verifyFailed": "Kami tidak dapat menyemak kod. Sila cuba lagi.",
+        "verificationLost": "Sila sahkan emel anda sekali lagi untuk meneruskan."
+      }
     },
     "validation": {
       "required": "Ruangan ini diperlukan",

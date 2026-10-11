@@ -85,7 +85,8 @@ class NotificationEngineTest extends TestCase
         app(Notifier::class)->billsIssued([$invoice->fresh()]);
 
         $message = collect(app('mail.manager')->mailer('array')->getSymfonyTransport()->messages())->last();
-        $body = $message->getOriginalMessage()->toString();
+        // The raw message wraps long lines (quoted-printable), which can split a phrase.
+        $body = quoted_printable_decode($message->getOriginalMessage()->toString());
         $this->assertStringContainsString('Bil baharu', $body);
         $this->assertStringContainsString('has issued a new bill', $body);
         $this->assertStringContainsString('/parent/invoices', $body);
@@ -239,10 +240,10 @@ class NotificationEngineTest extends TestCase
         $this->createPlatformUser('owner', ['email' => 'owner@school.test']);
         $this->createPlatformUser('support', ['email' => 'support@school.test']);
         $this->createPlatformUser('owner', ['email' => 'gone@school.test', 'deactivated_at' => now()]);
-
         $this->fromFrontend()->postJson('/api/register-operator', [
             'company_name' => 'Fresh Buses', 'contact_person' => 'Aminah', 'contact_phone' => '0123456789',
             'email' => 'fresh@buses.test', 'password' => 'password1',
+            'email_token' => $this->verifyEmail('fresh@buses.test'),
         ])->assertCreated();
 
         $this->assertSame(['owner@school.test'], $this->logs('operator_signed_up')->pluck('recipient')->all());

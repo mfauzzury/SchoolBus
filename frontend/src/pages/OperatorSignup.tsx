@@ -2,9 +2,8 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,11 +14,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { EmailCodeStep } from '@/components/EmailCodeStep'
 import { FieldError } from '@/components/FieldError'
 import { PasswordInput } from '@/components/PasswordInput'
 import { PasswordStrengthMeter } from '@/components/PasswordStrengthMeter'
+import { WizardProgress } from '@/components/WizardProgress'
+import { useEmailProof } from '@/hooks/useEmailProof'
 import { useRegisterOperator } from '@/hooks/useOperatorRegistration'
-import { cn } from '@/lib/utils'
 
 // Messages are i18n keys, translated where they're rendered (see FieldError).
 const signupSchema = z.object({
@@ -36,12 +37,13 @@ const signupSchema = z.object({
 
 type SignupForm = z.infer<typeof signupSchema>
 
-const STEPS = ['company', 'details', 'password'] as const
+const STEPS = ['verify', 'company', 'details', 'password'] as const
 
-// Which fields must be valid before leaving each step.
+// Which fields must be valid before leaving each step. The first step proves the
+// email with a one-time code (see EmailCodeStep).
 const STEP_FIELDS: Record<number, (keyof SignupForm)[]> = {
-  0: ['company_name'],
-  1: ['contact_person', 'contact_phone', 'email'],
+  1: ['company_name'],
+  2: ['contact_person', 'contact_phone'],
 }
 
 export function OperatorSignup() {
@@ -49,11 +51,15 @@ export function OperatorSignup() {
   const navigate = useNavigate()
   const register = useRegisterOperator()
   const [step, setStep] = useState(0)
+  // The email they have proven with a code. Signing up is refused without it.
+  const emailProof = useEmailProof()
   const {
     register: registerField,
     handleSubmit,
     trigger,
     watch,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm<SignupForm>({ resolver: zodResolver(signupSchema) })
 
@@ -62,17 +68,35 @@ export function OperatorSignup() {
 
   // Only the current step's fields need to be valid before moving on.
   const goNext = async () => {
-    if (await trigger(STEP_FIELDS[step])) setStep((current) => current + 1)
+    const fields = STEP_FIELDS[step]
+    if (!fields || (await trigger(fields))) setStep((current) => current + 1)
   }
 
   const onSubmit = (values: SignupForm) => {
-    register.mutate(values, {
-      onSuccess: () => navigate('/operator/dashboard'),
-    })
+    register.mutate(
+      { ...values, email_token: emailProof.proof?.token },
+      {
+        onSuccess: () => navigate('/operator/dashboard'),
+        onError: (error) => {
+          // The email itself was refused (proof ran out, or it got registered meanwhile):
+          // back to the first step, which says why.
+          if (emailProof.rejectedBy(error)) {
+            register.reset()
+            setStep(0)
+          }
+        },
+      },
+    )
   }
 
   // Enter on an earlier step advances rather than submitting a half-filled form.
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    // The first step has its own buttons and handles Enter itself.
+    if (step === 0) {
+      event.preventDefault()
+      return
+    }
+
     if (!isLastStep) {
       event.preventDefault()
       void goNext()
@@ -81,10 +105,13 @@ export function OperatorSignup() {
 
     void handleSubmit(onSubmit, (invalid) => {
       // Bring the user back to the earliest step that has something to fix.
-      if (invalid.company_name) setStep(0)
-      else if (invalid.contact_person || invalid.contact_phone || invalid.email) setStep(1)
+      if (invalid.company_name) setStep(1)
+      else if (invalid.contact_person || invalid.contact_phone) setStep(2)
+      else if (invalid.email) setStep(0)
     })(event)
   }
+
+  const stepLabel = t('auth.operatorSignup.stepLabel', { current: step + 1, total: STEPS.length })
 
   return (
     <Card className="w-full max-w-sm">
@@ -92,48 +119,41 @@ export function OperatorSignup() {
         <CardTitle>{t('auth.operatorSignup.title')}</CardTitle>
         <CardDescription>{t('auth.operatorSignup.description')}</CardDescription>
 
-        <div className="mt-3 flex flex-col gap-2">
-          <ol className="flex items-center gap-2" aria-label={t('auth.operatorSignup.stepLabel', { current: step + 1, total: STEPS.length })}>
-            {STEPS.map((key, index) => {
-              const done = index < step
-              const current = index === step
-              return (
-                <li
-                  key={key}
-                  aria-current={current ? 'step' : undefined}
-                  className={cn('flex items-center gap-2', index > 0 && 'flex-1')}
-                >
-                  {index > 0 && (
-                    <span
-                      aria-hidden="true"
-                      className={cn('h-0.5 flex-1 rounded-full', index <= step ? 'bg-primary' : 'bg-border')}
-                    />
-                  )}
-                  <span
-                    className={cn(
-                      'flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-medium',
-                      (done || current) && 'border-primary bg-primary text-primary-foreground',
-                      !done && !current && 'text-muted-foreground',
-                    )}
-                  >
-                    {done ? <Check className="size-3.5" /> : index + 1}
-                  </span>
-                </li>
-              )
-            })}
-          </ol>
-          <p className="text-xs text-muted-foreground">
-            {t('auth.operatorSignup.stepLabel', { current: step + 1, total: STEPS.length })}
-            {' · '}
-            <span className="font-medium text-foreground">
-              {t(`auth.operatorSignup.steps.${STEPS[step]}`)}
-            </span>
-          </p>
-        </div>
+        <WizardProgress
+          labels={STEPS.map((key) => t(`auth.operatorSignup.steps.${key}`))}
+          current={step}
+          stepLabel={stepLabel}
+        />
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={onFormSubmit} noValidate>
           {step === 0 && (
+            <EmailCodeStep
+              endpoint="/api/register-operator/email-code"
+              initialEmail={getValues('email') ?? ''}
+              verifiedEmail={emailProof.proof?.email ?? null}
+              notice={emailProof.notice}
+              emailPlaceholder={t('auth.operatorSignup.emailPlaceholder')}
+              nextLabel={t('auth.operatorSignup.next')}
+              onVerified={(email, token) => {
+                setValue('email', email, { shouldValidate: true })
+                emailProof.accept(email, token)
+                setStep(1)
+              }}
+              onChangeEmail={emailProof.clear}
+              onContinue={() => setStep(1)}
+              footer={
+                <p className="text-center text-sm text-muted-foreground">
+                  {t('auth.operatorSignup.haveAccount')}{' '}
+                  <Link to="/login" className="font-medium text-foreground hover:underline">
+                    {t('auth.operatorSignup.logIn')}
+                  </Link>
+                </p>
+              }
+            />
+          )}
+
+          {step === 1 && (
             <>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="company_name">{t('auth.operatorSignup.companyName')}</Label>
@@ -147,13 +167,18 @@ export function OperatorSignup() {
                 <FieldError message={errors.company_name?.message} />
               </div>
               {/* A real submit button so Enter advances; onFormSubmit routes it to goNext. */}
-              <Button key="next-company" type="submit">
-                {t('auth.operatorSignup.next')}
-              </Button>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={() => setStep(0)}>
+                  {t('auth.operatorSignup.back')}
+                </Button>
+                <Button key="next-company" type="submit" className="flex-1">
+                  {t('auth.operatorSignup.next')}
+                </Button>
+              </div>
             </>
           )}
 
-          {step === 1 && (
+          {step === 2 && (
             <>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="contact_person">{t('auth.operatorSignup.contactPerson')}</Label>
@@ -177,20 +202,9 @@ export function OperatorSignup() {
                 />
                 <FieldError message={errors.contact_phone?.message} />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email">{t('auth.operatorSignup.email')}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder={t('auth.operatorSignup.emailPlaceholder')}
-                  autoComplete="email"
-                  {...registerField('email')}
-                />
-                <FieldError message={errors.email?.message} />
-              </div>
 
               <div className="flex gap-2">
-                <Button type="button" variant="outline" onClick={() => setStep(0)}>
+                <Button type="button" variant="outline" onClick={() => setStep(1)}>
                   {t('auth.operatorSignup.back')}
                 </Button>
                 <Button key="next-details" type="submit" className="flex-1">
@@ -200,7 +214,7 @@ export function OperatorSignup() {
             </>
           )}
 
-          {step === 2 && (
+          {step === 3 && (
             <>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="password">{t('auth.operatorSignup.password')}</Label>
@@ -224,7 +238,7 @@ export function OperatorSignup() {
                   type="button"
                   variant="outline"
                   disabled={register.isPending}
-                  onClick={() => setStep(1)}
+                  onClick={() => setStep(2)}
                 >
                   {t('auth.operatorSignup.back')}
                 </Button>

@@ -29,6 +29,6 @@ class ApplicationReceived extends PlatformNotification
             ->line("{$parent} memohon tempat untuk {$student}. Sila semak dan luluskan atau tolak.")
             ->action('Buka permohonan / Open applications', self::url('/operator/applications'))
             ->line("{$parent} applied for a place for {$student}. Please review and approve or reject.")
-            ->salutation('SchoolBus');
+            ->salutation(self::brand());
     }
 }

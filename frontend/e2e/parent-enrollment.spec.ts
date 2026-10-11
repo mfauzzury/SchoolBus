@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { loginAs, unique } from './helpers'
+import { loginAs, unique, verifyEmailViaUi } from './helpers'
 
 /**
  * The full golden path: operator sets up a route with a rate card, a parent
@@ -15,11 +15,11 @@ test.describe.serial('Parent enrollment golden path', () => {
 
   test('operator signs up and creates a route with a rate card', async ({ page }) => {
     await page.goto('/signup')
+    await verifyEmailViaUi(page, operatorEmail)
     await page.fill('#company_name', `Enroll Bus Co ${suffix}`)
     await page.click('button:has-text("Next")')
     await page.fill('#contact_person', 'Operator')
     await page.fill('#contact_phone', '0123456789')
-    await page.fill('#email', operatorEmail)
     await page.click('button:has-text("Next")')
     await page.fill('#password', 'password123')
     await page.click('button[type="submit"]:has-text("Start free")')
@@ -45,10 +45,13 @@ test.describe.serial('Parent enrollment golden path', () => {
 
   test('parent registers via the operator code and submits an application', async ({ page }) => {
     await page.goto(`/register/${operatorCode}`)
+    await verifyEmailViaUi(page, parentEmail)
     await page.fill('#full_name', 'Enroll Parent')
     await page.fill('#ic_number', '900101-01-1111')
+    await page.click('button:has-text("Next")')
     await page.fill('#phone', '0123456789')
-    await page.fill('#email', parentEmail)
+    await page.click('button:has-text("Next")')
+    await page.click('button:has-text("Next")') // emergency contact is optional
     await page.fill('#password', 'password123')
     await page.click('button[type="submit"]:has-text("Register")')
     await expect(page).toHaveURL(/\/parent\/dashboard/)
