@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
         }
-        .accent-bar { background-color: #eab03e; height: 8px; width: 100%; font-size: 1px; line-height: 1px; }
+        .accent-bar { background-color: #ffce1b; height: 8px; width: 100%; font-size: 1px; line-height: 1px; }
         .page { padding: 28px 40px 40px; }
 
         table { border-collapse: collapse; }

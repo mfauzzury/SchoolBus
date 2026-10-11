@@ -1,13 +1,24 @@
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   ArrowRight,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   XCircle,
+  ZoomIn,
 } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Accordion,
   AccordionItem,
@@ -20,20 +31,25 @@ import opHeroBus from '@/assets/landing/op-hero-bus.webp'
 import opJourneyDepot from '@/assets/landing/op-journey-depot.webp'
 import opGetStartedBus from '@/assets/landing/op-get-started-bus.webp'
 import tourDashboard from '@/assets/landing/tour-dashboard.webp'
+import tourApplications from '@/assets/landing/tour-applications.webp'
 import tourRoutes from '@/assets/landing/tour-routes.webp'
+import tourBillingSettings from '@/assets/landing/tour-billing-settings.webp'
 import tourFinances from '@/assets/landing/tour-finances.webp'
 
 const capabilities = ['fleet', 'applications', 'discounts', 'free'] as const
 
 const journey = ['setup', 'apply', 'approve', 'bill'] as const
 
-const faqs = ['free', 'setup', 'billing', 'dataIsolation', 'parentsRegister', 'hiddenFees'] as const
+const faqs = ['free', 'setup', 'billing', 'payment', 'dataIsolation', 'parentsRegister', 'hiddenFees'] as const
 
-const whySwitchPairs = ['payments', 'applications', 'discounts', 'visibility'] as const
+const whySwitchPairs = ['payments', 'applications', 'discounts', 'flexible', 'visibility'] as const
 
+// In the order an operator meets them: overview, enrolling a child, fleet, billing rules, money.
 const screenshots = [
   { key: 'dashboard', src: tourDashboard },
+  { key: 'applications', src: tourApplications },
   { key: 'fleet', src: tourRoutes },
+  { key: 'billingSettings', src: tourBillingSettings },
   { key: 'billing', src: tourFinances },
 ] as const
 
@@ -162,6 +178,205 @@ function OperatorAccessCard() {
         </Link>
       </CardContent>
     </Card>
+  )
+}
+
+function ProductTour() {
+  const { t } = useTranslation()
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [edges, setEdges] = useState({ start: true, end: false })
+  const [selected, setSelected] = useState(0)
+  const [enlarged, setEnlarged] = useState(false)
+  const [dragging, setDragging] = useState(false)
+  const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0 })
+
+  const updateEdges = useCallback(() => {
+    const el = trackRef.current
+    if (!el) return
+    setEdges({
+      start: el.scrollLeft <= 4,
+      end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4,
+    })
+  }, [])
+
+  useEffect(() => {
+    updateEdges()
+    window.addEventListener('resize', updateEdges)
+    return () => window.removeEventListener('resize', updateEdges)
+  }, [updateEdges])
+
+  function page(direction: 1 | -1) {
+    const el = trackRef.current
+    if (!el) return
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollBy({ left: direction * el.clientWidth * 0.8, behavior: reduceMotion ? 'auto' : 'smooth' })
+  }
+
+  // Touch and trackpads scroll the slider natively; a mouse needs this to drag it.
+  function onPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || !trackRef.current) return
+    drag.current = {
+      active: true,
+      moved: false,
+      startX: e.clientX,
+      startScroll: trackRef.current.scrollLeft,
+    }
+  }
+
+  function onPointerMove(e: ReactPointerEvent<HTMLDivElement>) {
+    const el = trackRef.current
+    const d = drag.current
+    if (!el || !d.active) return
+    const dx = e.clientX - d.startX
+    if (!d.moved) {
+      // A small wobble is still a click on the screenshot, not a drag.
+      if (Math.abs(dx) < 5) return
+      d.moved = true
+      setDragging(true)
+      el.setPointerCapture(e.pointerId)
+    }
+    el.scrollLeft = d.startScroll - dx
+  }
+
+  function endDrag() {
+    const el = trackRef.current
+    const d = drag.current
+    if (!d.active) return
+    d.active = false
+    if (!d.moved || !el) return
+    setDragging(false)
+    // Settle on the nearest card, like a swipe would.
+    const left = el.getBoundingClientRect().left
+    const inset = parseFloat(getComputedStyle(el).paddingLeft) || 0
+    const offsets = Array.from(el.children).map(
+      (c) => c.getBoundingClientRect().left - left + el.scrollLeft - inset,
+    )
+    const nearest = offsets.reduce((a, b) =>
+      Math.abs(b - el.scrollLeft) < Math.abs(a - el.scrollLeft) ? b : a,
+    )
+    el.scrollTo({ left: nearest, behavior: 'smooth' })
+  }
+
+  // The click that follows a drag must not open the popup.
+  function swallowClickAfterDrag(e: React.MouseEvent) {
+    if (!drag.current.moved) return
+    e.preventDefault()
+    e.stopPropagation()
+    drag.current.moved = false
+  }
+
+  const current = screenshots[selected]
+
+  return (
+    <>
+      <div className="mb-8 flex items-end justify-between gap-4">
+        <div className="max-w-md">
+          <span className="mb-2 block font-mono text-xs font-bold text-primary uppercase">
+            {t('operatorsPage.screenshots.tag')}
+          </span>
+          <h2 className="text-2xl font-medium">{t('operatorsPage.screenshots.title')}</h2>
+          <p className="mt-1 text-muted-foreground">{t('operatorsPage.screenshots.subtitle')}</p>
+        </div>
+        {/* Touch devices swipe; the arrows are for mouse users. */}
+        <div className="hidden shrink-0 gap-2 sm:flex">
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={edges.start}
+            onClick={() => page(-1)}
+            aria-label={t('operatorsPage.screenshots.previous')}
+          >
+            <ChevronLeft />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={edges.end}
+            onClick={() => page(1)}
+            aria-label={t('operatorsPage.screenshots.next')}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
+      </div>
+
+      {/* Scroll-snap slider: swipes on touch, arrows on desktop. Negative margins let the next card peek in. */}
+      <div
+        ref={trackRef}
+        onScroll={updateEdges}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onClickCapture={swallowClickAfterDrag}
+        onDragStart={(e) => e.preventDefault()}
+        className={cn(
+          '-mx-4 flex scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 select-none lg:-mx-8 lg:scroll-px-8 lg:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+          // Snapping fights a mouse drag, so it is off while one is in progress.
+          dragging ? 'snap-none [&_*]:cursor-grabbing' : 'snap-x snap-mandatory',
+        )}
+      >
+        {screenshots.map(({ key, src }, i) => {
+          const title = t(`operatorsPage.screenshots.${key}.title`)
+          return (
+            <figure
+              key={key}
+              className="flex w-[82%] shrink-0 snap-start flex-col gap-3 sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]"
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setSelected(i)
+                  setEnlarged(true)
+                }}
+                aria-label={`${t('operatorsPage.screenshots.enlarge')}: ${title}`}
+                className="group relative block w-full cursor-grab overflow-hidden rounded-lg border shadow-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <img
+                  src={src}
+                  alt=""
+                  width={1440}
+                  height={916}
+                  loading="lazy"
+                  draggable={false}
+                  className="w-full transition-transform duration-200 group-hover:scale-[1.02]"
+                />
+                <span className="absolute right-2 bottom-2 flex size-8 items-center justify-center rounded-full bg-background/90 shadow ring-1 ring-foreground/10">
+                  <ZoomIn className="size-4" />
+                </span>
+              </button>
+              <figcaption>
+                <h3 className="text-sm font-medium">{title}</h3>
+                <p className="text-xs text-muted-foreground">
+                  {t(`operatorsPage.screenshots.${key}.description`)}
+                </p>
+              </figcaption>
+            </figure>
+          )
+        })}
+      </div>
+
+      <Dialog open={enlarged} onOpenChange={setEnlarged}>
+        <DialogContent className="gap-3 sm:max-w-5xl">
+          <DialogHeader className="pr-8">
+            <DialogTitle>{t(`operatorsPage.screenshots.${current.key}.title`)}</DialogTitle>
+            <DialogDescription>
+              {t(`operatorsPage.screenshots.${current.key}.description`)}
+            </DialogDescription>
+          </DialogHeader>
+          {/* On a phone the picture keeps a readable width and pans sideways inside the box. */}
+          <div className="max-h-[75vh] overflow-auto rounded-lg border">
+            <img
+              src={current.src}
+              alt={t(`operatorsPage.screenshots.${current.key}.title`)}
+              width={1440}
+              height={916}
+              className="w-full min-w-[820px] sm:mx-auto sm:max-h-[70vh] sm:w-auto sm:max-w-full sm:min-w-0"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -304,34 +519,7 @@ export function Operators() {
       </section>
 
       <section id="screenshots" className="border-t py-20">
-        <div className="mb-10 max-w-md">
-          <span className="mb-2 block font-mono text-xs font-bold text-primary uppercase">
-            {t('operatorsPage.screenshots.tag')}
-          </span>
-          <h2 className="text-2xl font-medium">{t('operatorsPage.screenshots.title')}</h2>
-          <p className="mt-1 text-muted-foreground">{t('operatorsPage.screenshots.subtitle')}</p>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-3">
-          {screenshots.map(({ key, src }) => (
-            <div key={key} className="flex flex-col gap-3">
-              <img
-                src={src}
-                alt={t(`operatorsPage.screenshots.${key}.title`)}
-                width={1100}
-                height={700}
-                loading="lazy"
-                className="w-full rounded-lg border shadow-sm"
-              />
-              <div>
-                <h3 className="text-sm font-medium">{t(`operatorsPage.screenshots.${key}.title`)}</h3>
-                <p className="text-xs text-muted-foreground">
-                  {t(`operatorsPage.screenshots.${key}.description`)}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ProductTour />
       </section>
 
       <section id="pricing" className="border-t py-20">

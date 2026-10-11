@@ -278,7 +278,7 @@
     "capabilities": {
       "fleet": "Fleet & route management",
       "applications": "Application approval workflow",
-      "discounts": "Auto discounts, monthly billing",
+      "discounts": "Automatic monthly bills & discounts",
       "free": "No monthly subscription"
     },
     "whySwitch": {
@@ -289,19 +289,23 @@
       "newWay": "With BasSekolah.my",
       "payments": {
         "old": "Tracking who's paid in a spreadsheet, hoping it's not out of date",
-        "new": "A live dashboard shows exactly who's paid, who's overdue, and how much you've collected"
+        "new": "Parents pay online and get a receipt; your live dashboard shows who's paid, who's overdue, and how much you've collected"
       },
       "applications": {
         "old": "New applications via WhatsApp messages you copy into a register by hand",
         "new": "Parents apply online with your 5-digit code — approve with one click"
       },
       "discounts": {
-        "old": "Calculating sibling and term discounts by hand, differently every time",
+        "old": "Calculating sibling discounts by hand, differently every time",
         "new": "Discounts calculated automatically, the same way every month"
       },
       "visibility": {
         "old": "No record of which bus, driver, or stop a child is assigned to besides your own notes",
         "new": "Every route, bus, and driver assignment logged and visible instantly"
+      },
+      "flexible": {
+        "old": "Re-doing the fee list every time a family has a special case, or the buses stop for the school holidays",
+        "new": "Skip holiday months, set a custom fee for one child, or add a one-off discount or charge to a single bill"
       }
     },
     "journeyTag": "The journey",
@@ -311,7 +315,7 @@
       "setup": {
         "who": "Operator",
         "title": "Set up your fleet",
-        "body": "Add buses, routes, stops, drivers and conductors. Set your own monthly rate per route — no per-stop pricing config needed."
+        "body": "Add buses, routes, stops, drivers and conductors. Set a return fare and a one-way fare for each route — no per-stop pricing needed."
       },
       "apply": {
         "who": "Parent",
@@ -321,12 +325,12 @@
       "approve": {
         "who": "Operator",
         "title": "Review and approve",
-        "body": "Assign the route and bus, confirm the fee. One click creates the student record and issues the first invoice."
+        "body": "Pick the route and pickup stop, confirm the fee, and choose how the first bill starts — full month, a reduced amount, or next month. One click creates the student record."
       },
       "bill": {
         "who": "Both",
         "title": "Billing runs itself",
-        "body": "Every month, fees recalculate automatically with sibling and term discounts applied. Track collections live, export to CSV anytime."
+        "body": "Bills go out on the 1st of every billed month with the sibling discount applied. Parents pay online, and you record cash or bank transfers. Track collections live, export to CSV anytime."
       }
     },
     "getStarted": { "title": "Get started", "subtitle": "Set up your workspace in minutes." },
@@ -343,18 +347,29 @@
     "screenshots": {
       "tag": "Product tour",
       "title": "A look inside the dashboard",
-      "subtitle": "A quick tour of what you'll find inside.",
+      "subtitle": "A quick tour of what you'll find inside. Tap a screenshot to enlarge it.",
+      "enlarge": "Enlarge screenshot",
+      "previous": "Previous screenshots",
+      "next": "Next screenshots",
       "dashboard": {
         "title": "Dashboard overview",
-        "description": "Fleet, student, and revenue stats at a glance"
+        "description": "New applications, collections by month, and seats by route at a glance"
+      },
+      "applications": {
+        "title": "Review & approve applications",
+        "description": "See the request, pick the route and stop, and choose how the first bill starts"
+      },
+      "billingSettings": {
+        "title": "Bills & fees",
+        "description": "Set the due day, skip holiday months, and set sibling discounts"
       },
       "fleet": {
-        "title": "Fleet & route management",
-        "description": "Buses, drivers, conductors, and stops in one place"
+        "title": "Routes & fares",
+        "description": "Set up stops, return and one-way fares, and the bus and crew step by step"
       },
       "billing": {
         "title": "Billing & collections",
-        "description": "Track who's paid, who's overdue, and export anytime"
+        "description": "Bills, payments received and who still owes — with CSV export"
       }
     },
     "pricing": {
@@ -401,7 +416,11 @@
       },
       "billing": {
         "question": "How does billing and collection work?",
-        "answer": "Configure your base fees and discount rules once — BasSekolah.my calculates each family's bill automatically by billing cycle and sibling count, and tracks who's paid."
+        "answer": "Set a fare for each route and your sibling discount once. Bills go out automatically on the 1st of each month you choose to bill, due on the day you set, and BasSekolah.my tracks who's paid. You can still adjust a single bill, set a custom fee for one child, or skip holiday months."
+      },
+      "payment": {
+        "question": "How do parents pay?",
+        "answer": "Parents pay from their dashboard with FPX online banking, e-wallet or card, and the bill is marked paid automatically with a PDF receipt. If a parent pays cash or by bank transfer, you record it yourself in a few taps."
       },
       "dataIsolation": {
         "question": "Is my fleet and student data private?",

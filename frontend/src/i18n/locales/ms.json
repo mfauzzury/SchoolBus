@@ -278,7 +278,7 @@
     "capabilities": {
       "fleet": "Pengurusan armada & laluan",
       "applications": "Aliran kerja kelulusan permohonan",
-      "discounts": "Diskaun automatik, bil bulanan",
+      "discounts": "Bil & diskaun bulanan automatik",
       "free": "Tiada langganan bulanan"
     },
     "whySwitch": {
@@ -289,19 +289,23 @@
       "newWay": "Dengan BasSekolah.my",
       "payments": {
         "old": "Menjejaki siapa yang telah membayar dalam helaian Excel, berharap ia tidak lapuk",
-        "new": "Papan pemuka langsung menunjukkan siapa yang telah bayar, siapa tertunggak, dan berapa banyak dikutip"
+        "new": "Ibu bapa membayar dalam talian dan menerima resit; papan pemuka langsung menunjukkan siapa yang telah bayar, siapa tertunggak, dan berapa banyak dikutip"
       },
       "applications": {
         "old": "Permohonan baharu melalui mesej WhatsApp yang anda salin ke daftar secara manual",
         "new": "Ibu bapa memohon dalam talian dengan kod 5-digit anda — luluskan dengan satu klik"
       },
       "discounts": {
-        "old": "Mengira diskaun adik-beradik dan tempoh secara manual, berbeza setiap kali",
+        "old": "Mengira diskaun adik-beradik secara manual, berbeza setiap kali",
         "new": "Diskaun dikira secara automatik, dengan cara yang sama setiap bulan"
       },
       "visibility": {
         "old": "Tiada rekod bas, pemandu, atau perhentian yang ditetapkan untuk seorang anak selain nota anda sendiri",
         "new": "Setiap penetapan laluan, bas, dan pemandu direkod dan boleh dilihat serta-merta"
+      },
+      "flexible": {
+        "old": "Menulis semula senarai yuran setiap kali ada keluarga dengan kes khas, atau bas berhenti ketika cuti sekolah",
+        "new": "Langkau bulan cuti, tetapkan yuran khas untuk seorang anak, atau tambah diskaun atau caj sekali sahaja pada satu bil"
       }
     },
     "journeyTag": "Perjalanannya",
@@ -311,7 +315,7 @@
       "setup": {
         "who": "Pengendali",
         "title": "Sediakan armada anda",
-        "body": "Tambah bas, laluan, perhentian, pemandu dan konduktor. Tetapkan kadar bulanan bagi setiap laluan — tiada konfigurasi harga setiap perhentian diperlukan."
+        "body": "Tambah bas, laluan, perhentian, pemandu dan konduktor. Tetapkan tambang pergi-balik dan tambang sehala bagi setiap laluan — tiada konfigurasi harga setiap perhentian diperlukan."
       },
       "apply": {
         "who": "Ibu bapa",
@@ -321,12 +325,12 @@
       "approve": {
         "who": "Pengendali",
         "title": "Semak dan luluskan",
-        "body": "Tetapkan laluan dan bas, sahkan yuran. Satu klik mencipta rekod pelajar dan mengeluarkan bil pertama."
+        "body": "Pilih laluan dan perhentian ambil, sahkan yuran, dan tentukan bagaimana bil pertama bermula — sebulan penuh, jumlah dikurangkan, atau bulan depan. Satu klik mencipta rekod pelajar."
       },
       "bill": {
         "who": "Kedua-dua",
         "title": "Bil berjalan sendiri",
-        "body": "Setiap bulan, yuran dikira semula secara automatik dengan diskaun adik-beradik dan tempoh. Jejaki kutipan secara langsung, eksport ke CSV bila-bila masa."
+        "body": "Bil dikeluarkan pada hari pertama setiap bulan yang dibilkan dengan diskaun adik-beradik. Ibu bapa membayar dalam talian, dan anda merekod bayaran tunai atau pindahan bank. Jejaki kutipan secara langsung, eksport ke CSV bila-bila masa."
       }
     },
     "getStarted": { "title": "Mula sekarang", "subtitle": "Sediakan ruang kerja anda dalam beberapa minit." },
@@ -343,18 +347,29 @@
     "screenshots": {
       "tag": "Lawatan produk",
       "title": "Lihat ke dalam papan pemuka",
-      "subtitle": "Lawatan ringkas ke dalam apa yang akan anda temui di dalamnya.",
+      "subtitle": "Lawatan ringkas ke dalam apa yang akan anda temui di dalamnya. Ketik gambar untuk membesarkannya.",
+      "enlarge": "Besarkan tangkapan skrin",
+      "previous": "Tangkapan skrin sebelumnya",
+      "next": "Tangkapan skrin seterusnya",
       "dashboard": {
         "title": "Gambaran papan pemuka",
-        "description": "Statistik armada, pelajar, dan hasil sekali imbas"
+        "description": "Permohonan baharu, kutipan mengikut bulan, dan tempat duduk mengikut laluan sekali imbas"
+      },
+      "applications": {
+        "title": "Semak & luluskan permohonan",
+        "description": "Lihat permohonan, pilih laluan dan perhentian, dan tentukan bagaimana bil pertama bermula"
+      },
+      "billingSettings": {
+        "title": "Bil & Yuran",
+        "description": "Tetapkan hari akhir bayaran, langkau bulan cuti, dan tetapkan diskaun adik-beradik"
       },
       "fleet": {
-        "title": "Pengurusan armada & laluan",
-        "description": "Bas, pemandu, konduktor, dan perhentian dalam satu tempat"
+        "title": "Laluan & tambang",
+        "description": "Sediakan perhentian, tambang pergi-balik dan sehala, serta bas dan krew langkah demi langkah"
       },
       "billing": {
         "title": "Pengebilan & kutipan",
-        "description": "Jejaki siapa yang telah bayar, siapa tertunggak, dan eksport bila-bila masa"
+        "description": "Bil, bayaran diterima dan siapa yang masih berhutang — dengan eksport CSV"
       }
     },
     "pricing": {
@@ -401,7 +416,11 @@
       },
       "billing": {
         "question": "Bagaimana pengebilan dan kutipan berfungsi?",
-        "answer": "Konfigurasikan yuran asas dan peraturan diskaun anda sekali sahaja — BasSekolah.my mengira bil setiap keluarga secara automatik mengikut kitaran bil dan bilangan adik-beradik, serta menjejaki siapa yang telah membayar."
+        "answer": "Tetapkan tambang setiap laluan dan diskaun adik-beradik anda sekali sahaja. Bil dikeluarkan secara automatik pada hari pertama setiap bulan yang anda pilih untuk dibilkan, dengan tarikh akhir mengikut hari yang anda tetapkan, dan BasSekolah.my menjejaki siapa yang telah membayar. Anda masih boleh melaraskan satu bil, menetapkan yuran khas untuk seorang anak, atau melangkau bulan cuti."
+      },
+      "payment": {
+        "question": "Bagaimana ibu bapa membayar?",
+        "answer": "Ibu bapa membayar dari papan pemuka mereka melalui perbankan dalam talian FPX, e-dompet atau kad, dan bil ditandakan telah dibayar secara automatik bersama resit PDF. Jika ibu bapa membayar tunai atau melalui pindahan bank, anda merekodnya sendiri dalam beberapa ketukan."
       },
       "dataIsolation": {
         "question": "Adakah data armada dan pelajar saya peribadi?",
