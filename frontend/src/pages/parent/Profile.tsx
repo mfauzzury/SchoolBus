@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +17,7 @@ import {
 } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { AvatarUpload } from '@/components/AvatarUpload'
+import { AboutYouCard } from '@/components/parent/AboutYouCard'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { FieldError } from '@/components/FieldError'
 import { PasswordInput } from '@/components/PasswordInput'
@@ -44,7 +46,7 @@ const passwordSchema = z
 
 type PasswordForm = z.infer<typeof passwordSchema>
 
-type ProfileTab = 'details' | 'password' | 'preferences'
+type ProfileTab = 'details' | 'about' | 'password' | 'preferences'
 
 function ChangePasswordCard() {
   const { t } = useTranslation()
@@ -156,7 +158,8 @@ export function ParentProfilePage() {
   const updateProfile = useUpdateParentProfile()
   const uploadAvatar = useUploadParentAvatar()
   const logout = useLogout()
-  const [tab, setTab] = useState<ProfileTab>('details')
+  const [searchParams] = useSearchParams()
+  const [tab, setTab] = useState<ProfileTab>(searchParams.get('tab') === 'about' ? 'about' : 'details')
 
   const {
     register,
@@ -199,6 +202,7 @@ export function ParentProfilePage() {
 
   const tabs: { value: ProfileTab; label: string }[] = [
     { value: 'details', label: t('parent.profile.tabDetails') },
+    { value: 'about', label: t('parent.about.tab') },
     { value: 'password', label: t('parent.profile.tabPassword') },
     { value: 'preferences', label: t('parent.profile.preferences') },
   ]
@@ -368,6 +372,10 @@ export function ParentProfilePage() {
           )}
         </div>
       </form>
+
+      <div className={cn(tab !== 'about' && 'hidden')}>
+        <AboutYouCard />
+      </div>
 
       <div className={cn('max-w-lg', tab !== 'password' && 'hidden')}>
         <ChangePasswordCard />

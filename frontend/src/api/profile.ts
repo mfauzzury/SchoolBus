@@ -7,6 +7,15 @@ export interface ProfileInput {
   contact_phone: string
   email: string
   bank_details?: BankDetails
+  legal_name?: string | null
+  ssm_number?: string | null
+  address_line1?: string | null
+  address_line2?: string | null
+  postcode?: string | null
+  city?: string | null
+  state?: string | null
+  whatsapp_number?: string | null
+  payment_note?: string | null
 }
 
 export async function updateProfile(input: ProfileInput): Promise<BusOperator> {

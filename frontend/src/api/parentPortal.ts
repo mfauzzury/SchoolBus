@@ -252,6 +252,17 @@ export async function updateParentProfile(input: UpdateParentProfileInput): Prom
   return data
 }
 
+export interface UpdateParentAboutInput {
+  income_range: string | null
+  occupation: string | null
+  working_field: string | null
+}
+
+export async function updateParentAbout(input: UpdateParentAboutInput): Promise<ParentProfile> {
+  const { data } = await apiClient.put<ParentProfile>('/api/parent/profile/about', input)
+  return data
+}
+
 export async function uploadParentAvatar(file: File): Promise<ParentProfile> {
   const formData = new FormData()
   formData.append('avatar', file)

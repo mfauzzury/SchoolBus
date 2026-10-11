@@ -20,11 +20,14 @@ export function MonthlyBarChart({
   points,
   kind,
   label,
+  tall = false,
 }: {
   points: MonthPoint[]
   kind: 'money' | 'count'
   /** What the numbers are, e.g. "Money collected": names the table view. */
   label: string
+  /** A taller plot, for when the card sits beside something taller than the default chart. */
+  tall?: boolean
 }) {
   const { t, i18n } = useTranslation()
   const [active, setActive] = useState<number | null>(null)
@@ -60,7 +63,7 @@ export function MonthlyBarChart({
   return (
     <div className="flex gap-3 pt-3" onPointerLeave={() => setActive(null)}>
       {/* y axis */}
-      <div className="relative h-44 w-10 shrink-0 text-xs text-muted-foreground" aria-hidden>
+      <div className={cn('relative w-10 shrink-0 text-xs text-muted-foreground', tall ? 'h-52' : 'h-32')} aria-hidden>
         {ticks.map((tick) => (
           <span
             key={tick}
@@ -73,7 +76,7 @@ export function MonthlyBarChart({
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="relative h-44">
+        <div className={cn('relative', tall ? 'h-52' : 'h-32')}>
           {ticks.map((tick) => (
             <div
               key={tick}

@@ -44,6 +44,12 @@ class User extends Authenticatable
         $query->whereHas('roles', fn (Builder $roles) => $roles->where('name', 'operator_admin'));
     }
 
+    /** Platform Owners (the saas_admin role), by relationship query so a missing role row can't throw. */
+    public function scopePlatformOwners(Builder $query): void
+    {
+        $query->whereHas('roles', fn (Builder $roles) => $roles->where('name', 'saas_admin'));
+    }
+
     public function busOperator(): BelongsTo
     {
         return $this->belongsTo(BusOperator::class, 'tenant_id');

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { ProfileNudge } from '@/components/parent/ProfileNudge'
+import { formatAddress, whatsappLink } from '@/lib/contact'
 import { BusFront, Receipt } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -68,6 +70,8 @@ export function ParentDashboard() {
       <h1 className="text-xl font-medium">
         {t('parent.dashboard.welcome', { name: data?.user.name })}
       </h1>
+
+      <ProfileNudge />
 
       {FEATURES.parentTrack && riders.length > 0 && (
         <Card>
@@ -255,6 +259,24 @@ export function ParentDashboard() {
                 {data.tenant.company_name} · {data.tenant.operator_code}
               </span>
             </div>
+            {data.tenant.legal_name && data.tenant.legal_name !== data.tenant.company_name && (
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">{t('parent.dashboard.registeredName')}</span>
+                <span className="text-right">{data.tenant.legal_name}</span>
+              </div>
+            )}
+            {data.tenant.ssm_number && (
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">{t('parent.dashboard.ssm')}</span>
+                <span className="text-right">{data.tenant.ssm_number}</span>
+              </div>
+            )}
+            {formatAddress(data.tenant) && (
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">{t('parent.dashboard.address')}</span>
+                <span className="text-right">{formatAddress(data.tenant)}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-muted-foreground">{t('parent.dashboard.phone')}</span>
               <a
@@ -264,6 +286,19 @@ export function ParentDashboard() {
                 {data.tenant.contact_phone}
               </a>
             </div>
+            {data.tenant.whatsapp_number && whatsappLink(data.tenant.whatsapp_number) && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">WhatsApp</span>
+                <a
+                  href={whatsappLink(data.tenant.whatsapp_number) ?? undefined}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline underline-offset-2 hover:text-primary"
+                >
+                  {data.tenant.whatsapp_number}
+                </a>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-muted-foreground">{t('parent.dashboard.email')}</span>
               <a

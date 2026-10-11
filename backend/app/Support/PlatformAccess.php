@@ -35,6 +35,7 @@ class PlatformAccess
         'transactions.export',
         'support.manage',
         'team.manage',
+        'settings.manage',
     ];
 
     private const ROLE_PERMISSIONS = [

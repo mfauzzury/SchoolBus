@@ -570,6 +570,8 @@ export async function deleteAnnouncement(id: number): Promise<void> {
 }
 
 export interface SystemHealth {
+  /** null unless the queue is the database queue. */
+  queue_backlog: { waiting: number; oldest_at: string | null } | null
   billing: {
     ran_at: string | null
     /** null = it has never run */
@@ -587,5 +589,165 @@ export interface SystemHealth {
 
 export async function getSystemHealth(): Promise<SystemHealth> {
   const { data } = await apiClient.get<SystemHealth>('/api/admin/system')
+  return data
+}
+
+export interface BrevoSettings {
+  configured: boolean
+  enabled: boolean
+  smtp_login: string | null
+  has_smtp_key: boolean
+  from_email: string | null
+  from_name: string | null
+}
+
+export interface WhatsAppSettings {
+  configured: boolean
+  enabled: boolean
+  has_access_token: boolean
+  phone_number_id: string | null
+  business_account_id: string | null
+}
+
+export interface IntegrationSettings {
+  brevo: BrevoSettings
+  whatsapp: WhatsAppSettings
+}
+
+export interface BrevoInput {
+  smtp_login: string
+  /** Omit/blank to keep the stored key: keys are never sent back to the browser. */
+  smtp_key?: string
+  from_email: string
+  from_name: string
+  enabled: boolean
+}
+
+export interface WhatsAppInput {
+  /** Omit/blank to keep the stored token. */
+  access_token?: string
+  phone_number_id: string
+  business_account_id: string
+  enabled: boolean
+}
+
+export async function getIntegrationSettings(): Promise<IntegrationSettings> {
+  const { data } = await apiClient.get<IntegrationSettings>('/api/admin/settings')
+  return data
+}
+
+export async function saveBrevo(input: BrevoInput): Promise<BrevoSettings> {
+  const { data } = await apiClient.put<BrevoSettings>('/api/admin/settings/brevo', input)
+  return data
+}
+
+export interface BrevoTestResult {
+  ok: boolean
+  reason: 'ok' | 'auth' | 'unreachable' | 'error'
+}
+
+export async function testBrevo(to: string): Promise<BrevoTestResult> {
+  const { data } = await apiClient.post<BrevoTestResult>('/api/admin/settings/brevo/test', { to })
+  return data
+}
+
+export async function saveWhatsApp(input: WhatsAppInput): Promise<WhatsAppSettings> {
+  const { data } = await apiClient.put<WhatsAppSettings>('/api/admin/settings/whatsapp', input)
+  return data
+}
+
+export interface WhatsAppTestResult {
+  ok: boolean
+  reason:
+    | 'ok'
+    | 'unauthorized'
+    | 'phone_number_not_found'
+    | 'recipient_not_allowed'
+    | 'template_not_found'
+    | 'unreachable'
+    | 'error'
+  verified_name: string | null
+  display_phone_number: string | null
+  /** True when the test message was actually delivered to the number given. */
+  sent: boolean
+  detail: string | null
+}
+
+export async function testWhatsApp(to: string): Promise<WhatsAppTestResult> {
+  const { data } = await apiClient.post<WhatsAppTestResult>('/api/admin/settings/whatsapp/test', {
+    to: to || undefined,
+  })
+  return data
+}
+
+export async function removeIntegration(provider: 'brevo' | 'whatsapp'): Promise<IntegrationSettings> {
+  const { data } = await apiClient.delete<IntegrationSettings>(`/api/admin/settings/${provider}`)
+  return data
+}
+
+export type NotificationTypeKey =
+  | 'bill_issued'
+  | 'payment_received'
+  | 'reminder_due_soon'
+  | 'reminder_overdue'
+  | 'application_decided'
+  | 'application_received'
+  | 'operator_signed_up'
+
+export interface NotificationTypeInfo {
+  type: NotificationTypeKey
+  audience: 'parent' | 'operator' | 'platform'
+  enabled: boolean
+  /** Last 30 days. */
+  sent: number
+  failed: number
+  waiting: number
+}
+
+export interface NotificationOverview {
+  types: NotificationTypeInfo[]
+  mailer: string
+  /** False when email is only being written to a file. */
+  delivers: boolean
+}
+
+export async function getNotificationOverview(): Promise<NotificationOverview> {
+  const { data } = await apiClient.get<NotificationOverview>('/api/admin/notifications')
+  return data
+}
+
+export async function setNotificationEnabled(type: NotificationTypeKey, enabled: boolean) {
+  const { data } = await apiClient.put(`/api/admin/notifications/${type}`, { enabled })
+  return data
+}
+
+export interface NotificationLogEntry {
+  id: number
+  type: NotificationTypeKey
+  recipient: string
+  recipient_name: string | null
+  subject: string | null
+  summary: string | null
+  status: 'queued' | 'sent' | 'failed' | 'skipped'
+  reason: string | null
+  transport: string | null
+  created_at: string
+  sent_at: string | null
+  bus_operator: { id: number; company_name: string } | null
+}
+
+export interface NotificationLogFilters {
+  page?: number
+  status?: NotificationLogEntry['status']
+  type?: NotificationTypeKey
+  search?: string
+}
+
+export async function listNotificationLog(
+  filters: NotificationLogFilters,
+): Promise<Paginated<NotificationLogEntry>> {
+  const { data } = await apiClient.get<Paginated<NotificationLogEntry>>('/api/admin/notifications/log', {
+    params: filters,
+  })
   return data
 }

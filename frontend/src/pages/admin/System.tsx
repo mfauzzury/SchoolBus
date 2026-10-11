@@ -1,12 +1,23 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import { BrevoSettingsCard } from '@/components/admin/BrevoSettingsCard'
+import { WhatsAppSettingsCard } from '@/components/admin/WhatsAppSettingsCard'
+import { pillTabClass, pillTabListClass } from '@/lib/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useSystemHealth } from '@/hooks/useAdmin'
 
-export function AdminSystem() {
+function SystemStatus() {
   const { t, i18n } = useTranslation()
-  const { data, isLoading } = useSystemHealth()
+  const { data, isLoading, isError } = useSystemHealth()
+
+  if (isError) {
+    return (
+      <p role="alert" className="text-sm text-destructive">
+        {t('admin.system.loadError')}
+      </p>
+    )
+  }
 
   if (isLoading || !data) {
     return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
@@ -21,6 +32,13 @@ export function AdminSystem() {
       : t('admin.system.never')
 
   const { billing, failed_jobs: failedJobs, environment } = data
+  const backlog = data.queue_backlog
+  // Emails are sent by a background worker. Anything waiting over 10 minutes means none is running.
+  const workerStuck =
+    backlog !== null &&
+    backlog.waiting > 0 &&
+    backlog.oldest_at !== null &&
+    Date.now() - new Date(backlog.oldest_at).getTime() > 10 * 60_000
   const mailNotSent = ['log', 'array'].includes(environment.mailer)
   const debugInProduction = environment.debug && environment.app_env === 'production'
 
@@ -37,7 +55,17 @@ export function AdminSystem() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-medium">{t('admin.system.title')}</h1>
+      {workerStuck && (
+        <div
+          role="alert"
+          className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-400"
+        >
+          <p className="font-medium">
+            {t('admin.system.queueStuckTitle', { count: backlog?.waiting ?? 0 })}
+          </p>
+          <p className="mt-1">{t('admin.system.queueStuckHelp')}</p>
+        </div>
+      )}
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-3">
@@ -160,6 +188,45 @@ export function AdminSystem() {
           )}
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+type TabKey = 'status' | 'email' | 'whatsapp'
+
+/** System settings: server health, plus where the platform's email and WhatsApp notifications are set up. */
+export function AdminSystem() {
+  const { t } = useTranslation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const requested = searchParams.get('tab')
+  const tab: TabKey = requested === 'email' || requested === 'whatsapp' ? requested : 'status'
+
+  const tabs: { key: TabKey; label: string }[] = [
+    { key: 'status', label: t('admin.system.tabStatus') },
+    { key: 'email', label: t('admin.system.tabEmail') },
+    { key: 'whatsapp', label: t('admin.system.tabWhatsapp') },
+  ]
+
+  return (
+    <div className="flex flex-col gap-6">
+      <h1 className="text-xl font-medium">{t('admin.system.title')}</h1>
+
+      <nav role="group" aria-label={t('admin.system.title')} className={pillTabListClass}>
+        {tabs.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => setSearchParams(item.key === 'status' ? {} : { tab: item.key })}
+            className={pillTabClass(tab === item.key)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </nav>
+
+      {tab === 'status' && <SystemStatus />}
+      {tab === 'email' && <BrevoSettingsCard />}
+      {tab === 'whatsapp' && <WhatsAppSettingsCard />}
     </div>
   )
 }

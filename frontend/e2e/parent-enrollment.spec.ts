@@ -28,13 +28,17 @@ test.describe.serial('Parent enrollment golden path', () => {
     operatorCode = (await page.locator('span.tracking-\\[0\\.3em\\]').textContent())?.trim() ?? ''
     expect(operatorCode).toMatch(/^\d{5}$/)
 
-    await page.click('a[aria-label="Settings"]')
+    // Routes are in the sidebar; adding one is a step-by-step page.
     await page.click('a:has-text("Routes")')
-    await page.click('button:has-text("Add route")')
+    await page.click('a:has-text("Add route")')
     await page.fill('#name', 'Route A')
-    await page.fill('#base_monthly_fee', '150')
+    await page.click('button:has-text("Next")') // details -> stops
     await page.click('button:has-text("Add stop")')
     await page.fill('input[placeholder="Stop name"]', 'Main Stop')
+    await page.click('button:has-text("Next")') // stops -> fares
+    await page.fill('#base_monthly_fee', '150')
+    await page.click('button:has-text("Next")') // fares -> bus & crew
+    await page.click('button:has-text("Next")') // bus & crew -> review
     await page.click('button[type="submit"]:has-text("Save")')
     await expect(page.locator('td:has-text("Route A")')).toBeVisible()
   })

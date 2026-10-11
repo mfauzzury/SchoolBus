@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Student;
 use App\Models\SystemStatus;
 use App\Services\InvoiceGenerator;
+use App\Services\Notifier;
 use Illuminate\Console\Command;
 use RuntimeException;
 use Throwable;
@@ -25,10 +26,10 @@ class GenerateRecurringInvoices extends Command
 
     protected $description = "Issue each active student's bill for the current month if they don't have one yet.";
 
-    public function handle(InvoiceGenerator $generator): int
+    public function handle(InvoiceGenerator $generator, Notifier $notifier): int
     {
         try {
-            return $this->generate($generator);
+            return $this->generate($generator, $notifier);
         } catch (Throwable $e) {
             // The System page shows this, so a silently broken schedule is noticed.
             SystemStatus::record('invoices_generate_recurring', [
@@ -40,23 +41,24 @@ class GenerateRecurringInvoices extends Command
         }
     }
 
-    private function generate(InvoiceGenerator $generator): int
+    private function generate(InvoiceGenerator $generator, Notifier $notifier): int
     {
         $month = InvoiceGenerator::currentMonth();
         $count = 0;
         $skipped = 0;
+        $issued = [];
 
         Student::query()
             ->where('enrollment_status', 'active')
             ->with(['busOperator', 'route'])
-            ->chunkById(100, function ($students) use ($generator, $month, &$count, &$skipped) {
+            ->chunkById(100, function ($students) use ($generator, $month, &$count, &$skipped, &$issued) {
                 foreach ($students as $student) {
                     if (! $generator->isBillable($student, $month) || $generator->invoiceForMonth($student, $month)) {
                         continue;
                     }
 
                     try {
-                        $generator->generateForMonth($student, $month);
+                        $issued[] = $generator->generateForMonth($student, $month);
                         $count++;
                     } catch (RuntimeException $e) {
                         // One student without a route or price must not stop everyone else's bills.
@@ -65,6 +67,9 @@ class GenerateRecurringInvoices extends Command
                     }
                 }
             });
+
+        // After the whole run, so a parent with three children gets one email, not three.
+        $notifier->billsIssued($issued);
 
         SystemStatus::record('invoices_generate_recurring', [
             'ok' => true,

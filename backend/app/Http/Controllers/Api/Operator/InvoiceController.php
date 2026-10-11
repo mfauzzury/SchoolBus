@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Models\Student;
 use App\Services\InvoiceGenerator;
+use App\Services\Notifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Response;
@@ -63,6 +64,8 @@ class InvoiceController extends Controller
                 'student_id' => 'This student has no route or monthly fee set yet.',
             ]);
         }
+
+        app(Notifier::class)->billsIssued([$invoice]);
 
         return response()->json($this->invoicePayload($invoice), 201);
     }

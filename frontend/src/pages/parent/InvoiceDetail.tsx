@@ -36,6 +36,8 @@ export function ParentInvoiceDetail() {
   const overdue = isInvoiceOverdue(invoice)
   const paid = invoice.status === 'paid'
   const amountPaid = Number(invoice.amount_paid ?? 0)
+  const bank = tenant?.bank_details ?? null
+  const hasPaymentInfo = Boolean(tenant?.payment_note || bank?.account_number)
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
@@ -145,6 +147,35 @@ export function ParentInvoiceDetail() {
           )}
         </CardContent>
       </Card>
+
+      {!paid && hasPaymentInfo && (
+        <Card>
+          <CardContent className="flex flex-col gap-2 text-sm">
+            <p className="text-xs font-medium text-muted-foreground uppercase">{t('parent.invoice.howToPay')}</p>
+            {tenant?.payment_note && <p className="whitespace-pre-wrap">{tenant.payment_note}</p>}
+            {bank?.account_number && (
+              <dl className="flex flex-col gap-1 rounded-md bg-muted/50 p-3">
+                {bank.bank_name && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-muted-foreground">{t('operator.settings.bankName')}</dt>
+                    <dd>{bank.bank_name}</dd>
+                  </div>
+                )}
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted-foreground">{t('operator.settings.accountNumber')}</dt>
+                  <dd className="font-mono">{bank.account_number}</dd>
+                </div>
+                {bank.account_holder && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-muted-foreground">{t('operator.settings.accountHolder')}</dt>
+                    <dd className="text-right">{bank.account_holder}</dd>
+                  </div>
+                )}
+              </dl>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

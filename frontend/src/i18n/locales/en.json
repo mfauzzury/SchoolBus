@@ -47,7 +47,21 @@
     "en": "English",
     "ms": "Bahasa Melayu"
   },
+    "stepper": {
+      "label": "Progress",
+      "stepOf": "Step {{current}} of {{total}}",
+      "next": "Next",
+      "previous": "Back"
+    },
   "nav": {
+    "groupOverview": "Overview",
+    "groupPeople": "People",
+    "groupFleet": "Fleet management",
+    "routesAndFares": "Routes & fares",
+    "settingsGeneral": "General",
+    "settingsBilling": "Bills & fees",
+    "groupMoney": "Money",
+    "groupSettings": "Settings",
     "dashboard": "Dashboard",
     "routes": "Routes",
     "buses": "Buses",
@@ -598,7 +612,8 @@
       "groupSupport": "Support",
       "inbox": "Inbox",
       "announcements": "Announcements",
-      "system": "System"
+      "system": "System",
+      "messages": "Messages"
     },
     "dashboard": {
       "welcome": "Welcome, {{name}}",
@@ -772,7 +787,11 @@
         "contact_message_handled": "Marked a message as done",
         "announcement_created": "Created an announcement",
         "announcement_updated": "Edited an announcement",
-        "announcement_deleted": "Deleted an announcement"
+        "announcement_deleted": "Deleted an announcement",
+        "integration_updated": "Changed email / WhatsApp settings",
+        "integration_tested": "Tested email / WhatsApp settings",
+        "integration_removed": "Removed email / WhatsApp settings",
+        "notification_type_toggled": "Switched a message type on or off"
         }
       },
       "notes": {
@@ -913,7 +932,142 @@
         "on": "On",
         "off": "Off",
         "mailNotSent": "Emails are being written to a file, not sent. Password resets and invites will not reach anyone.",
-        "debugOn": "Debug mode is on in production. Turn it off: it can show private details in error pages."
+        "debugOn": "Debug mode is on in production. Turn it off: it can show private details in error pages.",
+        "tabStatus": "Status",
+        "tabEmail": "Email (Brevo)",
+        "tabWhatsapp": "WhatsApp",
+        "loadError": "Could not load this. Please refresh the page. If it keeps happening, the server may need a database update: tell your developer.",
+        "queueStuckTitle": "{{count}} email(s) are waiting and nothing is sending them",
+        "queueStuckHelp": "Emails are sent by a background worker on the server. It does not seem to be running. Ask your developer to start it, otherwise parents will not get their bills and receipts."
+      },
+      "settings": {
+        "notSetUp": "Not set up",
+        "inUse": "In use",
+        "switchedOff": "Switched off",
+        "keyPlaceholder": "Paste it here",
+        "keyStored": "A key is saved. Leave empty to keep it, or paste a new one to replace it.",
+        "saveError": "Could not save. Please check the details and try again.",
+        "remove": "Remove",
+        "sending": "Working…",
+        "optional": "Optional.",
+        "brevo": {
+          "title": "Email through Brevo",
+          "description": "Password resets, team invites and other emails are sent through your Brevo account.",
+          "login": "SMTP login",
+          "loginHelp": "In Brevo: SMTP & API, then the SMTP tab. It is the email shown as Login.",
+          "key": "SMTP key",
+          "keyHelp": "In Brevo: SMTP & API, then Generate a new SMTP key. This is not the same as the API key.",
+          "fromEmail": "Send emails from",
+          "fromEmailHelp": "Must be a sender you have verified in Brevo, otherwise Brevo rejects the emails.",
+          "fromName": "Sender name",
+          "enable": "Use Brevo to send emails",
+          "enableHelp": "When off, the settings stay saved but emails go the way they did before.",
+          "removeConfirm": "Remove the Brevo settings?",
+          "removeHelp": "The saved login and key are deleted and emails go back to the server's own setting.",
+          "testTitle": "Send a test email",
+          "testHelp": "Uses the settings saved above, so save your changes first.",
+          "sendTest": "Send test",
+          "test": {
+            "ok": "Test email sent to {{email}}. Check the inbox.",
+            "auth": "Brevo refused the login or key. Check them and try again.",
+            "unreachable": "Could not reach Brevo. Check the server's internet connection.",
+            "error": "The email could not be sent. Check the settings and try again."
+          }
+        },
+        "whatsapp": {
+          "title": "WhatsApp Business",
+          "description": "Connect your WhatsApp Business account so the platform can send WhatsApp notifications.",
+          "token": "Access token",
+          "tokenHelp": "Use a permanent token from Meta Business settings (System user). A temporary token stops working after 24 hours.",
+          "phoneId": "Phone number ID",
+          "phoneIdHelp": "In Meta for Developers: WhatsApp, then API setup. It is a long number, not the phone number itself.",
+          "accountId": "WhatsApp Business account ID",
+          "digitsOnly": "Digits only, please.",
+          "enable": "WhatsApp is ready to use",
+          "enableHelp": "Sending real notifications also needs approved message templates, which are set up as the next step.",
+          "removeConfirm": "Remove the WhatsApp settings?",
+          "removeHelp": "The saved token and numbers are deleted.",
+          "testTitle": "Check the connection",
+          "testHelp": "Checks the saved token and number. Add a phone number to also send Meta's sample \"hello_world\" message there. While your account is in test mode, that number must be in Meta's allowed list.",
+          "check": "Check connection",
+          "checkAndSend": "Check and send",
+          "test": {
+            "ok": "Connected: {{name}} ({{number}}).",
+            "sent": "Test message sent. Check WhatsApp on that phone.",
+            "unauthorized": "Meta refused the token. It may have expired: create a new one and save it.",
+            "phone_number_not_found": "Meta cannot find that Phone number ID, or the token has no access to it.",
+            "recipient_not_allowed": "That number is not in your allowed list yet. Add it in Meta for Developers, or use a number that is.",
+            "template_not_found": "The sample message template was not found on this account.",
+            "unreachable": "Could not reach Meta. Check the server's internet connection.",
+            "error": "Something went wrong talking to WhatsApp."
+          }
+        }
+      },
+      "messages": {
+        "title": "Messages",
+        "tabTypes": "Message types",
+        "tabLog": "Sent log",
+        "intro": "These emails are sent automatically. Switch any of them off here.",
+        "notDeliveringTitle": "Emails are not being delivered yet",
+        "notDeliveringHelp": "The server is only writing emails to a file, so nobody receives them. Set up Brevo to start sending for real.",
+        "setUpEmail": "Set up email",
+        "on": "On",
+        "off": "Off",
+        "audience": {
+          "parent": "To parents",
+          "operator": "To operators",
+          "platform": "To you"
+        },
+        "last30": "Last 30 days: {{sent}} sent, {{failed}} failed",
+        "waiting": "{{count}} waiting",
+        "daytimeNote": "Emails to parents are only sent between 9am and 8pm (Malaysia time). Anything made at night waits until 9am.",
+        "types": {
+          "bill_issued": {
+            "title": "New bill",
+            "help": "Parents get an email when a bill is made. One email lists all their children."
+          },
+          "payment_received": {
+            "title": "Payment received",
+            "help": "Parents get a receipt email when a payment is recorded or paid online."
+          },
+          "reminder_due_soon": {
+            "title": "Reminder before due date",
+            "help": "Sent 3 days before the due date, if the bill is still unpaid."
+          },
+          "reminder_overdue": {
+            "title": "Overdue notice",
+            "help": "Sent 1 day after the due date, if the bill is still unpaid."
+          },
+          "application_decided": {
+            "title": "Application approved or rejected",
+            "help": "The parent is told what the operator decided, and why if rejected."
+          },
+          "application_received": {
+            "title": "New application",
+            "help": "The operator's owner is told when a parent applies for a place."
+          },
+          "operator_signed_up": {
+            "title": "New operator signed up",
+            "help": "Platform owners are told when a new bus company creates an account."
+          }
+        },
+        "searchPlaceholder": "Name or email",
+        "typeLabel": "Message",
+        "allTypes": "All messages",
+        "to": "To",
+        "what": "What",
+        "status": {
+          "sent": "Sent",
+          "queued": "Waiting",
+          "failed": "Failed",
+          "skipped": "Not sent"
+        },
+        "reason": {
+          "switched_off": "Switched off",
+          "no_email": "No valid email address"
+        },
+        "notDelivered": "Not delivered: file-only mode",
+        "empty": "No messages yet."
       },
     "operatorDetail": {
       "back": "Back to Operators",
@@ -1003,11 +1157,16 @@
       }
     },
     "buses": {
+      "model": "Model",
+      "modelPlaceholder": "For example: Hino RK1J",
+      "engineCapacity": "Engine capacity (cc)",
+      "errors": {"seats": "Enter the number of seats, for example 40.",
+        "engine": "Enter the engine size in cc, for example 7684."},
       "title": "Buses",
       "addBus": "Add bus",
       "editBus": "Edit bus",
       "plateNumber": "Plate number",
-      "capacity": "Capacity",
+      "capacity": "Seats",
       "status": "Status",
       "selectStatus": "Select status",
       "actions": "Actions",
@@ -1033,14 +1192,35 @@
       "deleteConfirm": "Delete {{name}}?"
     },
     "routes": {
-      "title": "Routes",
+      "steps": {"details": "Details", "stops": "Stops", "fares": "Fares", "crew": "Bus & crew", "review": "Review"},
+      "hints": {"details": "Start with the basics: what is this route called, and where does it go?", "stops": "Add the places the bus stops, in the order it visits them. You can add more later.", "crew": "Choose the bus and the people who run this route. You can leave this empty and set it later.", "review": "Check everything, then save."},
+      "noStopsReview": "No stops added yet.",
+      "sameAsReturn": "Same as return fare",
+      "noFareTitle": "No fare set yet",
+      "noFareWarning": "Students on this route cannot be billed until a fare is set. You can save now and add it later.",
+      "faresSummaryBoth": "Parents pay RM {{returnFare}} a month for return, or RM {{oneWayFare}} for one-way.",
+      "faresSummarySame": "Parents pay RM {{returnFare}} a month, for return or one-way.",
+      "back": "Back to routes",
+      "notFound": "This route was not found.",
+      "sectionDetails": "Route details",
+      "sectionFares": "Fares",
+      "sectionAssign": "Bus and crew",
+      "sectionStops": "Stops",
+      "faresHelp": "What a parent pays each month for a child on this route. This is the price that bills are made from.",
+      "stopsHelp": "In the order the bus visits them. Use the arrows to move a stop.",
+      "noStops": "No stops yet. Add the first one.",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "saveError": "Could not save this route. Please check the details and try again.",
+      "errors": {"nameRequired": "Please enter a route name.", "stopRequired": "Please name this stop, or remove it."},
+      "title": "Routes & fares",
       "addRoute": "Add route",
       "editRoute": "Edit route",
       "name": "Name",
       "routeName": "Route name",
       "zone": "Zone",
       "schoolDestination": "School destination",
-      "baseMonthlyFee": "Return fee per month (RM)",
+      "baseMonthlyFee": "Return fare per month",
       "bus": "Bus",
       "driver": "Driver",
       "conductor": "Conductor",
@@ -1048,12 +1228,12 @@
       "addStop": "Add stop",
       "stopNamePlaceholder": "Stop name",
       "remove": "Remove",
-      "baseFee": "Return fee",
+      "baseFee": "Return fare",
       "actions": "Actions",
       "deleteConfirm": "Delete {{name}}?",
-      "oneWayMonthlyFee": "One-way fee per month (RM)",
-      "oneWayFeeHint": "Leave the one-way fee blank to charge the return fee.",
-      "oneWayFee": "One-way fee"
+      "oneWayMonthlyFee": "One-way fare per month",
+      "oneWayFeeHint": "Leave the one-way fare blank to charge the return fare.",
+      "oneWayFee": "One-way fare"
     },
     "students": {
       "title": "Students",
@@ -1242,6 +1422,47 @@
       "contactPhone": "Contact phone",
       "email": "Email",
       "bankDetails": "Bank details",
+      "whatsapp": "WhatsApp number",
+      "whatsappHelp": "Parents can tap this to message you.",
+      "registeredCompany": "Registered company",
+      "registeredHelp": "Shown on receipts. Leave empty if you are not a registered company.",
+      "legalName": "Registered company name",
+      "ssmNumber": "SSM registration number",
+      "officeAddress": "Office address",
+      "addressLine1": "Address line 1",
+      "addressLine2": "Address line 2",
+      "postcode": "Postcode",
+      "city": "City",
+      "state": "State",
+      "selectState": "Choose a state",
+      "paymentNote": "Payment note",
+      "paymentNoteHelp": "Shown to parents on an unpaid bill. For example: which reference to use.",
+      "paymentNotePlaceholder": "For example: Please put your child's name as the reference.",
+        "completeness": {
+          "title": "Your company profile is {{percent}}% complete",
+          "titleDone": "Your company profile is complete",
+          "hintLow": "A complete profile helps parents trust you, and your receipts look more professional. It only takes a few minutes.",
+          "hintHigh_one": "Almost there. Just {{count}} more to add:",
+          "hintHigh_other": "Almost there. {{count}} more to add:",
+          "done": "Well done. Parents can see all your details.",
+          "items": {
+            "logo": "Logo",
+            "companyName": "Company name",
+            "contactPerson": "Contact person",
+            "contactPhone": "Contact phone",
+            "whatsapp": "WhatsApp number",
+            "email": "Email",
+            "legalName": "Registered company name",
+            "ssm": "SSM number",
+            "address": "Office address",
+            "bank": "Bank details",
+            "paymentNote": "Payment note"
+          }
+        },
+      "errors": {
+        "whatsapp": "Enter a valid phone number.",
+        "postcode": "Postcode must be 5 digits."
+      },
       "bankName": "Bank name",
       "accountNumber": "Account number",
       "accountHolder": "Account holder",
@@ -1265,12 +1486,55 @@
     }
   },
   "parent": {
+    "about": {
+      "tab": "About you",
+      "title": "About your family",
+      "intro": "Three short questions. All of them are optional.",
+      "privacy": "Your answers help SchoolBus and your bus operator understand families better. They are only shown as group totals, never with your name, and your bus operator cannot see them.",
+      "income": "Household income per month",
+      "incomePlaceholder": "Choose a range",
+      "incomeOptions": {
+        "under_3000": "Below RM 3,000",
+        "3000_5000": "RM 3,000 - 5,000",
+        "5000_8000": "RM 5,001 - 8,000",
+        "8000_12000": "RM 8,001 - 12,000",
+        "above_12000": "Above RM 12,000",
+        "prefer_not_to_say": "Prefer not to say"
+      },
+      "occupation": "Profession / job title",
+      "occupationPlaceholder": "For example: teacher, driver, nurse",
+      "field": "Working field",
+      "fieldPlaceholder": "Choose a field",
+      "fieldOptions": {
+        "government": "Government",
+        "education": "Education",
+        "healthcare": "Healthcare",
+        "manufacturing": "Manufacturing",
+        "construction": "Construction",
+        "retail_services": "Retail, food & hospitality",
+        "transport_logistics": "Transport & logistics",
+        "finance_it": "Finance, IT & professional services",
+        "agriculture": "Agriculture",
+        "own_business": "Own business",
+        "homemaker": "Homemaker",
+        "not_working": "Not working",
+        "other": "Other"
+      },
+      "progress": "{{done}} of 3 answered",
+      "nudgeTitle": "Complete your profile",
+      "nudgeBody": "3 quick questions about your family. Optional, and it takes about a minute.",
+      "nudgeCta": "Complete now",
+      "nudgeLater": "Not now"
+    },
     "dashboard": {
       "welcome": "Welcome, {{name}}",
       "myChildren": "My children",
       "enrollAChild": "Enroll a child",
       "noChildren": "No children enrolled yet. Click \"Enroll a child\" to get started.",
       "yourOperator": "Your Operator",
+      "registeredName": "Registered name",
+      "ssm": "SSM no.",
+      "address": "Address",
       "phone": "Phone",
       "email": "Email",
       "name": "Name",
@@ -1365,7 +1629,8 @@
       "dueOn": "Due {{date}}",
       "overdueSince": "Overdue since {{date}}",
       "back": "Back to invoices",
-      "notFound": "This invoice could not be found."
+      "notFound": "This invoice could not be found.",
+      "howToPay": "How to pay"
     },
     "enroll": {
       "title": "Apply for a child",

@@ -77,6 +77,9 @@ return [
     |
     */
 
+    // Where the SPA lives: links in emails point here.
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+
     'billing_timezone' => env('BILLING_TIMEZONE', 'Asia/Kuala_Lumpur'),
 
     /*

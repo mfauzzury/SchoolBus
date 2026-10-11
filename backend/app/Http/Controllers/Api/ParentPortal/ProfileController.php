@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api\ParentPortal;
 
 use App\Http\Controllers\Controller;
+use App\Models\ParentProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
@@ -34,7 +35,33 @@ class ProfileController extends Controller
 
         $profile->update($data);
 
-        return $profile->fresh();
+        return $profile->fresh()->forOwner();
+    }
+
+    /**
+     * The optional "About you" questions. A separate, small form so a parent can
+     * answer them without re-submitting their whole profile. Saving it (even with
+     * every answer skipped) ends the "complete your profile" reminder: they have
+     * been asked, and no more nagging is the respectful default.
+     */
+    public function updateAbout(Request $request)
+    {
+        $data = $request->validate([
+            'income_range' => ['nullable', Rule::in(ParentProfile::INCOME_RANGES)],
+            'occupation' => 'nullable|string|max:100',
+            'working_field' => ['nullable', Rule::in(ParentProfile::WORKING_FIELDS)],
+        ]);
+
+        $profile = $request->user()->parentProfile;
+
+        $profile->update([
+            'income_range' => $data['income_range'] ?? null,
+            'occupation' => filled($data['occupation'] ?? null) ? trim($data['occupation']) : null,
+            'working_field' => $data['working_field'] ?? null,
+            'about_saved_at' => now(),
+        ]);
+
+        return $profile->fresh()->forOwner();
     }
 
     public function updatePassword(Request $request)

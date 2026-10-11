@@ -25,6 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('invoices:generate-recurring')->daily();
+
+        // Mornings in Malaysia, when parents are awake to read it.
+        $schedule->command('notifications:send-reminders')
+            ->dailyAt('09:00')
+            ->timezone(config('app.billing_timezone'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

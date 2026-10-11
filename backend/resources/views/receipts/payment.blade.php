@@ -91,6 +91,15 @@
             <tr>
                 <td style="width: 60%;">
                     <div class="company-name">{{ $tenant->company_name }}</div>
+                    @if ($tenant->legal_name && $tenant->legal_name !== $tenant->company_name)
+                        <div class="company-tagline">{{ $tenant->legal_name }}</div>
+                    @endif
+                    @if ($tenant->ssm_number)
+                        <div class="company-tagline">SSM: {{ $tenant->ssm_number }}</div>
+                    @endif
+                    @if ($address = $tenant->fullAddress())
+                        <div class="company-tagline">{{ $address }}</div>
+                    @endif
                     <div class="company-tagline">Operator Code: {{ $tenant->operator_code }}</div>
                     <div class="company-tagline">{{ $tenant->contact_phone }} &middot; {{ $tenant->email }}</div>
                 </td>
