@@ -54,6 +54,14 @@
     --viz-collected: #2a78d6;
     /* Single-series charts: categorical slot 1. */
     --viz-primary: #2a78d6;
+    /* "Not given" / "other": a neutral, never a series colour. */
+    --viz-neutral: #b4b2ab;
+    /* Ordered bands (low to high): one hue, light to dark. */
+    --viz-ramp-1: #86b6ef;
+    --viz-ramp-2: #5598e7;
+    --viz-ramp-3: #2a78d6;
+    --viz-ramp-4: #1c5cab;
+    --viz-ramp-5: #104281;
     --viz-overdue: #eb6834;
     --viz-pending: #1baf7a;
     --background: oklch(1 0 0);
@@ -93,6 +101,13 @@
 .dark {
     --viz-collected: #3987e5;
     --viz-primary: #3987e5;
+    --viz-neutral: #5b5a56;
+    /* On dark, "more" is lighter. */
+    --viz-ramp-1: #184f95;
+    --viz-ramp-2: #256abf;
+    --viz-ramp-3: #3987e5;
+    --viz-ramp-4: #6da7ec;
+    --viz-ramp-5: #9ec5f4;
     --viz-overdue: #d95926;
     --viz-pending: #199e70;
     --background: oklch(0.145 0 0);

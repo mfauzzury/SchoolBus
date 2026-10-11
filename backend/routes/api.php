@@ -43,6 +43,7 @@ use App\Http\Controllers\Api\ParentPortal\RouteController as ParentRouteControll
 use App\Http\Controllers\Api\ParentPortal\StudentApplicationController as ParentStudentApplicationController;
 use App\Http\Controllers\Api\ParentPortal\StudentController as ParentStudentController;
 use App\Http\Controllers\Api\Public\ContactController;
+use App\Http\Controllers\Api\Public\EmailCodeController;
 use App\Http\Controllers\Api\Public\OperatorRegistrationController;
 use App\Http\Controllers\Api\Public\PasswordResetController;
 use App\Http\Controllers\Api\Public\RegistrationController;
@@ -51,7 +52,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
+// "Forgot password": email -> one-time code -> new password.
+Route::post('/forgot-password', [EmailCodeController::class, 'sendForPasswordReset'])->middleware('throttle:email-code-send');
+Route::post('/forgot-password/verify', [EmailCodeController::class, 'verifyForPasswordReset'])->middleware('throttle:email-code-check');
+Route::post('/forgot-password/reset', [PasswordResetController::class, 'resetWithCode'])->middleware('throttle:password-reset');
+// Invitation links (new team member, new operator owner) still arrive as a token.
 Route::post('/reset-password', [PasswordResetController::class, 'reset']);
 
 // Public and each one emails the platform Owners, so it must not be scriptable.
@@ -61,6 +66,14 @@ Route::post('/contact', [ContactController::class, 'store'])->middleware('thrott
 
 Route::get('/register/{operatorCode}', [RegistrationController::class, 'show']);
 Route::post('/register/{operatorCode}', [RegistrationController::class, 'store']);
+
+// Sign-up and "forgot password" start by proving the email with a one-time code.
+// Each kind of call has its own per-network limit (see AppServiceProvider); the limits
+// that stop guessing and inbox flooding are per email address (see EmailOtp).
+Route::post('/register/{operatorCode}/email-code', [EmailCodeController::class, 'sendForParent'])->middleware('throttle:email-code-send');
+Route::post('/register/{operatorCode}/email-code/verify', [EmailCodeController::class, 'verifyForParent'])->middleware('throttle:email-code-check');
+Route::post('/register-operator/email-code', [EmailCodeController::class, 'sendForOperator'])->middleware('throttle:email-code-send');
+Route::post('/register-operator/email-code/verify', [EmailCodeController::class, 'verifyForOperator'])->middleware('throttle:email-code-check');
 
 // Billplz posts payment results here. Unauthenticated; X Signature is the auth.
 Route::post('/webhooks/billplz', [BillplzWebhookController::class, 'callback'])->middleware('throttle:120,1');

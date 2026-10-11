@@ -125,10 +125,10 @@ class DashboardInsightsTest extends TestCase
     {
         $owner = $this->createPlatformUser('owner');
         $this->ensureRole('operator_admin');
-
         $this->fromFrontend()->postJson('/api/register-operator', [
             'company_name' => 'Fresh Buses', 'contact_person' => 'Aminah', 'contact_phone' => '0123456789',
             'email' => 'fresh@buses.test', 'password' => 'password1',
+            'email_token' => $this->verifyEmail('fresh@buses.test'),
         ])->assertCreated();
 
         $user = User::firstWhere('email', 'fresh@buses.test');

@@ -95,9 +95,19 @@ export async function fetchMe(): Promise<MeResponse> {
   return data
 }
 
-export async function forgotPassword(email: string): Promise<void> {
+/** The last step of "forgot password", once the email has been proven with a code. */
+export async function resetPasswordWithCode(input: {
+  email: string
+  /** Proof that this browser verified the email (see EmailCodeStep). */
+  token: string
+  password: string
+}): Promise<void> {
   await getCsrfCookie()
-  await apiClient.post('/api/forgot-password', { email })
+  await apiClient.post('/api/forgot-password/reset', {
+    email: input.email,
+    email_token: input.token,
+    password: input.password,
+  })
 }
 
 export interface ResetPasswordInput {

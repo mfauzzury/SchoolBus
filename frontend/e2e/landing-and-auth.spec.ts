@@ -1,12 +1,15 @@
 import { test, expect } from '@playwright/test'
-import { loginAs, unique } from './helpers'
+import { loginAs, unique, verifyEmailViaUi } from './helpers'
 
 async function registerParentViaUi(page: import('@playwright/test').Page, email: string) {
   await page.goto('/register/10000')
+  await verifyEmailViaUi(page, email) // step 1: prove the email with a code
   await page.fill('#full_name', 'E2E Parent')
   await page.fill('#ic_number', '900101-01-9999')
+  await page.click('button:has-text("Next")')
   await page.fill('#phone', '0123456789')
-  await page.fill('#email', email)
+  await page.click('button:has-text("Next")')
+  await page.click('button:has-text("Next")') // emergency contact is optional
   await page.fill('#password', 'password123')
   await page.click('button[type="submit"]:has-text("Register")')
   await expect(page).toHaveURL(/\/parent\/dashboard/)
@@ -56,6 +59,21 @@ test.describe('Authentication', () => {
 
   test('a parent login redirects to the parent dashboard, not the operator one', async ({ page }) => {
     await registerParentViaUi(page, `parent-login-${unique()}@test.com`)
+  })
+
+  test('a forgotten password is reset with an emailed code', async ({ page }) => {
+    const email = `parent-forgot-${unique()}@test.com`
+    await registerParentViaUi(page, email)
+    await page.context().clearCookies()
+
+    await page.goto('/forgot-password')
+    await verifyEmailViaUi(page, email)
+    await page.fill('#password', 'newpassword456')
+    await page.click('button[type="submit"]:has-text("Change password")')
+    await expect(page.getByText('Password changed')).toBeVisible()
+
+    await loginAs(page, email, 'newpassword456')
+    await expect(page).toHaveURL(/\/parent\/dashboard/)
   })
 
   test('an authenticated parent cannot directly load an operator page', async ({ page }) => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { unique } from './helpers'
+import { unique, verifyEmailViaUi } from './helpers'
 
 test.describe.serial('Operator workflow', () => {
   const suffix = unique()
@@ -8,11 +8,11 @@ test.describe.serial('Operator workflow', () => {
 
   test('sign up creates a workspace and shows an operator ID', async ({ page }) => {
     await page.goto('/signup')
+    await verifyEmailViaUi(page, email)
     await page.fill('#company_name', companyName)
     await page.click('button:has-text("Next")')
     await page.fill('#contact_person', 'E2E Operator')
     await page.fill('#contact_phone', '0123456789')
-    await page.fill('#email', email)
     await page.click('button:has-text("Next")')
     await page.fill('#password', 'password123')
     await page.click('button[type="submit"]:has-text("Start free")')

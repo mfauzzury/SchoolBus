@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\BusOperator;
 use App\Models\ParentProfile;
 use App\Models\User;
+use App\Support\EmailOtp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 
 class RegistrationController extends Controller
 {
@@ -27,7 +29,7 @@ class RegistrationController extends Controller
         ]);
     }
 
-    public function store(Request $request, string $operatorCode)
+    public function store(Request $request, string $operatorCode, EmailOtp $otp)
     {
         $tenant = BusOperator::where('operator_code', $operatorCode)->firstOrFail();
 
@@ -41,6 +43,7 @@ class RegistrationController extends Controller
             'ic_number' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'email_token' => 'nullable|string|max:255',
             'address_line1' => 'nullable|string|max:255',
             'address_line2' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
@@ -49,7 +52,12 @@ class RegistrationController extends Controller
             'emergency_contact_relationship' => 'nullable|string|max:255',
             'emergency_contact_phone' => 'nullable|string|max:255',
             'password' => ['required', 'string', Password::min(8)->letters()->numbers()],
-        ]);
+        ], ['email.unique' => 'taken']);
+
+        // The email must have been proven with a one-time code, by this browser.
+        if (! $otp->isVerified(EmailOtp::REGISTRATION, $data['email'], $data['email_token'] ?? null)) {
+            throw ValidationException::withMessages(['email' => ['unverified']]);
+        }
 
         $user = DB::transaction(function () use ($tenant, $data) {
             $user = User::create([
@@ -80,6 +88,8 @@ class RegistrationController extends Controller
 
             return $user;
         });
+
+        $otp->forget(EmailOtp::REGISTRATION, $data['email']);
 
         Auth::login($user);
         $request->session()->regenerate();

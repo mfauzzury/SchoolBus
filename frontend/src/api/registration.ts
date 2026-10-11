@@ -13,6 +13,8 @@ export interface RegisterInput {
   ic_number: string
   phone: string
   email: string
+  /** Proof that this browser verified the email (see EmailCodeStep). */
+  email_token?: string
   address_line1?: string
   address_line2?: string
   city?: string

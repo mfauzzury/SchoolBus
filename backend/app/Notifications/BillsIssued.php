@@ -24,32 +24,24 @@ class BillsIssued extends PlatformNotification
     public function toMail(object $notifiable): MailMessage
     {
         $total = array_sum(array_map(fn ($l) => (float) $l['amount'], $this->lines));
-        $many = count($this->lines) > 1;
-
         $operator = self::plain($this->operator);
 
-        $mail = (new MailMessage)
+        $rows = array_map(
+            fn ($line) => [$line['student'], self::date($line['due_date']), self::money($line['amount'])],
+            $this->lines,
+        );
+
+        return (new MailMessage)
             ->subject($this->subjectLine())
             ->greeting('Salam '.self::plain($this->parent).',')
-            ->line("{$operator} telah mengeluarkan bil baharu:");
-
-        foreach ($this->lines as $line) {
-            $mail->line(self::plain($line['student']).': '.self::money($line['amount']).' (bayar sebelum '.self::date($line['due_date']).')');
-        }
-        if ($many) {
-            $mail->line('Jumlah: '.self::money($total));
-        }
-
-        $mail->action('Lihat dan bayar / View and pay', self::url('/parent/invoices'))
-            ->line("{$operator} has issued a new bill:");
-
-        foreach ($this->lines as $line) {
-            $mail->line(self::plain($line['student']).': '.self::money($line['amount']).' (due '.self::date($line['due_date']).')');
-        }
-        if ($many) {
-            $mail->line('Total: '.self::money($total));
-        }
-
-        return $mail->salutation('SchoolBus');
+            ->line("{$operator} telah mengeluarkan bil baharu:")
+            ->line(self::table(
+                ['Murid / Student', 'Tarikh akhir / Due', 'Jumlah / Amount'],
+                $rows,
+                count($rows) > 1 ? ['Jumlah / Total', '', self::money($total)] : null,
+            ))
+            ->action('Lihat dan bayar / View and pay', self::url('/parent/invoices'))
+            ->line("{$operator} has issued a new bill. The list above shows each child, the due date and the amount.")
+            ->salutation(self::brand());
     }
 }

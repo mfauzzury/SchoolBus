@@ -3,29 +3,54 @@
 namespace App\Http\Controllers\Api\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Support\EmailOtp;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Validation\ValidationException;
 
 class PasswordResetController extends Controller
 {
     /**
-     * Always responds with a generic "if that email exists" message —
-     * regardless of the broker's actual result — so this endpoint can't be
-     * used to enumerate registered email addresses.
+     * The last step of "forgot password": the email was proven with a one-time
+     * code (see EmailCodeController) and this browser holds the proof token,
+     * so the new password can be set.
      */
-    public function sendResetLink(Request $request)
+    public function resetWithCode(Request $request, EmailOtp $otp)
     {
-        $request->validate(['email' => 'required|email']);
+        $data = $request->validate([
+            'email' => 'required|email|max:255',
+            'email_token' => 'nullable|string|max:255',
+            'password' => ['required', 'string', PasswordRule::min(8)->letters()->numbers()],
+        ]);
 
-        Password::sendResetLink($request->only('email'));
+        $user = User::where('email', $data['email'])->first();
 
-        return response()->json(['message' => 'If that email is registered, a reset link has been sent.']);
+        if (! $user || ! $otp->isVerified(EmailOtp::PASSWORD_RESET, $data['email'], $data['email_token'] ?? null)) {
+            throw ValidationException::withMessages(['email' => ['unverified']]);
+        }
+
+        $user->forceFill([
+            'password' => $data['password'],
+            'remember_token' => Str::random(60),
+        ])->save();
+
+        $otp->forget(EmailOtp::PASSWORD_RESET, $data['email']);
+
+        event(new PasswordReset($user));
+
+        return response()->json(['message' => 'Password reset.']);
     }
 
+    /**
+     * Sets a password from an emailed link token. Used by invitations (a new
+     * team member, a new operator owner); a forgotten password goes through
+     * resetWithCode instead.
+     */
     public function reset(Request $request)
     {
         $data = $request->validate([

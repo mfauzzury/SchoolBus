@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   fetchMe,
-  forgotPassword,
   login,
   logout,
   resetPassword,
+  resetPasswordWithCode,
   type ResetPasswordInput,
 } from '@/api/auth'
 import { isPlatformUser } from '@/lib/platform'
@@ -36,9 +36,10 @@ export function useLogin() {
   })
 }
 
-export function useForgotPassword() {
+export function useResetPasswordWithCode() {
   return useMutation({
-    mutationFn: (email: string) => forgotPassword(email),
+    mutationFn: (input: { email: string; token: string; password: string }) =>
+      resetPasswordWithCode(input),
   })
 }
 

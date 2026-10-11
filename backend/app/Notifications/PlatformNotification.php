@@ -3,9 +3,11 @@
 namespace App\Notifications;
 
 use App\Models\NotificationLog;
+use App\Support\MailText;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 use Throwable;
 
 /**
@@ -47,15 +49,31 @@ abstract class PlatformNotification extends Notification implements ShouldQueue
      */
     protected static function plain(?string $value): string
     {
-        $oneLine = self::oneLine($value);
-
-        return preg_replace('/([\\\\`*_{}\\[\\]()#+!|<>~])/', '\\\\$1', $oneLine) ?? '';
+        return MailText::plain($value);
     }
 
     /** For subject lines: plain text already, but must stay on one line. */
     protected static function oneLine(?string $value): string
     {
-        return trim((string) preg_replace('/\\s+/', ' ', (string) $value));
+        return MailText::oneLine($value);
+    }
+
+    /**
+     * The children and amounts in a message, as a table whose headings are in
+     * both languages (so the list is shown once, not once per language).
+     *
+     * @param  list<list<string>>  $rows
+     * @param  list<string>|null  $footer
+     */
+    protected static function table(array $head, array $rows, ?array $footer = null): HtmlString
+    {
+        return MailText::table($head, $rows, $footer);
+    }
+
+    /** What every message is signed with. */
+    protected static function brand(): string
+    {
+        return MailText::brand();
     }
 
     protected static function money(float|string $amount): string

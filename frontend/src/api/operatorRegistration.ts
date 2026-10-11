@@ -6,6 +6,8 @@ export interface OperatorRegisterInput {
   contact_person: string
   contact_phone: string
   email: string
+  /** Proof that this browser verified the email (see EmailCodeStep). */
+  email_token?: string
   password: string
 }
 

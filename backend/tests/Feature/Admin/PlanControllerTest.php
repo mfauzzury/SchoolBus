@@ -52,13 +52,13 @@ class PlanControllerTest extends TestCase
         $this->ensureRole('operator_admin');
         $custom = Plan::create($this->planPayload(['is_default' => false]));
         $this->assertNotSame($custom->id, $this->createTenant()->plan_id);
-
         $this->fromFrontend()->postJson('/api/register-operator', [
             'company_name' => 'Fresh Buses',
             'contact_person' => 'Aminah',
             'contact_phone' => '0123456789',
             'email' => 'fresh@buses.test',
             'password' => 'password1',
+            'email_token' => $this->verifyEmail('fresh@buses.test'),
         ])->assertCreated();
 
         $this->assertSame(Plan::default()->id, BusOperator::firstWhere('email', 'fresh@buses.test')->plan_id);
