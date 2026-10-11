@@ -1,7 +1,9 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useMe } from '@/hooks/useAuth'
+import { isPlatformUser } from '@/lib/platform'
+import { Suspended } from '@/pages/Suspended'
 
-export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'saas_admin' }) {
+export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'platform' }) {
   const { data, isLoading, isError } = useMe()
 
   if (isLoading) {
@@ -12,11 +14,22 @@ export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'saas_
     return <Navigate to="/login" replace />
   }
 
-  const isParent = data.roles.includes('parent')
-  const isSaasAdmin = data.roles.includes('saas_admin')
-  const homePath = isSaasAdmin ? '/admin/dashboard' : isParent ? '/parent/dashboard' : '/operator/dashboard'
+  // On hold: operator, its staff and its parents see a plain notice instead of the app.
+  // (A platform member logged in as the operator is let through to help.)
+  if (data.tenant?.status === 'suspended' && !data.impersonating) {
+    return (
+      <Suspended
+        isParent={data.roles.includes('parent')}
+        companyName={data.tenant.company_name}
+      />
+    )
+  }
 
-  if (role === 'saas_admin' && !isSaasAdmin) {
+  const isParent = data.roles.includes('parent')
+  const isPlatform = isPlatformUser(data.roles)
+  const homePath = isPlatform ? '/admin/dashboard' : isParent ? '/parent/dashboard' : '/operator/dashboard'
+
+  if (role === 'platform' && !isPlatform) {
     return <Navigate to={homePath} replace />
   }
 
@@ -24,7 +37,7 @@ export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'saas_
     return <Navigate to={homePath} replace />
   }
 
-  if (role === 'operator' && (isParent || isSaasAdmin)) {
+  if (role === 'operator' && (isParent || isPlatform)) {
     return <Navigate to={homePath} replace />
   }
 

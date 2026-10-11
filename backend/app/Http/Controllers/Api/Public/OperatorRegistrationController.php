@@ -28,7 +28,6 @@ class OperatorRegistrationController extends Controller
                 'contact_person' => $data['contact_person'],
                 'contact_phone' => $data['contact_phone'],
                 'email' => $data['email'],
-                'subscription_plan' => 'free',
             ]);
 
             $user = User::create([
@@ -41,6 +40,10 @@ class OperatorRegistrationController extends Controller
 
             return $user;
         });
+
+        // They are logged in right now, so count it as a login (the dashboard's
+        // "no login in 30 days" would otherwise flag every brand-new operator).
+        $user->forceFill(['last_login_at' => now()])->save();
 
         Auth::login($user);
         $request->session()->regenerate();

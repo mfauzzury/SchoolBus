@@ -7,6 +7,7 @@ import {
   resetPassword,
   type ResetPasswordInput,
 } from '@/api/auth'
+import { isPlatformUser } from '@/lib/platform'
 
 export function useMe() {
   return useQuery({
@@ -52,9 +53,15 @@ export function useIsOperatorAdmin() {
   return data?.roles.includes('operator_admin') ?? false
 }
 
-export function useIsSaasAdmin() {
+export function useIsPlatformUser() {
   const { data } = useMe()
-  return data?.roles.includes('saas_admin') ?? false
+  return data ? isPlatformUser(data.roles) : false
+}
+
+/** Whether the logged-in platform-team member may do `permission` (e.g. 'team.manage'). */
+export function useCan(permission: string) {
+  const { data } = useMe()
+  return data?.permissions?.includes(permission) ?? false
 }
 
 export function useLogout() {

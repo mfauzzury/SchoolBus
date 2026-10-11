@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Webhooks;
 
 use App\Http\Controllers\Controller;
 use App\Models\PaymentAttempt;
+use App\Models\SystemStatus;
 use App\Services\BillplzService;
 use App\Services\PaymentAttemptSettler;
 use Illuminate\Http\Request;
@@ -39,6 +40,9 @@ class BillplzController extends Controller
             403,
             'Invalid signature.',
         );
+
+        // Signed and matched to a bill: Billplz really is reaching us.
+        SystemStatus::record('billplz_webhook', ['paid' => ($params['paid'] ?? null) === 'true']);
 
         // A failed attempt leaves the bill "due"; the customer can retry on the same bill.
         if (($params['paid'] ?? null) !== 'true' || ($params['state'] ?? null) !== 'paid') {

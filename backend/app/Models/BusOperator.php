@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,7 +22,7 @@ class BusOperator extends Model
         'email',
         'bank_details',
         'logo_path',
-        'subscription_plan',
+        'plan_id',
         'discount_config',
         'billing_config',
     ];
@@ -32,6 +34,8 @@ class BusOperator extends Model
     protected $hidden = [
         'billplz_secret_key',
         'billplz_x_signature_key',
+        // Platform-team context; the operator/parents only need to know *that* they're suspended.
+        'suspended_reason',
     ];
 
     protected $casts = [
@@ -41,9 +45,15 @@ class BusOperator extends Model
         'billplz_secret_key' => 'encrypted',
         'billplz_x_signature_key' => 'encrypted',
         'billplz_sandbox' => 'boolean',
+        'suspended_at' => 'datetime',
     ];
 
     protected $appends = ['logo_url', 'billplz_enabled'];
+
+    public function isSuspended(): bool
+    {
+        return $this->status === 'suspended';
+    }
 
     protected function logoUrl(): Attribute
     {
@@ -89,6 +99,11 @@ class BusOperator extends Model
         static::creating(function (self $operator) {
             if (empty($operator->operator_code)) {
                 $operator->operator_code = $operator->generateUniqueOperatorCode();
+            }
+
+            // Every operator is on a plan; new ones start on the default.
+            if (empty($operator->plan_id)) {
+                $operator->plan_id = Plan::default()?->id;
             }
         });
     }
@@ -152,6 +167,74 @@ class BusOperator extends Model
             'due_day' => (int) ($config['due_day'] ?? self::DEFAULT_BILLING_CONFIG['due_day']),
             'billed_months' => array_values(array_unique($months)),
         ];
+    }
+
+    /** The things the dashboard's "needs attention" list (and the matching list filter) is made of. */
+    public const ATTENTION = ['new', 'no_billplz', 'no_students', 'over_limit', 'inactive'];
+
+    public function scopeBillplzConnected(Builder $query): void
+    {
+        $query->whereNotNull('bus_operators.billplz_secret_key')
+            ->whereNotNull('bus_operators.billplz_x_signature_key')
+            ->whereNotNull('bus_operators.billplz_collection_id');
+    }
+
+    public function scopeBillplzMissing(Builder $query): void
+    {
+        $query->where(fn (Builder $q) => $q
+            ->whereNull('bus_operators.billplz_secret_key')
+            ->orWhereNull('bus_operators.billplz_x_signature_key')
+            ->orWhereNull('bus_operators.billplz_collection_id'));
+    }
+
+    /** More active students than the plan's limit; plans with no limit never qualify. */
+    public function scopeOverPlanLimit(Builder $query): void
+    {
+        $query->whereHas('plan', fn (Builder $plan) => $plan
+            ->whereNotNull('student_limit')
+            ->whereRaw(
+                '(select count(*) from students where students.tenant_id = bus_operators.id and students.enrollment_status = ?) > plans.student_limit',
+                ['active'],
+            ));
+    }
+
+    /**
+     * One "needs a look" reason. Suspended operators are excluded: they have
+     * already been dealt with.
+     */
+    public function scopeAttention(Builder $query, string $kind): void
+    {
+        $query->where('bus_operators.status', 'active');
+
+        match ($kind) {
+            'new' => $query->where('bus_operators.created_at', '>=', now()->subDays(7)),
+            'no_billplz' => $query->billplzMissing(),
+            'no_students' => $query
+                ->where('bus_operators.created_at', '<=', now()->subDays(7))
+                ->whereDoesntHave('students'),
+            'over_limit' => $query->overPlanLimit(),
+            'inactive' => $query
+                ->where('bus_operators.created_at', '<=', now()->subDays(30))
+                ->whereDoesntHave('users', fn (Builder $users) => $users
+                    ->operatorOwners()
+                    ->where('last_login_at', '>=', now()->subDays(30))),
+        };
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(OperatorNote::class, 'tenant_id');
+    }
+
+    /** The operator's owner login — who "log in as operator" and password resets act on. */
+    public function adminUser(): ?User
+    {
+        return $this->users()->operatorOwners()->orderBy('id')->first();
     }
 
     public function users(): HasMany

@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\Student;
+use App\Models\SystemStatus;
 use App\Services\InvoiceGenerator;
 use Illuminate\Console\Command;
 use RuntimeException;
+use Throwable;
 
 /**
  * Phone-bill-style recurring billing: every active student gets a bill for
@@ -24,6 +26,21 @@ class GenerateRecurringInvoices extends Command
     protected $description = "Issue each active student's bill for the current month if they don't have one yet.";
 
     public function handle(InvoiceGenerator $generator): int
+    {
+        try {
+            return $this->generate($generator);
+        } catch (Throwable $e) {
+            // The System page shows this, so a silently broken schedule is noticed.
+            SystemStatus::record('invoices_generate_recurring', [
+                'ok' => false,
+                'message' => class_basename($e).': '.$e->getMessage(),
+            ]);
+
+            throw $e;
+        }
+    }
+
+    private function generate(InvoiceGenerator $generator): int
     {
         $month = InvoiceGenerator::currentMonth();
         $count = 0;
@@ -48,6 +65,12 @@ class GenerateRecurringInvoices extends Command
                     }
                 }
             });
+
+        SystemStatus::record('invoices_generate_recurring', [
+            'ok' => true,
+            'generated' => $count,
+            'skipped' => $skipped,
+        ]);
 
         $this->info("Generated {$count} recurring invoice(s).".($skipped ? " Skipped {$skipped}." : ''));
 

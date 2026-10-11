@@ -1,13 +1,23 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\ActivityLogController;
+use App\Http\Controllers\Api\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Api\Admin\BillplzSettingsController;
+use App\Http\Controllers\Api\Admin\ContactMessageController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Api\Admin\ImpersonationController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
+use App\Http\Controllers\Api\Admin\OperatorNoteController;
+use App\Http\Controllers\Api\Admin\PaymentAttemptController;
+use App\Http\Controllers\Api\Admin\PlanController;
+use App\Http\Controllers\Api\Admin\SystemController;
+use App\Http\Controllers\Api\Admin\TeamController;
 use App\Http\Controllers\Api\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Driver\AuthController as DriverAuthController;
 use App\Http\Controllers\Api\Driver\TripController as DriverTripController;
 use App\Http\Controllers\Api\ParentPortal\AuthController as ParentAuthController;
+use App\Http\Controllers\Api\Operator\AnnouncementController as OperatorAnnouncementController;
 use App\Http\Controllers\Api\Operator\BillingConfigController;
 use App\Http\Controllers\Api\Operator\BusController;
 use App\Http\Controllers\Api\Operator\DashboardController;
@@ -58,14 +68,77 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    Route::middleware('role:saas_admin')->prefix('admin')->group(function () {
+    // Outside the admin group on purpose: while impersonating, the session is the operator's.
+    Route::post('/impersonation/stop', [ImpersonationController::class, 'stop']);
+
+    // Platform team: Owner (saas_admin), Finance and Support. Everyone may look;
+    // what each level may change is gated per route by permission.
+    Route::middleware('role:saas_admin|saas_finance|saas_support')->prefix('admin')->group(function () {
         Route::get('dashboard/summary', [AdminDashboardController::class, 'summary']);
+        Route::get('dashboard/trends', [AdminDashboardController::class, 'trends']);
+        Route::get('dashboard/attention', [AdminDashboardController::class, 'attention']);
         Route::get('operators', [AdminOperatorController::class, 'index']);
+        Route::get('operators/options', [AdminOperatorController::class, 'options']);
         Route::get('operators/{operator}', [AdminOperatorController::class, 'show']);
-        Route::put('operators/{operator}/billplz', [BillplzSettingsController::class, 'update']);
-        Route::post('operators/{operator}/billplz/test', [BillplzSettingsController::class, 'test']);
-        Route::delete('operators/{operator}/billplz', [BillplzSettingsController::class, 'destroy']);
         Route::get('transactions', [AdminTransactionController::class, 'index']);
+        Route::get('payment-attempts', [PaymentAttemptController::class, 'index']);
+        Route::get('transactions/export', [AdminTransactionController::class, 'export'])
+            ->middleware('permission:transactions.export');
+
+        Route::get('plans', [PlanController::class, 'index']);
+
+        Route::middleware('permission:plans.manage')->group(function () {
+            Route::post('plans', [PlanController::class, 'store']);
+            Route::put('plans/{plan}', [PlanController::class, 'update']);
+            Route::delete('plans/{plan}', [PlanController::class, 'destroy']);
+            Route::put('operators/{operator}/plan', [PlanController::class, 'assign']);
+        });
+
+        Route::middleware('permission:operators.edit')->group(function () {
+            Route::put('operators/{operator}', [AdminOperatorController::class, 'update']);
+            Route::post('operators/{operator}/password-reset', [AdminOperatorController::class, 'sendPasswordReset']);
+            Route::get('operators/{operator}/notes', [OperatorNoteController::class, 'index']);
+            Route::post('operators/{operator}/notes', [OperatorNoteController::class, 'store']);
+            Route::delete('operators/{operator}/notes/{note}', [OperatorNoteController::class, 'destroy']);
+        });
+
+        Route::middleware('permission:operators.suspend')->group(function () {
+            Route::post('operators/{operator}/suspend', [AdminOperatorController::class, 'suspend']);
+            Route::post('operators/{operator}/reactivate', [AdminOperatorController::class, 'reactivate']);
+        });
+
+        Route::post('operators/{operator}/impersonate', [ImpersonationController::class, 'start'])
+            ->middleware('permission:operators.impersonate');
+
+        Route::middleware('permission:gateway.manage')->group(function () {
+            Route::put('operators/{operator}/billplz', [BillplzSettingsController::class, 'update']);
+            Route::post('operators/{operator}/billplz/test', [BillplzSettingsController::class, 'test']);
+            Route::delete('operators/{operator}/billplz', [BillplzSettingsController::class, 'destroy']);
+        });
+
+        Route::middleware('permission:support.manage')->group(function () {
+            Route::get('inbox', [ContactMessageController::class, 'index']);
+            Route::get('inbox/summary', [ContactMessageController::class, 'summary']);
+            Route::get('inbox/{message}', [ContactMessageController::class, 'show']);
+            Route::post('inbox/{message}/handle', [ContactMessageController::class, 'handle']);
+            Route::post('inbox/{message}/reopen', [ContactMessageController::class, 'reopen']);
+
+            Route::get('announcements', [AdminAnnouncementController::class, 'index']);
+            Route::post('announcements', [AdminAnnouncementController::class, 'store']);
+            Route::put('announcements/{announcement}', [AdminAnnouncementController::class, 'update']);
+            Route::delete('announcements/{announcement}', [AdminAnnouncementController::class, 'destroy']);
+        });
+
+        Route::middleware('permission:team.manage')->group(function () {
+            Route::get('system', [SystemController::class, 'show']);
+            Route::get('team', [TeamController::class, 'index']);
+            Route::post('team', [TeamController::class, 'store']);
+            Route::put('team/{user}', [TeamController::class, 'update']);
+            Route::post('team/{user}/deactivate', [TeamController::class, 'deactivate']);
+            Route::post('team/{user}/reactivate', [TeamController::class, 'reactivate']);
+            Route::get('activity', [ActivityLogController::class, 'index']);
+            Route::get('activity/actions', [ActivityLogController::class, 'actions']);
+        });
     });
 
     Route::middleware('tenant')->group(function () {
@@ -83,6 +156,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('payments/{payment}/receipt', [TransactionController::class, 'receipt']);
             Route::get('outstanding', [OutstandingController::class, 'index']);
             Route::get('dashboard/summary', [DashboardController::class, 'summary']);
+            Route::get('announcements/active', [OperatorAnnouncementController::class, 'active']);
             Route::get('students', [StudentController::class, 'index']);
             Route::get('students/{student}', [StudentController::class, 'show']);
             Route::get('student-applications', [StudentApplicationController::class, 'index']);

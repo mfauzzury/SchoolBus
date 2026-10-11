@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { useLogin } from '@/hooks/useAuth'
+import { isPlatformUser } from '@/lib/platform'
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -46,7 +47,7 @@ export function Login() {
   const onSubmit = (values: LoginForm) => {
     login.mutate(values, {
       onSuccess: (data) => {
-        if (data.roles.includes('saas_admin')) {
+        if (isPlatformUser(data.roles)) {
           navigate('/admin/dashboard')
         } else if (data.roles.includes('parent')) {
           navigate('/parent/dashboard')

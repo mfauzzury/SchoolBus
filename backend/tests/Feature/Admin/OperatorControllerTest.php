@@ -24,10 +24,10 @@ class OperatorControllerTest extends TestCase
 
         $response = $this->actingAs($admin)->getJson('/api/admin/operators');
 
-        $response->assertOk()->assertJsonCount(2);
-        $alpha = collect($response->json())->firstWhere('company_name', 'Alpha Buses');
+        $response->assertOk()->assertJsonCount(2, 'data')->assertJsonPath('total', 2);
+        $alpha = collect($response->json('data'))->firstWhere('company_name', 'Alpha Buses');
         $this->assertSame(2, $alpha['students_count']);
-        $beta = collect($response->json())->firstWhere('company_name', 'Beta Buses');
+        $beta = collect($response->json('data'))->firstWhere('company_name', 'Beta Buses');
         $this->assertSame(0, $beta['students_count']);
     }
 

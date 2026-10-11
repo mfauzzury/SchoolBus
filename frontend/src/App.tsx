@@ -44,6 +44,17 @@ import { AdminDashboard } from '@/pages/admin/Dashboard'
 import { AdminOperators } from '@/pages/admin/Operators'
 import { AdminOperatorPage } from '@/pages/admin/OperatorDetail'
 import { AdminTransactions } from '@/pages/admin/Transactions'
+import { AdminOperatorEdit } from '@/pages/admin/OperatorEdit'
+import { AdminInbox } from '@/pages/admin/Inbox'
+import { AdminInboxMessage } from '@/pages/admin/InboxMessage'
+import { AdminAnnouncements } from '@/pages/admin/Announcements'
+import { AdminAnnouncementEdit } from '@/pages/admin/AnnouncementEdit'
+import { AdminSystem } from '@/pages/admin/System'
+import { AdminPlans } from '@/pages/admin/Plans'
+import { AdminPlanEdit } from '@/pages/admin/PlanEdit'
+import { AdminTeam } from '@/pages/admin/Team'
+import { AdminTeamAdd } from '@/pages/admin/TeamAdd'
+import { AdminActivityLog } from '@/pages/admin/ActivityLog'
 
 function App() {
   return (
@@ -109,12 +120,25 @@ function App() {
           </Route>
         </Route>
 
-        <Route element={<ProtectedRoute role="saas_admin" />}>
+        <Route element={<ProtectedRoute role="platform" />}>
           <Route element={<SaasAdminLayout />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/operators" element={<AdminOperators />} />
             <Route path="/admin/operators/:id" element={<AdminOperatorPage />} />
+            <Route path="/admin/operators/:id/edit" element={<AdminOperatorEdit />} />
             <Route path="/admin/transactions" element={<AdminTransactions />} />
+            <Route path="/admin/plans" element={<AdminPlans />} />
+            <Route path="/admin/plans/new" element={<AdminPlanEdit />} />
+            <Route path="/admin/plans/:id" element={<AdminPlanEdit />} />
+            <Route path="/admin/inbox" element={<AdminInbox />} />
+            <Route path="/admin/inbox/:id" element={<AdminInboxMessage />} />
+            <Route path="/admin/announcements" element={<AdminAnnouncements />} />
+            <Route path="/admin/announcements/new" element={<AdminAnnouncementEdit />} />
+            <Route path="/admin/announcements/:id" element={<AdminAnnouncementEdit />} />
+            <Route path="/admin/system" element={<AdminSystem />} />
+            <Route path="/admin/team" element={<AdminTeam />} />
+            <Route path="/admin/team/new" element={<AdminTeamAdd />} />
+            <Route path="/admin/activity" element={<AdminActivityLog />} />
           </Route>
         </Route>
 

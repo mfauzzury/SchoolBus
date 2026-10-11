@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -32,6 +33,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Operator owner logins. A plain relationship query rather than Spatie's
+     * role() scope, which throws if the role row doesn't exist yet.
+     */
+    public function scopeOperatorOwners(Builder $query): void
+    {
+        $query->whereHas('roles', fn (Builder $roles) => $roles->where('name', 'operator_admin'));
     }
 
     public function busOperator(): BelongsTo
