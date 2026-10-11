@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useCan, useMe, useLogout } from '@/hooks/useAuth'
+import { useInboxSummary } from '@/hooks/useAdmin'
 import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { ThemeSwitcher } from '@/components/ThemeSwitcher'
@@ -11,6 +12,8 @@ import { cn } from '@/lib/utils'
 interface NavItem {
   to: string
   label: string
+  /** A small count shown beside the label (e.g. unread messages). */
+  badge?: number
 }
 
 interface NavGroup {
@@ -25,6 +28,8 @@ export function SaasAdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const canManageTeam = useCan('team.manage')
   const canManagePlans = useCan('plans.manage')
+  const canSupport = useCan('support.manage')
+  const { data: inbox } = useInboxSummary(canSupport)
 
   // Groups with nothing in them (a level may not see Settings at all) are dropped.
   const groups: NavGroup[] = [
@@ -44,11 +49,21 @@ export function SaasAdminLayout() {
       ],
     },
     {
+      title: t('admin.nav.groupSupport'),
+      items: canSupport
+        ? [
+            { to: '/admin/inbox', label: t('admin.nav.inbox'), badge: inbox?.open },
+            { to: '/admin/announcements', label: t('admin.nav.announcements') },
+          ]
+        : [],
+    },
+    {
       title: t('admin.nav.groupSettings'),
       items: canManageTeam
         ? [
             { to: '/admin/team', label: t('admin.nav.team') },
             { to: '/admin/activity', label: t('admin.nav.activity') },
+            { to: '/admin/system', label: t('admin.nav.system') },
           ]
         : [],
     },
@@ -68,12 +83,17 @@ export function SaasAdminLayout() {
               onClick={onNavigate}
               className={({ isActive }) =>
                 cn(
-                  'rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground',
+                  'flex items-center justify-between rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground',
                   isActive && 'bg-muted font-medium text-foreground',
                 )
               }
             >
               {item.label}
+              {item.badge ? (
+                <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-medium text-primary-foreground">
+                  {item.badge}
+                </span>
+              ) : null}
             </NavLink>
           ))}
         </div>

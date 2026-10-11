@@ -487,3 +487,105 @@ export async function assignOperatorPlan(operatorId: number, planId: number): Pr
   })
   return data
 }
+
+export interface ContactMessage {
+  id: number
+  name: string
+  email: string
+  phone: string | null
+  message: string
+  created_at: string
+  handled_at: string | null
+  handler: { id: number; name: string } | null
+}
+
+export async function listInbox(filters: {
+  page?: number
+  status?: 'open' | 'handled'
+}): Promise<Paginated<ContactMessage>> {
+  const { data } = await apiClient.get<Paginated<ContactMessage>>('/api/admin/inbox', {
+    params: filters,
+  })
+  return data
+}
+
+export async function getInboxSummary(): Promise<{ open: number }> {
+  const { data } = await apiClient.get<{ open: number }>('/api/admin/inbox/summary')
+  return data
+}
+
+export async function getInboxMessage(id: number): Promise<ContactMessage> {
+  const { data } = await apiClient.get<ContactMessage>(`/api/admin/inbox/${id}`)
+  return data
+}
+
+export async function handleInboxMessage(id: number): Promise<ContactMessage> {
+  const { data } = await apiClient.post<ContactMessage>(`/api/admin/inbox/${id}/handle`)
+  return data
+}
+
+export async function reopenInboxMessage(id: number): Promise<ContactMessage> {
+  const { data } = await apiClient.post<ContactMessage>(`/api/admin/inbox/${id}/reopen`)
+  return data
+}
+
+export interface Announcement {
+  id: number
+  title: string
+  body: string
+  title_ms: string | null
+  body_ms: string | null
+  starts_at: string | null
+  ends_at: string | null
+  status: 'scheduled' | 'live' | 'ended'
+  created_at: string
+}
+
+export interface AnnouncementInput {
+  title: string
+  body: string
+  title_ms: string | null
+  body_ms: string | null
+  starts_at: string | null
+  ends_at: string | null
+}
+
+export async function listAnnouncements(): Promise<Announcement[]> {
+  const { data } = await apiClient.get<Announcement[]>('/api/admin/announcements')
+  return data
+}
+
+export async function createAnnouncement(input: AnnouncementInput): Promise<Announcement> {
+  const { data } = await apiClient.post<Announcement>('/api/admin/announcements', input)
+  return data
+}
+
+export async function updateAnnouncement(id: number, input: AnnouncementInput): Promise<Announcement> {
+  const { data } = await apiClient.put<Announcement>(`/api/admin/announcements/${id}`, input)
+  return data
+}
+
+export async function deleteAnnouncement(id: number): Promise<void> {
+  await apiClient.delete(`/api/admin/announcements/${id}`)
+}
+
+export interface SystemHealth {
+  billing: {
+    ran_at: string | null
+    /** null = it has never run */
+    ok: boolean | null
+    generated: number | null
+    skipped: number | null
+    message: string | null
+    stale: boolean
+  }
+  failed_jobs: { count: number; latest: { id: number; name: string; failed_at: string }[] }
+  billplz_webhook: { received_at: string | null }
+  sandbox_operators: { count: number; items: { id: number; company_name: string }[] }
+  environment: { app_env: string; debug: boolean; mailer: string; queue: string }
+}
+
+export async function getSystemHealth(): Promise<SystemHealth> {
+  const { data } = await apiClient.get<SystemHealth>('/api/admin/system')
+  return data
+}

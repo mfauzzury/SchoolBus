@@ -1,19 +1,23 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\ActivityLogController;
+use App\Http\Controllers\Api\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Api\Admin\BillplzSettingsController;
+use App\Http\Controllers\Api\Admin\ContactMessageController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\ImpersonationController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
 use App\Http\Controllers\Api\Admin\OperatorNoteController;
 use App\Http\Controllers\Api\Admin\PaymentAttemptController;
 use App\Http\Controllers\Api\Admin\PlanController;
+use App\Http\Controllers\Api\Admin\SystemController;
 use App\Http\Controllers\Api\Admin\TeamController;
 use App\Http\Controllers\Api\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Driver\AuthController as DriverAuthController;
 use App\Http\Controllers\Api\Driver\TripController as DriverTripController;
 use App\Http\Controllers\Api\ParentPortal\AuthController as ParentAuthController;
+use App\Http\Controllers\Api\Operator\AnnouncementController as OperatorAnnouncementController;
 use App\Http\Controllers\Api\Operator\BillingConfigController;
 use App\Http\Controllers\Api\Operator\BusController;
 use App\Http\Controllers\Api\Operator\DashboardController;
@@ -112,7 +116,21 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('operators/{operator}/billplz', [BillplzSettingsController::class, 'destroy']);
         });
 
+        Route::middleware('permission:support.manage')->group(function () {
+            Route::get('inbox', [ContactMessageController::class, 'index']);
+            Route::get('inbox/summary', [ContactMessageController::class, 'summary']);
+            Route::get('inbox/{message}', [ContactMessageController::class, 'show']);
+            Route::post('inbox/{message}/handle', [ContactMessageController::class, 'handle']);
+            Route::post('inbox/{message}/reopen', [ContactMessageController::class, 'reopen']);
+
+            Route::get('announcements', [AdminAnnouncementController::class, 'index']);
+            Route::post('announcements', [AdminAnnouncementController::class, 'store']);
+            Route::put('announcements/{announcement}', [AdminAnnouncementController::class, 'update']);
+            Route::delete('announcements/{announcement}', [AdminAnnouncementController::class, 'destroy']);
+        });
+
         Route::middleware('permission:team.manage')->group(function () {
+            Route::get('system', [SystemController::class, 'show']);
             Route::get('team', [TeamController::class, 'index']);
             Route::post('team', [TeamController::class, 'store']);
             Route::put('team/{user}', [TeamController::class, 'update']);
@@ -138,6 +156,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('payments/{payment}/receipt', [TransactionController::class, 'receipt']);
             Route::get('outstanding', [OutstandingController::class, 'index']);
             Route::get('dashboard/summary', [DashboardController::class, 'summary']);
+            Route::get('announcements/active', [OperatorAnnouncementController::class, 'active']);
             Route::get('students', [StudentController::class, 'index']);
             Route::get('students/{student}', [StudentController::class, 'show']);
             Route::get('student-applications', [StudentApplicationController::class, 'index']);

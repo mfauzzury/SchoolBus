@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
 import { useStudentApplications } from '@/hooks/useStudentApplications'
 import { useStopImpersonation } from '@/hooks/useAdmin'
+import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { ThemeSwitcher } from '@/components/ThemeSwitcher'
@@ -54,6 +55,7 @@ export function OperatorLayout() {
           </button>
         </div>
       )}
+      <AnnouncementBanner />
       <header className="border-b">
         <div className="mx-auto flex max-w-content items-center justify-between px-4 py-4 lg:px-8">
           <Link to="/" className="flex min-w-0 items-center gap-2 hover:text-primary">

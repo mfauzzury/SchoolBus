@@ -1,6 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   addOperatorNote,
+  createAnnouncement,
+  deleteAnnouncement,
+  getInboxMessage,
+  getInboxSummary,
+  getSystemHealth,
+  handleInboxMessage,
+  listAnnouncements,
+  listInbox,
+  reopenInboxMessage,
+  updateAnnouncement,
   assignOperatorPlan,
   createPlan,
   deletePlan,
@@ -33,6 +43,7 @@ import {
   updateBillplzSettings,
   updateOperator,
   type ActivityFilters,
+  type AnnouncementInput,
   type BillplzSettingsInput,
   type OperatorDetailsInput,
   type OperatorFilters,
@@ -256,4 +267,78 @@ export function useAssignOperatorPlan(operatorId: number) {
       queryClient.invalidateQueries({ queryKey: ['admin-plans'] })
     },
   })
+}
+
+export function useInbox(filters: { page?: number; status?: 'open' | 'handled' }) {
+  return useQuery({
+    queryKey: ['admin-inbox', filters],
+    queryFn: () => listInbox(filters),
+    placeholderData: (previous) => previous,
+  })
+}
+
+/** How many messages are waiting; refreshed in the background so the menu badge stays current. */
+export function useInboxSummary(enabled = true) {
+  return useQuery({
+    queryKey: ['admin-inbox-summary'],
+    queryFn: getInboxSummary,
+    enabled,
+    refetchInterval: 60_000,
+  })
+}
+
+export function useInboxMessage(id: number) {
+  return useQuery({ queryKey: ['admin-inbox-message', id], queryFn: () => getInboxMessage(id) })
+}
+
+function useInboxMutation(mutationFn: (id: number) => Promise<unknown>) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-inbox'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-inbox-message'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-inbox-summary'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
+  })
+}
+
+export function useHandleInboxMessage() {
+  return useInboxMutation(handleInboxMessage)
+}
+
+export function useReopenInboxMessage() {
+  return useInboxMutation(reopenInboxMessage)
+}
+
+export function useAnnouncements() {
+  return useQuery({ queryKey: ['admin-announcements'], queryFn: listAnnouncements })
+}
+
+export function useSaveAnnouncement(id?: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: AnnouncementInput) =>
+      id ? updateAnnouncement(id, input) : createAnnouncement(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-announcements'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
+  })
+}
+
+export function useDeleteAnnouncement() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => deleteAnnouncement(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-announcements'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
+  })
+}
+
+export function useSystemHealth() {
+  return useQuery({ queryKey: ['admin-system'], queryFn: getSystemHealth })
 }
