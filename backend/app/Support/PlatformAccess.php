@@ -36,6 +36,7 @@ class PlatformAccess
         'support.manage',
         'team.manage',
         'settings.manage',
+        'reports.view',
     ];
 
     private const ROLE_PERMISSIONS = [

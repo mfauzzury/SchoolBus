@@ -10,6 +10,7 @@ import {
   Megaphone,
   Receipt,
   Users,
+  UsersRound,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useCan, useMe, useLogout } from '@/hooks/useAuth'
@@ -23,6 +24,7 @@ export function SaasAdminLayout() {
   const canManageTeam = useCan('team.manage')
   const canManagePlans = useCan('plans.manage')
   const canSupport = useCan('support.manage')
+  const canSeeReports = useCan('reports.view')
   const { data: inbox } = useInboxSummary(canSupport)
 
   // Items hidden by permission; a group left empty is dropped by the shell.
@@ -33,7 +35,10 @@ export function SaasAdminLayout() {
     },
     {
       title: t('admin.nav.groupOperators'),
-      items: [{ to: '/admin/operators', label: t('admin.nav.operators'), icon: Bus }],
+      items: [
+        { to: '/admin/operators', label: t('admin.nav.operators'), icon: Bus },
+        ...(canSeeReports ? [{ to: '/admin/parents', label: t('admin.nav.parents'), icon: UsersRound }] : []),
+      ],
     },
     {
       title: t('admin.nav.groupMoney'),

@@ -632,7 +632,8 @@
       "inbox": "Peti masuk",
       "announcements": "Pengumuman",
       "system": "Sistem",
-      "messages": "Mesej"
+      "messages": "Mesej",
+      "parents": "Ibu bapa"
     },
     "dashboard": {
       "welcome": "Selamat datang, {{name}}",
@@ -1086,6 +1087,67 @@
         "notDelivered": "Tidak dihantar: mod fail sahaja",
         "empty": "Belum ada mesej."
       },
+        "parentsReport": {
+          "title": "Ibu bapa",
+          "intro": "Siapa ibu bapa kita, sebagai jumlah kumpulan sahaja. Tiada nama dipaparkan, dan kumpulan kurang daripada {{count}} ibu bapa disembunyikan.",
+          "operator": "Pengendali",
+          "allOperators": "Semua pengendali",
+          "totalParents": "Ibu bapa",
+          "answered": "Menjawab \"Tentang anda\"",
+          "answeredOf": "{{done}} daripada {{total}} ibu bapa",
+          "notEnough": "Belum cukup ibu bapa untuk menggambarkan mereka tanpa menunjuk kepada individu. Laporan ini muncul bila ada {{count}} atau lebih.",
+          "nothing": "Belum ada apa-apa untuk ditunjukkan.",
+          "fewerThan": "kurang daripada {{count}}",
+          "notGiven": "Tidak diberi",
+          "notAnswered": "Tidak menjawab",
+          "other": "Lain-lain (kumpulan kecil)",
+          "sectionWho": "Siapa mereka",
+          "sectionWhere": "Di mana mereka tinggal",
+          "sectionFamily": "Keluarga mereka",
+          "sectionWork": "Pekerjaan dan pendapatan",
+          "gender": "Jantina",
+          "relationship": "Hubungan dengan anak",
+          "age": "Umur",
+          "ageNote": "Dikira daripada tarikh lahir dalam nombor IC.",
+          "ageBands": {
+            "under_25": "Bawah 25",
+            "25_34": "25 hingga 34",
+            "35_44": "35 hingga 44",
+            "45_54": "45 hingga 54",
+            "55_plus": "55 ke atas"
+          },
+          "state": "Negeri",
+          "stateNote": "Dikira daripada poskod; poskod yang tiada atau luar biasa dikira sebagai tidak diberi.",
+          "children": "Anak yang didaftarkan",
+          "childCount": {
+            "0": "Tiada anak didaftarkan",
+            "1": "1 anak",
+            "2": "2 anak",
+            "3": "3 anak",
+            "4_plus": "4 atau lebih"
+          },
+          "schoolLevel": "Anak mengikut peringkat sekolah",
+          "level": {
+            "preschool": "Prasekolah",
+            "year_1": "Darjah 1",
+            "year_2": "Darjah 2",
+            "year_3": "Darjah 3",
+            "year_4": "Darjah 4",
+            "year_5": "Darjah 5",
+            "year_6": "Darjah 6",
+            "form_1": "Tingkatan 1",
+            "form_2": "Tingkatan 2",
+            "form_3": "Tingkatan 3",
+            "form_4": "Tingkatan 4",
+            "form_5": "Tingkatan 5",
+            "other": "Lebih tua daripada Tingkatan 5"
+          },
+          "income": "Pendapatan isi rumah sebulan",
+          "workingField": "Bidang pekerjaan",
+          "profession": "Profesion paling kerap",
+          "professionNote": "{{count}} jawapan lain tidak dipaparkan kerana kurang daripada {{min}} ibu bapa memberinya.",
+          "privacy": "Jumlah sahaja. Jawapan tidak pernah dikaitkan dengan nama, dan kumpulan kurang daripada {{count}} disembunyikan supaya tiada sesiapa boleh dikenal pasti."
+        },
     "operatorDetail": {
       "back": "Kembali ke Pengendali",
       "empty": "Belum ada apa-apa di sini.",
