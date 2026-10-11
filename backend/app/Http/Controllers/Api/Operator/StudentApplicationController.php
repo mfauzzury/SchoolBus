@@ -8,6 +8,7 @@ use App\Models\RouteStop;
 use App\Models\Student;
 use App\Models\StudentApplication;
 use App\Services\InvoiceGenerator;
+use App\Services\Notifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -86,7 +87,9 @@ class StudentApplicationController extends Controller
         $startsNextMonth = ($data['billing_start'] ?? 'this_month') === 'next_month';
         $billingStartsOn = InvoiceGenerator::currentMonth()->addMonths($startsNextMonth ? 1 : 0);
 
-        DB::transaction(function () use ($request, $studentApplication, $data, $billingStartsOn) {
+        $issuedInvoice = null;
+
+        DB::transaction(function () use ($request, $studentApplication, $data, $billingStartsOn, &$issuedInvoice) {
             $student = Student::create([
                 'tenant_id' => $studentApplication->tenant_id,
                 'parent_id' => $studentApplication->parent_id,
@@ -104,7 +107,7 @@ class StudentApplicationController extends Controller
 
             // No bill comes out of this when billing starts next month or this is
             // a month the operator doesn't bill; the daily job issues the first one.
-            $this->invoiceGenerator->generate($student, $data['first_month_amount'] ?? null);
+            $issuedInvoice = $this->invoiceGenerator->generate($student, $data['first_month_amount'] ?? null);
 
             $studentApplication->update([
                 'status' => 'approved',
@@ -115,6 +118,13 @@ class StudentApplicationController extends Controller
                 'reviewed_at' => now(),
             ]);
         });
+
+        // After the transaction has committed, so nothing is announced that then rolls back.
+        $notifier = app(Notifier::class);
+        $notifier->applicationDecided($studentApplication->fresh(), true);
+        if ($issuedInvoice) {
+            $notifier->billsIssued([$issuedInvoice]);
+        }
 
         return $studentApplication->load(['resultingStudent', 'route:id,name']);
     }
@@ -135,6 +145,8 @@ class StudentApplicationController extends Controller
             'reviewed_by' => $request->user()->id,
             'reviewed_at' => now(),
         ]);
+
+        app(Notifier::class)->applicationDecided($studentApplication->fresh(), false);
 
         return $studentApplication;
     }

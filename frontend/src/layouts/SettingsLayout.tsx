@@ -1,38 +1,16 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { pillTabClass, pillTabListClass } from '@/lib/tabs'
 
+/** Company settings. The menu picks the section; this just titles it. */
 export function SettingsLayout() {
   const { t } = useTranslation()
+  const { pathname } = useLocation()
 
-  const tabs = [
-    { to: '/operator/settings', label: t('operator.settings.general'), end: true },
-    { to: '/operator/settings/billing', label: t('operator.settings.billing'), end: false },
-    { to: '/operator/settings/routes', label: t('nav.routes'), end: false },
-    { to: '/operator/settings/buses', label: t('nav.buses'), end: false },
-    { to: '/operator/settings/staff', label: t('nav.staff'), end: false },
-  ]
+  const title = pathname.endsWith('/billing') ? t('nav.settingsBilling') : t('nav.settingsGeneral')
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-medium">{t('operator.settings.title')}</h1>
-
-      <nav
-        role="group"
-        aria-label="Settings section"
-        className={pillTabListClass}
-      >
-        {tabs.map((tab) => (
-          <NavLink
-            key={tab.to}
-            to={tab.to}
-            end={tab.end}
-            className={({ isActive }) => pillTabClass(isActive)}
-          >
-            {tab.label}
-          </NavLink>
-        ))}
-      </nav>
+      <h1 className="text-xl font-medium">{title}</h1>
 
       <Outlet />
     </div>

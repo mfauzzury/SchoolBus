@@ -47,7 +47,21 @@
     "en": "English",
     "ms": "Bahasa Melayu"
   },
+    "stepper": {
+      "label": "Kemajuan",
+      "stepOf": "Langkah {{current}} daripada {{total}}",
+      "next": "Seterusnya",
+      "previous": "Kembali"
+    },
   "nav": {
+    "groupOverview": "Gambaran",
+    "groupPeople": "Orang",
+    "groupFleet": "Pengurusan Fleet",
+    "routesAndFares": "Laluan & Tambang",
+    "settingsGeneral": "Umum",
+    "settingsBilling": "Bil & Yuran",
+    "groupMoney": "Wang",
+    "groupSettings": "Tetapan",
     "dashboard": "Papan Pemuka",
     "routes": "Laluan",
     "buses": "Bas",
@@ -264,7 +278,7 @@
     "capabilities": {
       "fleet": "Pengurusan armada & laluan",
       "applications": "Aliran kerja kelulusan permohonan",
-      "discounts": "Diskaun automatik, bil bulanan",
+      "discounts": "Bil & diskaun bulanan automatik",
       "free": "Tiada langganan bulanan"
     },
     "whySwitch": {
@@ -275,19 +289,23 @@
       "newWay": "Dengan BasSekolah.my",
       "payments": {
         "old": "Menjejaki siapa yang telah membayar dalam helaian Excel, berharap ia tidak lapuk",
-        "new": "Papan pemuka langsung menunjukkan siapa yang telah bayar, siapa tertunggak, dan berapa banyak dikutip"
+        "new": "Ibu bapa membayar dalam talian dan menerima resit; papan pemuka langsung menunjukkan siapa yang telah bayar, siapa tertunggak, dan berapa banyak dikutip"
       },
       "applications": {
         "old": "Permohonan baharu melalui mesej WhatsApp yang anda salin ke daftar secara manual",
         "new": "Ibu bapa memohon dalam talian dengan kod 5-digit anda — luluskan dengan satu klik"
       },
       "discounts": {
-        "old": "Mengira diskaun adik-beradik dan tempoh secara manual, berbeza setiap kali",
+        "old": "Mengira diskaun adik-beradik secara manual, berbeza setiap kali",
         "new": "Diskaun dikira secara automatik, dengan cara yang sama setiap bulan"
       },
       "visibility": {
         "old": "Tiada rekod bas, pemandu, atau perhentian yang ditetapkan untuk seorang anak selain nota anda sendiri",
         "new": "Setiap penetapan laluan, bas, dan pemandu direkod dan boleh dilihat serta-merta"
+      },
+      "flexible": {
+        "old": "Menulis semula senarai yuran setiap kali ada keluarga dengan kes khas, atau bas berhenti ketika cuti sekolah",
+        "new": "Langkau bulan cuti, tetapkan yuran khas untuk seorang anak, atau tambah diskaun atau caj sekali sahaja pada satu bil"
       }
     },
     "journeyTag": "Perjalanannya",
@@ -297,7 +315,7 @@
       "setup": {
         "who": "Pengendali",
         "title": "Sediakan armada anda",
-        "body": "Tambah bas, laluan, perhentian, pemandu dan konduktor. Tetapkan kadar bulanan bagi setiap laluan — tiada konfigurasi harga setiap perhentian diperlukan."
+        "body": "Tambah bas, laluan, perhentian, pemandu dan konduktor. Tetapkan tambang pergi-balik dan tambang sehala bagi setiap laluan — tiada konfigurasi harga setiap perhentian diperlukan."
       },
       "apply": {
         "who": "Ibu bapa",
@@ -307,12 +325,12 @@
       "approve": {
         "who": "Pengendali",
         "title": "Semak dan luluskan",
-        "body": "Tetapkan laluan dan bas, sahkan yuran. Satu klik mencipta rekod pelajar dan mengeluarkan bil pertama."
+        "body": "Pilih laluan dan perhentian ambil, sahkan yuran, dan tentukan bagaimana bil pertama bermula — sebulan penuh, jumlah dikurangkan, atau bulan depan. Satu klik mencipta rekod pelajar."
       },
       "bill": {
         "who": "Kedua-dua",
         "title": "Bil berjalan sendiri",
-        "body": "Setiap bulan, yuran dikira semula secara automatik dengan diskaun adik-beradik dan tempoh. Jejaki kutipan secara langsung, eksport ke CSV bila-bila masa."
+        "body": "Bil dikeluarkan pada hari pertama setiap bulan yang dibilkan dengan diskaun adik-beradik. Ibu bapa membayar dalam talian, dan anda merekod bayaran tunai atau pindahan bank. Jejaki kutipan secara langsung, eksport ke CSV bila-bila masa."
       }
     },
     "getStarted": { "title": "Mula sekarang", "subtitle": "Sediakan ruang kerja anda dalam beberapa minit." },
@@ -329,18 +347,29 @@
     "screenshots": {
       "tag": "Lawatan produk",
       "title": "Lihat ke dalam papan pemuka",
-      "subtitle": "Lawatan ringkas ke dalam apa yang akan anda temui di dalamnya.",
+      "subtitle": "Lawatan ringkas ke dalam apa yang akan anda temui di dalamnya. Ketik gambar untuk membesarkannya.",
+      "enlarge": "Besarkan tangkapan skrin",
+      "previous": "Tangkapan skrin sebelumnya",
+      "next": "Tangkapan skrin seterusnya",
       "dashboard": {
         "title": "Gambaran papan pemuka",
-        "description": "Statistik armada, pelajar, dan hasil sekali imbas"
+        "description": "Permohonan baharu, kutipan mengikut bulan, dan tempat duduk mengikut laluan sekali imbas"
+      },
+      "applications": {
+        "title": "Semak & luluskan permohonan",
+        "description": "Lihat permohonan, pilih laluan dan perhentian, dan tentukan bagaimana bil pertama bermula"
+      },
+      "billingSettings": {
+        "title": "Bil & Yuran",
+        "description": "Tetapkan hari akhir bayaran, langkau bulan cuti, dan tetapkan diskaun adik-beradik"
       },
       "fleet": {
-        "title": "Pengurusan armada & laluan",
-        "description": "Bas, pemandu, konduktor, dan perhentian dalam satu tempat"
+        "title": "Laluan & tambang",
+        "description": "Sediakan perhentian, tambang pergi-balik dan sehala, serta bas dan krew langkah demi langkah"
       },
       "billing": {
         "title": "Pengebilan & kutipan",
-        "description": "Jejaki siapa yang telah bayar, siapa tertunggak, dan eksport bila-bila masa"
+        "description": "Bil, bayaran diterima dan siapa yang masih berhutang — dengan eksport CSV"
       }
     },
     "pricing": {
@@ -387,7 +416,11 @@
       },
       "billing": {
         "question": "Bagaimana pengebilan dan kutipan berfungsi?",
-        "answer": "Konfigurasikan yuran asas dan peraturan diskaun anda sekali sahaja — BasSekolah.my mengira bil setiap keluarga secara automatik mengikut kitaran bil dan bilangan adik-beradik, serta menjejaki siapa yang telah membayar."
+        "answer": "Tetapkan tambang setiap laluan dan diskaun adik-beradik anda sekali sahaja. Bil dikeluarkan secara automatik pada hari pertama setiap bulan yang anda pilih untuk dibilkan, dengan tarikh akhir mengikut hari yang anda tetapkan, dan BasSekolah.my menjejaki siapa yang telah membayar. Anda masih boleh melaraskan satu bil, menetapkan yuran khas untuk seorang anak, atau melangkau bulan cuti."
+      },
+      "payment": {
+        "question": "Bagaimana ibu bapa membayar?",
+        "answer": "Ibu bapa membayar dari papan pemuka mereka melalui perbankan dalam talian FPX, e-dompet atau kad, dan bil ditandakan telah dibayar secara automatik bersama resit PDF. Jika ibu bapa membayar tunai atau melalui pindahan bank, anda merekodnya sendiri dalam beberapa ketukan."
       },
       "dataIsolation": {
         "question": "Adakah data armada dan pelajar saya peribadi?",
@@ -598,7 +631,8 @@
       "groupSupport": "Sokongan",
       "inbox": "Peti masuk",
       "announcements": "Pengumuman",
-      "system": "Sistem"
+      "system": "Sistem",
+      "messages": "Mesej"
     },
     "dashboard": {
       "welcome": "Selamat datang, {{name}}",
@@ -771,7 +805,11 @@
         "contact_message_handled": "Menanda mesej sebagai selesai",
         "announcement_created": "Mencipta pengumuman",
         "announcement_updated": "Mengubah pengumuman",
-        "announcement_deleted": "Memadam pengumuman"
+        "announcement_deleted": "Memadam pengumuman",
+        "integration_updated": "Mengubah tetapan e-mel / WhatsApp",
+        "integration_tested": "Menguji tetapan e-mel / WhatsApp",
+        "integration_removed": "Membuang tetapan e-mel / WhatsApp",
+        "notification_type_toggled": "Menghidup atau mematikan jenis mesej"
         }
       },
       "notes": {
@@ -911,7 +949,142 @@
         "on": "Hidup",
         "off": "Mati",
         "mailNotSent": "E-mel ditulis ke fail, tidak dihantar. Set semula kata laluan dan jemputan tidak akan sampai kepada sesiapa.",
-        "debugOn": "Mod nyahpepijat hidup dalam pengeluaran. Matikannya: ia boleh mendedahkan butiran peribadi pada halaman ralat."
+        "debugOn": "Mod nyahpepijat hidup dalam pengeluaran. Matikannya: ia boleh mendedahkan butiran peribadi pada halaman ralat.",
+        "tabStatus": "Status",
+        "tabEmail": "E-mel (Brevo)",
+        "tabWhatsapp": "WhatsApp",
+        "loadError": "Tidak dapat memuatkan ini. Sila muat semula halaman. Jika ia berterusan, pelayan mungkin perlukan kemas kini pangkalan data: maklumkan pembangun anda.",
+        "queueStuckTitle": "{{count}} e-mel menunggu dan tiada yang menghantarnya",
+        "queueStuckHelp": "E-mel dihantar oleh pekerja latar belakang pada pelayan. Ia nampaknya tidak berjalan. Minta pembangun anda memulakannya, jika tidak ibu bapa tidak akan menerima bil dan resit."
+      },
+      "settings": {
+        "notSetUp": "Belum disediakan",
+        "inUse": "Digunakan",
+        "switchedOff": "Dimatikan",
+        "keyPlaceholder": "Tampal di sini",
+        "keyStored": "Kunci telah disimpan. Biarkan kosong untuk mengekalkannya, atau tampal yang baharu untuk menggantikannya.",
+        "saveError": "Tidak dapat simpan. Sila semak butiran dan cuba lagi.",
+        "remove": "Buang",
+        "sending": "Sedang diproses…",
+        "optional": "Pilihan.",
+        "brevo": {
+          "title": "E-mel melalui Brevo",
+          "description": "Set semula kata laluan, jemputan pasukan dan e-mel lain dihantar melalui akaun Brevo anda.",
+          "login": "Log masuk SMTP",
+          "loginHelp": "Dalam Brevo: SMTP & API, kemudian tab SMTP. Ia ialah e-mel yang tertera sebagai Login.",
+          "key": "Kunci SMTP",
+          "keyHelp": "Dalam Brevo: SMTP & API, kemudian Generate a new SMTP key. Ini bukan sama dengan kunci API.",
+          "fromEmail": "Hantar e-mel daripada",
+          "fromEmailHelp": "Mesti penghantar yang telah anda sahkan dalam Brevo, jika tidak Brevo akan menolak e-mel.",
+          "fromName": "Nama penghantar",
+          "enable": "Guna Brevo untuk menghantar e-mel",
+          "enableHelp": "Apabila dimatikan, tetapan kekal disimpan tetapi e-mel dihantar seperti sebelum ini.",
+          "removeConfirm": "Buang tetapan Brevo?",
+          "removeHelp": "Log masuk dan kunci yang disimpan dipadam dan e-mel kembali kepada tetapan pelayan.",
+          "testTitle": "Hantar e-mel ujian",
+          "testHelp": "Menggunakan tetapan yang disimpan di atas, jadi simpan perubahan anda dahulu.",
+          "sendTest": "Hantar ujian",
+          "test": {
+            "ok": "E-mel ujian dihantar ke {{email}}. Semak peti masuk.",
+            "auth": "Brevo menolak log masuk atau kunci. Semak dan cuba lagi.",
+            "unreachable": "Tidak dapat menghubungi Brevo. Semak sambungan internet pelayan.",
+            "error": "E-mel tidak dapat dihantar. Semak tetapan dan cuba lagi."
+          }
+        },
+        "whatsapp": {
+          "title": "WhatsApp Business",
+          "description": "Sambungkan akaun WhatsApp Business anda supaya platform boleh menghantar notifikasi WhatsApp.",
+          "token": "Token akses",
+          "tokenHelp": "Guna token kekal daripada tetapan Meta Business (System user). Token sementara berhenti berfungsi selepas 24 jam.",
+          "phoneId": "ID nombor telefon",
+          "phoneIdHelp": "Dalam Meta for Developers: WhatsApp, kemudian API setup. Ia nombor panjang, bukan nombor telefon itu sendiri.",
+          "accountId": "ID akaun WhatsApp Business",
+          "digitsOnly": "Nombor sahaja, sila.",
+          "enable": "WhatsApp sedia digunakan",
+          "enableHelp": "Menghantar notifikasi sebenar juga memerlukan templat mesej yang diluluskan, yang disediakan sebagai langkah seterusnya.",
+          "removeConfirm": "Buang tetapan WhatsApp?",
+          "removeHelp": "Token dan nombor yang disimpan dipadam.",
+          "testTitle": "Semak sambungan",
+          "testHelp": "Menyemak token dan nombor yang disimpan. Tambah nombor telefon untuk turut menghantar mesej contoh \"hello_world\" Meta ke sana. Semasa akaun dalam mod ujian, nombor itu mesti ada dalam senarai dibenarkan Meta.",
+          "check": "Semak sambungan",
+          "checkAndSend": "Semak dan hantar",
+          "test": {
+            "ok": "Disambung: {{name}} ({{number}}).",
+            "sent": "Mesej ujian dihantar. Semak WhatsApp pada telefon itu.",
+            "unauthorized": "Meta menolak token. Mungkin sudah tamat tempoh: cipta yang baharu dan simpan.",
+            "phone_number_not_found": "Meta tidak menjumpai ID nombor telefon itu, atau token tiada akses kepadanya.",
+            "recipient_not_allowed": "Nombor itu belum ada dalam senarai dibenarkan. Tambah dalam Meta for Developers, atau guna nombor yang ada.",
+            "template_not_found": "Templat mesej contoh tidak dijumpai pada akaun ini.",
+            "unreachable": "Tidak dapat menghubungi Meta. Semak sambungan internet pelayan.",
+            "error": "Sesuatu tidak kena semasa berhubung dengan WhatsApp."
+          }
+        }
+      },
+      "messages": {
+        "title": "Mesej",
+        "tabTypes": "Jenis mesej",
+        "tabLog": "Log dihantar",
+        "intro": "E-mel ini dihantar secara automatik. Matikan mana-mana di sini.",
+        "notDeliveringTitle": "E-mel belum dihantar sebenarnya",
+        "notDeliveringHelp": "Pelayan hanya menulis e-mel ke fail, jadi tiada sesiapa menerimanya. Sediakan Brevo untuk mula menghantar dengan sebenar.",
+        "setUpEmail": "Sediakan e-mel",
+        "on": "Hidup",
+        "off": "Mati",
+        "audience": {
+          "parent": "Kepada ibu bapa",
+          "operator": "Kepada pengendali",
+          "platform": "Kepada anda"
+        },
+        "last30": "30 hari lepas: {{sent}} dihantar, {{failed}} gagal",
+        "waiting": "{{count}} menunggu",
+        "daytimeNote": "E-mel kepada ibu bapa hanya dihantar antara 9 pagi dan 8 malam (waktu Malaysia). Yang dibuat pada waktu malam menunggu sehingga 9 pagi.",
+        "types": {
+          "bill_issued": {
+            "title": "Bil baharu",
+            "help": "Ibu bapa menerima e-mel apabila bil dikeluarkan. Satu e-mel menyenaraikan semua anak mereka."
+          },
+          "payment_received": {
+            "title": "Bayaran diterima",
+            "help": "Ibu bapa menerima e-mel resit apabila bayaran direkodkan atau dibayar dalam talian."
+          },
+          "reminder_due_soon": {
+            "title": "Peringatan sebelum tarikh akhir",
+            "help": "Dihantar 3 hari sebelum tarikh akhir, jika bil masih belum dibayar."
+          },
+          "reminder_overdue": {
+            "title": "Notis tertunggak",
+            "help": "Dihantar 1 hari selepas tarikh akhir, jika bil masih belum dibayar."
+          },
+          "application_decided": {
+            "title": "Permohonan diluluskan atau ditolak",
+            "help": "Ibu bapa dimaklumkan keputusan pengendali, dan sebabnya jika ditolak."
+          },
+          "application_received": {
+            "title": "Permohonan baharu",
+            "help": "Pemilik pengendali dimaklumkan apabila ibu bapa memohon tempat."
+          },
+          "operator_signed_up": {
+            "title": "Pengendali baharu mendaftar",
+            "help": "Pemilik platform dimaklumkan apabila syarikat bas baharu membuat akaun."
+          }
+        },
+        "searchPlaceholder": "Nama atau e-mel",
+        "typeLabel": "Mesej",
+        "allTypes": "Semua mesej",
+        "to": "Kepada",
+        "what": "Apa",
+        "status": {
+          "sent": "Dihantar",
+          "queued": "Menunggu",
+          "failed": "Gagal",
+          "skipped": "Tidak dihantar"
+        },
+        "reason": {
+          "switched_off": "Dimatikan",
+          "no_email": "Tiada e-mel yang sah"
+        },
+        "notDelivered": "Tidak dihantar: mod fail sahaja",
+        "empty": "Belum ada mesej."
       },
     "operatorDetail": {
       "back": "Kembali ke Pengendali",
@@ -1001,11 +1174,16 @@
       }
     },
     "buses": {
+      "model": "Model",
+      "modelPlaceholder": "Contoh: Hino RK1J",
+      "engineCapacity": "Kapasiti enjin (cc)",
+      "errors": {"seats": "Masukkan bilangan tempat duduk, contohnya 40.",
+        "engine": "Masukkan saiz enjin dalam cc, contohnya 7684."},
       "title": "Bas",
       "addBus": "Tambah bas",
       "editBus": "Edit bas",
       "plateNumber": "Nombor plat",
-      "capacity": "Kapasiti",
+      "capacity": "Tempat duduk",
       "status": "Status",
       "selectStatus": "Pilih status",
       "actions": "Tindakan",
@@ -1031,14 +1209,35 @@
       "deleteConfirm": "Padam {{name}}?"
     },
     "routes": {
-      "title": "Laluan",
+      "steps": {"details": "Butiran", "stops": "Perhentian", "fares": "Tambang", "crew": "Bas & krew", "review": "Semak"},
+      "hints": {"details": "Mulakan dengan asas: apa nama laluan ini, dan ke mana ia pergi?", "stops": "Tambah tempat bas berhenti, mengikut urutan ia singgah. Anda boleh tambah lagi kemudian.", "crew": "Pilih bas dan orang yang mengendalikan laluan ini. Boleh dikosongkan dan ditetapkan kemudian.", "review": "Semak semuanya, kemudian simpan."},
+      "noStopsReview": "Belum ada perhentian.",
+      "sameAsReturn": "Sama seperti tambang pergi-balik",
+      "noFareTitle": "Tambang belum ditetapkan",
+      "noFareWarning": "Pelajar di laluan ini tidak boleh dibilkan sehingga tambang ditetapkan. Anda boleh simpan sekarang dan tambah kemudian.",
+      "faresSummaryBoth": "Ibu bapa bayar RM {{returnFare}} sebulan untuk pergi-balik, atau RM {{oneWayFare}} untuk sehala.",
+      "faresSummarySame": "Ibu bapa bayar RM {{returnFare}} sebulan, untuk pergi-balik atau sehala.",
+      "back": "Kembali ke laluan",
+      "notFound": "Laluan ini tidak dijumpai.",
+      "sectionDetails": "Butiran laluan",
+      "sectionFares": "Tambang",
+      "sectionAssign": "Bas dan krew",
+      "sectionStops": "Perhentian",
+      "faresHelp": "Jumlah yang dibayar ibu bapa setiap bulan untuk seorang anak di laluan ini. Bil dibuat berdasarkan harga ini.",
+      "stopsHelp": "Ikut urutan bas singgah. Guna anak panah untuk alih perhentian.",
+      "noStops": "Belum ada perhentian. Tambah yang pertama.",
+      "moveUp": "Alih ke atas",
+      "moveDown": "Alih ke bawah",
+      "saveError": "Tidak dapat simpan laluan ini. Sila semak butiran dan cuba lagi.",
+      "errors": {"nameRequired": "Sila masukkan nama laluan.", "stopRequired": "Sila namakan perhentian ini, atau buangkannya."},
+      "title": "Laluan & Tambang",
       "addRoute": "Tambah laluan",
       "editRoute": "Edit laluan",
       "name": "Nama",
       "routeName": "Nama laluan",
       "zone": "Zon",
       "schoolDestination": "Destinasi sekolah",
-      "baseMonthlyFee": "Yuran pergi-balik sebulan (RM)",
+      "baseMonthlyFee": "Tambang pergi-balik sebulan",
       "bus": "Bas",
       "driver": "Pemandu",
       "conductor": "Konduktor",
@@ -1046,12 +1245,12 @@
       "addStop": "Tambah perhentian",
       "stopNamePlaceholder": "Nama perhentian",
       "remove": "Buang",
-      "baseFee": "Yuran pergi-balik",
+      "baseFee": "Tambang pergi-balik",
       "actions": "Tindakan",
       "deleteConfirm": "Padam {{name}}?",
-      "oneWayMonthlyFee": "Yuran sehala sebulan (RM)",
-      "oneWayFeeHint": "Biarkan yuran sehala kosong untuk caj yuran pergi-balik.",
-      "oneWayFee": "Yuran sehala"
+      "oneWayMonthlyFee": "Tambang sehala sebulan",
+      "oneWayFeeHint": "Biarkan tambang sehala kosong untuk caj tambang pergi-balik.",
+      "oneWayFee": "Tambang sehala"
     },
     "students": {
       "title": "Pelajar",
@@ -1239,6 +1438,46 @@
       "contactPhone": "Telefon hubungan",
       "email": "Emel",
       "bankDetails": "Butiran bank",
+      "whatsapp": "Nombor WhatsApp",
+      "whatsappHelp": "Ibu bapa boleh tekan ini untuk menghantar mesej kepada anda.",
+      "registeredCompany": "Syarikat berdaftar",
+      "registeredHelp": "Dipaparkan pada resit. Biarkan kosong jika anda bukan syarikat berdaftar.",
+      "legalName": "Nama syarikat berdaftar",
+      "ssmNumber": "No. pendaftaran SSM",
+      "officeAddress": "Alamat pejabat",
+      "addressLine1": "Alamat baris 1",
+      "addressLine2": "Alamat baris 2",
+      "postcode": "Poskod",
+      "city": "Bandar",
+      "state": "Negeri",
+      "selectState": "Pilih negeri",
+      "paymentNote": "Nota bayaran",
+      "paymentNoteHelp": "Dipaparkan kepada ibu bapa pada bil yang belum dibayar. Contoh: rujukan yang perlu digunakan.",
+      "paymentNotePlaceholder": "Contoh: Sila letak nama anak anda sebagai rujukan.",
+        "completeness": {
+          "title": "Profil syarikat anda {{percent}}% lengkap",
+          "titleDone": "Profil syarikat anda sudah lengkap",
+          "hintLow": "Profil yang lengkap membantu ibu bapa mempercayai anda, dan resit anda kelihatan lebih profesional. Hanya ambil masa beberapa minit.",
+          "hintHigh_other": "Hampir siap. Tinggal {{count}} lagi untuk diisi:",
+          "done": "Syabas. Ibu bapa boleh melihat semua butiran anda.",
+          "items": {
+            "logo": "Logo",
+            "companyName": "Nama syarikat",
+            "contactPerson": "Orang untuk dihubungi",
+            "contactPhone": "Telefon",
+            "whatsapp": "Nombor WhatsApp",
+            "email": "E-mel",
+            "legalName": "Nama syarikat berdaftar",
+            "ssm": "No. SSM",
+            "address": "Alamat pejabat",
+            "bank": "Butiran bank",
+            "paymentNote": "Nota bayaran"
+          }
+        },
+      "errors": {
+        "whatsapp": "Masukkan nombor telefon yang sah.",
+        "postcode": "Poskod mesti 5 digit."
+      },
       "bankName": "Nama bank",
       "accountNumber": "Nombor akaun",
       "accountHolder": "Pemegang akaun",
@@ -1262,12 +1501,55 @@
     }
   },
   "parent": {
+    "about": {
+      "tab": "Tentang anda",
+      "title": "Tentang keluarga anda",
+      "intro": "Tiga soalan ringkas. Semuanya pilihan.",
+      "privacy": "Jawapan anda membantu SchoolBus dan pengendali bas anda memahami keluarga dengan lebih baik. Ia hanya dipaparkan sebagai jumlah kumpulan, tidak pernah dengan nama anda, dan pengendali bas anda tidak dapat melihatnya.",
+      "income": "Pendapatan isi rumah sebulan",
+      "incomePlaceholder": "Pilih julat",
+      "incomeOptions": {
+        "under_3000": "Bawah RM 3,000",
+        "3000_5000": "RM 3,000 - 5,000",
+        "5000_8000": "RM 5,001 - 8,000",
+        "8000_12000": "RM 8,001 - 12,000",
+        "above_12000": "Melebihi RM 12,000",
+        "prefer_not_to_say": "Lebih suka tidak nyatakan"
+      },
+      "occupation": "Profesion / jawatan",
+      "occupationPlaceholder": "Contoh: guru, pemandu, jururawat",
+      "field": "Bidang pekerjaan",
+      "fieldPlaceholder": "Pilih bidang",
+      "fieldOptions": {
+        "government": "Kerajaan",
+        "education": "Pendidikan",
+        "healthcare": "Penjagaan kesihatan",
+        "manufacturing": "Pembuatan",
+        "construction": "Pembinaan",
+        "retail_services": "Runcit, makanan & hospitaliti",
+        "transport_logistics": "Pengangkutan & logistik",
+        "finance_it": "Kewangan, IT & perkhidmatan profesional",
+        "agriculture": "Pertanian",
+        "own_business": "Perniagaan sendiri",
+        "homemaker": "Suri rumah",
+        "not_working": "Tidak bekerja",
+        "other": "Lain-lain"
+      },
+      "progress": "{{done}} daripada 3 dijawab",
+      "nudgeTitle": "Lengkapkan profil anda",
+      "nudgeBody": "3 soalan ringkas tentang keluarga anda. Pilihan, dan mengambil masa kira-kira seminit.",
+      "nudgeCta": "Lengkapkan sekarang",
+      "nudgeLater": "Bukan sekarang"
+    },
     "dashboard": {
       "welcome": "Selamat datang, {{name}}",
       "myChildren": "Anak-anak saya",
       "enrollAChild": "Daftarkan anak",
       "noChildren": "Belum ada anak didaftarkan. Klik \"Daftarkan anak\" untuk bermula.",
       "yourOperator": "Pengendali Anda",
+      "registeredName": "Nama berdaftar",
+      "ssm": "No. SSM",
+      "address": "Alamat",
       "phone": "Telefon",
       "email": "E-mel",
       "name": "Nama",
@@ -1362,7 +1644,8 @@
       "dueOn": "Cukup tempoh {{date}}",
       "overdueSince": "Tertunggak sejak {{date}}",
       "back": "Kembali ke bil",
-      "notFound": "Bil ini tidak dijumpai."
+      "notFound": "Bil ini tidak dijumpai.",
+      "howToPay": "Cara membayar"
     },
     "enroll": {
       "title": "Mohon untuk anak",

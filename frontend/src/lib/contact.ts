@@ -19,3 +19,29 @@ export function toLocalInput(iso: string | null): string {
 export function fromLocalInput(value: string): string | null {
   return value ? new Date(value).toISOString() : null
 }
+
+/** The office address on one line, or null when none was filled in. */
+export function formatAddress(parts: {
+  address_line1?: string | null
+  address_line2?: string | null
+  postcode?: string | null
+  city?: string | null
+  state?: string | null
+}): string | null {
+  const joined = [
+    parts.address_line1,
+    parts.address_line2,
+    [parts.postcode, parts.city].filter(Boolean).join(' '),
+    parts.state,
+  ]
+    .filter((part) => part && part.trim() !== '')
+    .join(', ')
+
+  return joined || null
+}
+
+export const MALAYSIAN_STATES = [
+  'Johor', 'Kedah', 'Kelantan', 'Melaka', 'Negeri Sembilan', 'Pahang', 'Perak', 'Perlis',
+  'Pulau Pinang', 'Sabah', 'Sarawak', 'Selangor', 'Terengganu',
+  'Kuala Lumpur', 'Labuan', 'Putrajaya',
+] as const

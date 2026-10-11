@@ -72,7 +72,8 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user->makeHidden('roles'),
             'tenant' => $user->busOperator,
-            'parentProfile' => $user->parentProfile,
+            // Their own profile only (operators have none), so the private About-you answers are safe to include.
+            'parentProfile' => $user->parentProfile?->forOwner(),
             'roles' => $roles,
             // Set while a platform-team member is "logged in as" this operator.
             'impersonating' => $this->impersonation($request),

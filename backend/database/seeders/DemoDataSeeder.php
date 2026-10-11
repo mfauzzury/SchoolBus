@@ -11,7 +11,7 @@ use App\Services\InvoiceGenerator;
 use Illuminate\Database\Seeder;
 
 /**
- * One-off demo data for the seeded "Demo Bus Co" tenant, so the operator
+ * One-off demo data for the seeded "Shahrul Transport" tenant, so the operator
  * dashboard/pages have something realistic to look at. Not part of the
  * standard migrate:fresh --seed chain.
  */

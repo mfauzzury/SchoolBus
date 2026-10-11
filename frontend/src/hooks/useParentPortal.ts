@@ -12,6 +12,7 @@ import {
   submitStudentApplication,
   updateParentPassword,
   updateMyStudent,
+  updateParentAbout,
   updateParentProfile,
   uploadMyStudentAvatar,
   uploadParentAvatar,
@@ -20,6 +21,7 @@ import {
   type QuoteInput,
   type UpdateMyStudentInput,
   type UpdatePasswordInput,
+  type UpdateParentAboutInput,
   type UpdateParentProfileInput,
 } from '@/api/parentPortal'
 
@@ -118,6 +120,16 @@ export function useUpdateParentProfile() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (input: UpdateParentProfileInput) => updateParentProfile(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+    },
+  })
+}
+
+export function useUpdateParentAbout() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: UpdateParentAboutInput) => updateParentAbout(input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] })
     },

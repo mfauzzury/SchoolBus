@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
         }
-        .accent-bar { background-color: #eab03e; height: 8px; width: 100%; font-size: 1px; line-height: 1px; }
+        .accent-bar { background-color: #ffce1b; height: 8px; width: 100%; font-size: 1px; line-height: 1px; }
         .page { padding: 28px 40px 40px; }
 
         table { border-collapse: collapse; }
@@ -91,6 +91,15 @@
             <tr>
                 <td style="width: 60%;">
                     <div class="company-name">{{ $tenant->company_name }}</div>
+                    @if ($tenant->legal_name && $tenant->legal_name !== $tenant->company_name)
+                        <div class="company-tagline">{{ $tenant->legal_name }}</div>
+                    @endif
+                    @if ($tenant->ssm_number)
+                        <div class="company-tagline">SSM: {{ $tenant->ssm_number }}</div>
+                    @endif
+                    @if ($address = $tenant->fullAddress())
+                        <div class="company-tagline">{{ $address }}</div>
+                    @endif
                     <div class="company-tagline">Operator Code: {{ $tenant->operator_code }}</div>
                     <div class="company-tagline">{{ $tenant->contact_phone }} &middot; {{ $tenant->email }}</div>
                 </td>

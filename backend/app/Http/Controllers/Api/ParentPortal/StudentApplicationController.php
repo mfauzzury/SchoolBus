@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\ParentPortal;
 
 use App\Enums\BillingPeriod;
 use App\Http\Controllers\Controller;
+use App\Services\Notifier;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -34,6 +35,8 @@ class StudentApplicationController extends Controller
             'billing_period' => BillingPeriod::Monthly,
             'status' => 'pending',
         ]);
+
+        app(Notifier::class)->applicationReceived($application);
 
         return response()->json($application, 201);
     }

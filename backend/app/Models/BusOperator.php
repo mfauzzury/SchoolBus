@@ -22,6 +22,15 @@ class BusOperator extends Model
         'email',
         'bank_details',
         'logo_path',
+        'legal_name',
+        'ssm_number',
+        'address_line1',
+        'address_line2',
+        'postcode',
+        'city',
+        'state',
+        'whatsapp_number',
+        'payment_note',
         'plan_id',
         'discount_config',
         'billing_config',
@@ -49,6 +58,26 @@ class BusOperator extends Model
     ];
 
     protected $appends = ['logo_url', 'billplz_enabled'];
+
+    /** Malaysian states and federal territories, for the address form. */
+    public const STATES = [
+        'Johor', 'Kedah', 'Kelantan', 'Melaka', 'Negeri Sembilan', 'Pahang', 'Perak', 'Perlis',
+        'Pulau Pinang', 'Sabah', 'Sarawak', 'Selangor', 'Terengganu',
+        'Kuala Lumpur', 'Labuan', 'Putrajaya',
+    ];
+
+    /** The office address as one line ("12 Jalan Maju, 50000 Kuala Lumpur, Kuala Lumpur"), or null if none was given. */
+    public function fullAddress(): ?string
+    {
+        $parts = array_filter([
+            $this->address_line1,
+            $this->address_line2,
+            trim(($this->postcode ?? '').' '.($this->city ?? '')),
+            $this->state,
+        ], fn ($part) => filled($part));
+
+        return $parts === [] ? null : implode(', ', $parts);
+    }
 
     public function isSuspended(): bool
     {

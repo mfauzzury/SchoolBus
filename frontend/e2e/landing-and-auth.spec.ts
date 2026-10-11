@@ -29,7 +29,7 @@ test.describe('Landing page', () => {
 
     for (let i = 0; i < 5; i++) await page.keyboard.press('Backspace')
     await page.keyboard.type('10000')
-    await expect(page.getByText('Demo Bus Co')).toBeVisible()
+    await expect(page.getByText('Shahrul Transport')).toBeVisible()
 
     await page.click('button:has-text("Continue")')
     await expect(page).toHaveURL(/\/register\/10000/)

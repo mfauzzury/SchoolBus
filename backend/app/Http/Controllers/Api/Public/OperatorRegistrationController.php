@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Public;
 use App\Http\Controllers\Controller;
 use App\Models\BusOperator;
 use App\Models\User;
+use App\Services\Notifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,6 +45,8 @@ class OperatorRegistrationController extends Controller
         // They are logged in right now, so count it as a login (the dashboard's
         // "no login in 30 days" would otherwise flag every brand-new operator).
         $user->forceFill(['last_login_at' => now()])->save();
+
+        app(Notifier::class)->operatorSignedUp($user->busOperator);
 
         Auth::login($user);
         $request->session()->regenerate();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BusOperator;
 use App\Models\SystemStatus;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -36,7 +37,18 @@ class SystemController extends Controller
             ->toBase()
             ->get(['id', 'company_name']);
 
+        // With the database queue, a pile of old waiting jobs means no worker is running.
+        $queue = null;
+        if (config('queue.default') === 'database') {
+            $oldest = DB::table('jobs')->min('created_at');
+            $queue = [
+                'waiting' => DB::table('jobs')->count(),
+                'oldest_at' => $oldest ? Carbon::createFromTimestamp($oldest)->toIso8601String() : null,
+            ];
+        }
+
         return [
+            'queue_backlog' => $queue,
             'billing' => [
                 'ran_at' => $billing?->updated_at,
                 'ok' => $billing ? (bool) ($billing->value['ok'] ?? false) : null,

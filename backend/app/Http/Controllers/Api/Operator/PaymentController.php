@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Operator;
 use App\Enums\InvoiceStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Services\Notifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -35,9 +36,9 @@ class PaymentController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($invoice, $data) {
-            $invoice->recordPayment($data);
-        });
+        $payment = DB::transaction(fn () => $invoice->recordPayment($data));
+
+        app(Notifier::class)->paymentReceived([$payment]);
 
         return response()->json($invoice->fresh(['payments', 'student', 'route', 'items'])->withBalance(), 201);
     }

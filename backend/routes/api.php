@@ -6,7 +6,9 @@ use App\Http\Controllers\Api\Admin\BillplzSettingsController;
 use App\Http\Controllers\Api\Admin\ContactMessageController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\ImpersonationController;
+use App\Http\Controllers\Api\Admin\IntegrationSettingsController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
+use App\Http\Controllers\Api\Admin\NotificationController;
 use App\Http\Controllers\Api\Admin\OperatorNoteController;
 use App\Http\Controllers\Api\Admin\PaymentAttemptController;
 use App\Http\Controllers\Api\Admin\PlanController;
@@ -51,9 +53,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/reset-password', [PasswordResetController::class, 'reset']);
 
-Route::post('/register-operator', [OperatorRegistrationController::class, 'store']);
+// Public and each one emails the platform Owners, so it must not be scriptable.
+Route::post('/register-operator', [OperatorRegistrationController::class, 'store'])->middleware('throttle:public-forms');
 
-Route::post('/contact', [ContactController::class, 'store']);
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:public-forms');
 
 Route::get('/register/{operatorCode}', [RegistrationController::class, 'show']);
 Route::post('/register/{operatorCode}', [RegistrationController::class, 'store']);
@@ -129,6 +132,23 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('announcements/{announcement}', [AdminAnnouncementController::class, 'destroy']);
         });
 
+        // Owner only: outside-service credentials. The test calls send real messages, so they are throttled.
+        Route::middleware('permission:settings.manage')->prefix('settings')->group(function () {
+            Route::get('/', [IntegrationSettingsController::class, 'show']);
+            Route::put('brevo', [IntegrationSettingsController::class, 'updateBrevo']);
+            Route::post('brevo/test', [IntegrationSettingsController::class, 'testBrevo'])->middleware('throttle:10,1');
+            Route::put('whatsapp', [IntegrationSettingsController::class, 'updateWhatsApp']);
+            Route::post('whatsapp/test', [IntegrationSettingsController::class, 'testWhatsApp'])->middleware('throttle:10,1');
+            Route::delete('{provider}', [IntegrationSettingsController::class, 'destroy']);
+        });
+
+        // Owner only: which automatic messages are on, and what was sent.
+        Route::middleware('permission:settings.manage')->prefix('notifications')->group(function () {
+            Route::get('/', [NotificationController::class, 'index']);
+            Route::get('log', [NotificationController::class, 'log']);
+            Route::put('{type}', [NotificationController::class, 'update']);
+        });
+
         Route::middleware('permission:team.manage')->group(function () {
             Route::get('system', [SystemController::class, 'show']);
             Route::get('team', [TeamController::class, 'index']);
@@ -202,7 +222,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('students/{student}', [ParentStudentController::class, 'update']);
             Route::post('students/{student}/avatar', [ParentStudentController::class, 'uploadAvatar']);
             Route::get('student-applications', [ParentStudentApplicationController::class, 'index']);
-            Route::post('student-applications', [ParentStudentApplicationController::class, 'store']);
+            // Each application emails the operator; a parent has no reason to send many a minute.
+            Route::post('student-applications', [ParentStudentApplicationController::class, 'store'])
+                ->middleware('throttle:10,1');
             Route::post('quote', [QuoteController::class, 'store']);
             Route::get('invoices', [ParentInvoiceController::class, 'index']);
             Route::get('payments/{payment}/receipt', [ParentInvoiceController::class, 'paymentReceipt']);
@@ -211,6 +233,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('payments/{attempt}', [ParentPaymentController::class, 'show']);
             Route::post('payments/{attempt}/confirm', [ParentPaymentController::class, 'confirm']);
             Route::put('profile', [ParentProfileController::class, 'update']);
+            Route::put('profile/about', [ParentProfileController::class, 'updateAbout']);
             Route::post('profile/avatar', [ParentProfileController::class, 'uploadAvatar']);
             Route::put('profile/password', [ParentProfileController::class, 'updatePassword']);
         });

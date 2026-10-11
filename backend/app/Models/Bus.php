@@ -16,7 +16,9 @@ class Bus extends Model
     protected $fillable = [
         'tenant_id',
         'plate_number',
+        'model',
         'capacity',
+        'engine_capacity',
         'status',
         'avatar_path',
     ];

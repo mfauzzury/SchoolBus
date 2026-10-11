@@ -10,6 +10,33 @@ import type { AttentionKind } from '@/api/admin'
 
 const ATTENTION_KINDS: AttentionKind[] = ['new', 'no_billplz', 'no_students', 'over_limit', 'inactive']
 
+/** A compact number tile: small label, the value, and an optional line underneath. */
+function Stat({
+  label,
+  value,
+  note,
+  size = 'md',
+}: {
+  label: string
+  value: string
+  note?: string
+  size?: 'lg' | 'md' | 'sm'
+}) {
+  return (
+    <div className="flex flex-col gap-0.5 rounded-xl bg-card px-3.5 py-2.5 ring-1 ring-foreground/10">
+      <span className="truncate text-xs text-muted-foreground">{label}</span>
+      <span
+        className={
+          size === 'lg' ? 'text-2xl font-medium' : size === 'md' ? 'text-xl font-medium' : 'text-base font-medium'
+        }
+      >
+        {value}
+      </span>
+      {note && <span className="truncate text-xs text-muted-foreground">{note}</span>}
+    </div>
+  )
+}
+
 export function AdminDashboard() {
   const { t } = useTranslation()
   const { data } = useMe()
@@ -21,35 +48,8 @@ export function AdminDashboard() {
   const lastMonth = summary?.last_month
 
   // "Last month" is the whole month, so it reads as a reference, not a like-for-like change.
-  const monthTile = (
-    label: string,
-    value: string,
-    previous: string | undefined,
-    emphasis = false,
-  ) => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm text-muted-foreground">{label}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-1">
-        <span className={emphasis ? 'text-3xl font-medium' : 'text-2xl font-medium'}>{value}</span>
-        {previous !== undefined && (
-          <span className="text-xs text-muted-foreground">
-            {t('admin.dashboard.lastMonth', { value: previous })}
-          </span>
-        )}
-      </CardContent>
-    </Card>
-  )
-
-  const total = (label: string, value: string) => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm text-muted-foreground">{label}</CardTitle>
-      </CardHeader>
-      <CardContent className="text-2xl font-medium">{value}</CardContent>
-    </Card>
-  )
+  const previous = (value: string | undefined) =>
+    value === undefined ? undefined : t('admin.dashboard.lastMonth', { value })
 
   const attentionTotal = attention
     ? ATTENTION_KINDS.reduce((sum, kind) => sum + attention[kind].count, 0) +
@@ -57,126 +57,125 @@ export function AdminDashboard() {
     : 0
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-medium">
+    <div className="flex flex-col gap-4">
+      <h1 className="text-lg font-medium">
         {t('admin.dashboard.welcome', { name: data?.user.name })}
       </h1>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">{t('admin.dashboard.thisMonth')}</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {monthTile(
-            t('admin.dashboard.collected'),
-            `RM ${formatMoney(thisMonth?.collected ?? 0)}`,
-            lastMonth ? `RM ${formatMoney(lastMonth.collected)}` : undefined,
-            true,
-          )}
-          {monthTile(
-            t('admin.dashboard.newOperators'),
-            String(thisMonth?.new_operators ?? 0),
-            lastMonth ? String(lastMonth.new_operators) : undefined,
-          )}
-          {monthTile(
-            t('admin.dashboard.newStudents'),
-            String(thisMonth?.new_students ?? 0),
-            lastMonth ? String(lastMonth.new_students) : undefined,
-          )}
+      <section className="flex flex-col gap-2">
+        <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+          {t('admin.dashboard.thisMonth')}
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Stat
+            size="lg"
+            label={t('admin.dashboard.collected')}
+            value={`RM ${formatMoney(thisMonth?.collected ?? 0)}`}
+            note={previous(lastMonth ? `RM ${formatMoney(lastMonth.collected)}` : undefined)}
+          />
+          <Stat
+            label={t('admin.dashboard.newOperators')}
+            value={String(thisMonth?.new_operators ?? 0)}
+            note={previous(lastMonth ? String(lastMonth.new_operators) : undefined)}
+          />
+          <Stat
+            label={t('admin.dashboard.newStudents')}
+            value={String(thisMonth?.new_students ?? 0)}
+            note={previous(lastMonth ? String(lastMonth.new_students) : undefined)}
+          />
         </div>
       </section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('admin.dashboard.attentionTitle')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!attention ? (
-            <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
-          ) : attentionTotal === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('admin.dashboard.attentionNone')}</p>
-          ) : (
-            <ul className="flex flex-col divide-y">
-              {ATTENTION_KINDS.map((kind) => {
-                const list = attention[kind]
-                if (list.count === 0) return null
-                return (
-                  <li key={kind} className="flex flex-col gap-1 py-3 first:pt-0 last:pb-0">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <Badge variant={kind === 'over_limit' ? 'destructive' : 'info'}>{list.count}</Badge>
-                        <span className="text-sm font-medium">
-                          {t(`admin.dashboard.attention.${kind}.title`)}
+      <section className="grid gap-3 lg:grid-cols-2 lg:items-start">
+        <Card size="sm">
+          <CardHeader>
+            <CardTitle>{t('admin.dashboard.attentionTitle')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!attention ? (
+              <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+            ) : attentionTotal === 0 ? (
+              <p className="text-sm text-muted-foreground">{t('admin.dashboard.attentionNone')}</p>
+            ) : (
+              <ul className="flex flex-col divide-y">
+                {ATTENTION_KINDS.map((kind) => {
+                  const list = attention[kind]
+                  if (list.count === 0) return null
+                  return (
+                    <li
+                      key={kind}
+                      className="flex flex-col gap-0.5 py-2 first:pt-0 last:pb-0"
+                      title={t(`admin.dashboard.attention.${kind}.help`)}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
+                          <Badge variant={kind === 'over_limit' ? 'destructive' : 'info'}>{list.count}</Badge>
+                          <span className="truncate">{t(`admin.dashboard.attention.${kind}.title`)}</span>
                         </span>
+                        <Link
+                          to={`/admin/operators?attention=${kind}`}
+                          className="shrink-0 text-xs underline underline-offset-4 hover:text-primary"
+                        >
+                          {t('admin.dashboard.seeAll')}
+                        </Link>
                       </div>
-                      <Link
-                        to={`/admin/operators?attention=${kind}`}
-                        className="text-sm underline underline-offset-4 hover:text-primary"
-                      >
-                        {t('admin.dashboard.seeAll')}
-                      </Link>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {t(`admin.dashboard.attention.${kind}.help`)}
-                    </p>
-                    <p className="text-sm">
-                      {list.items.map((operator, index) => (
-                        <span key={operator.id}>
-                          {index > 0 && ', '}
-                          <Link to={`/admin/operators/${operator.id}`} className="hover:underline">
-                            {operator.company_name}
-                          </Link>
-                        </span>
-                      ))}
-                      {list.count > list.items.length && (
-                        <span className="text-muted-foreground">
-                          {' '}
-                          {t('admin.dashboard.andMore', { count: list.count - list.items.length })}
-                        </span>
-                      )}
-                    </p>
-                  </li>
-                )
-              })}
+                      <p className="truncate text-xs text-muted-foreground">
+                        {list.items.map((operator, index) => (
+                          <span key={operator.id}>
+                            {index > 0 && ', '}
+                            <Link to={`/admin/operators/${operator.id}`} className="hover:underline">
+                              {operator.company_name}
+                            </Link>
+                          </span>
+                        ))}
+                        {list.count > list.items.length &&
+                          ` ${t('admin.dashboard.andMore', { count: list.count - list.items.length })}`}
+                      </p>
+                    </li>
+                  )
+                })}
 
-              {attention.stuck_payments.count > 0 && (
-                <li className="flex flex-col gap-1 py-3 first:pt-0 last:pb-0">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
+                {attention.stuck_payments.count > 0 && (
+                  <li
+                    className="flex items-center justify-between gap-2 py-2 first:pt-0 last:pb-0"
+                    title={t('admin.dashboard.attention.stuck_payments.help')}
+                  >
+                    <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
                       <Badge variant="destructive">{attention.stuck_payments.count}</Badge>
-                      <span className="text-sm font-medium">
+                      <span className="truncate">
                         {t('admin.dashboard.attention.stuck_payments.title')}
                       </span>
-                    </div>
+                    </span>
                     <Link
                       to="/admin/transactions?tab=online&stuck=1"
-                      className="text-sm underline underline-offset-4 hover:text-primary"
+                      className="shrink-0 text-xs underline underline-offset-4 hover:text-primary"
                     >
                       {t('admin.dashboard.seeAll')}
                     </Link>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t('admin.dashboard.attention.stuck_payments.help')}
-                  </p>
-                </li>
-              )}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+                  </li>
+                )}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        <Card className="lg:col-span-2">
+        <Card size="sm">
           <CardHeader>
             <CardTitle>{t('admin.dashboard.charts.collected')}</CardTitle>
           </CardHeader>
           <CardContent>
             <MonthlyBarChart
               kind="money"
+              tall
               label={t('admin.dashboard.charts.collected')}
               points={(trends ?? []).map((m) => ({ month: m.month, value: m.collected }))}
             />
           </CardContent>
         </Card>
-        <Card>
+      </section>
+
+      <section className="grid gap-3 lg:grid-cols-2">
+        <Card size="sm">
           <CardHeader>
             <CardTitle>{t('admin.dashboard.charts.newOperators')}</CardTitle>
           </CardHeader>
@@ -188,7 +187,7 @@ export function AdminDashboard() {
             />
           </CardContent>
         </Card>
-        <Card>
+        <Card size="sm">
           <CardHeader>
             <CardTitle>{t('admin.dashboard.charts.newStudents')}</CardTitle>
           </CardHeader>
@@ -202,18 +201,30 @@ export function AdminDashboard() {
         </Card>
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">{t('admin.dashboard.platformTotals')}</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {total(t('admin.dashboard.totalOperators'), String(summary?.total_operators ?? 0))}
-          {total(t('admin.dashboard.totalStudents'), String(summary?.total_students ?? 0))}
-          {total(t('admin.dashboard.totalBuses'), String(summary?.total_buses ?? 0))}
-          {total(t('admin.dashboard.totalParents'), String(summary?.total_parents ?? 0))}
-        </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {total(t('operator.finances.totalExpected'), `RM ${formatMoney(summary?.total_expected ?? 0)}`)}
-          {total(t('operator.finances.totalCollected'), `RM ${formatMoney(summary?.total_collected ?? 0)}`)}
-          {total(t('operator.finances.totalOutstanding'), `RM ${formatMoney(summary?.total_outstanding ?? 0)}`)}
+      <section className="flex flex-col gap-2">
+        <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+          {t('admin.dashboard.platformTotals')}
+        </h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Stat size="sm" label={t('admin.dashboard.totalOperators')} value={String(summary?.total_operators ?? 0)} />
+          <Stat size="sm" label={t('admin.dashboard.totalStudents')} value={String(summary?.total_students ?? 0)} />
+          <Stat size="sm" label={t('admin.dashboard.totalBuses')} value={String(summary?.total_buses ?? 0)} />
+          <Stat size="sm" label={t('admin.dashboard.totalParents')} value={String(summary?.total_parents ?? 0)} />
+          <Stat
+            size="sm"
+            label={t('operator.finances.totalExpected')}
+            value={`RM ${formatMoney(summary?.total_expected ?? 0)}`}
+          />
+          <Stat
+            size="sm"
+            label={t('operator.finances.totalCollected')}
+            value={`RM ${formatMoney(summary?.total_collected ?? 0)}`}
+          />
+          <Stat
+            size="sm"
+            label={t('operator.finances.totalOutstanding')}
+            value={`RM ${formatMoney(summary?.total_outstanding ?? 0)}`}
+          />
         </div>
       </section>
     </div>

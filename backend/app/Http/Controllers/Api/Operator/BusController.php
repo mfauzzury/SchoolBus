@@ -18,7 +18,10 @@ class BusController extends Controller
     {
         $data = $request->validate([
             'plate_number' => 'required|string|max:255',
+            'model' => 'nullable|string|max:100',
             'capacity' => 'required|integer|min:1',
+            // Engine size in cc.
+            'engine_capacity' => 'nullable|integer|min:1|max:99999',
             'status' => 'sometimes|in:active,maintenance,retired',
         ]);
 
@@ -34,7 +37,9 @@ class BusController extends Controller
     {
         $data = $request->validate([
             'plate_number' => 'sometimes|required|string|max:255',
+            'model' => 'sometimes|nullable|string|max:100',
             'capacity' => 'sometimes|required|integer|min:1',
+            'engine_capacity' => 'sometimes|nullable|integer|min:1|max:99999',
             'status' => 'sometimes|in:active,maintenance,retired',
         ]);
 

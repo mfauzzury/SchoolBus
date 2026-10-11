@@ -33,6 +33,20 @@ npm run dev              # http://localhost:5173
 /opt/homebrew/opt/postgresql@17/bin/createdb schoolbus
 ```
 
+## Background jobs
+
+Two things must be running besides the web server, or automatic emails never leave:
+
+```bash
+cd backend
+php artisan queue:work      # sends the queued emails (bills, receipts, reminders)
+php artisan schedule:work   # daily billing + the 9am payment reminders (in production: a cron running `schedule:run` every minute)
+```
+
+Email goes to the log file until Brevo is set up under **System → Email (Brevo)** in the
+platform admin. The platform admin's **System** page shows if the worker or the daily
+billing has stopped.
+
 ## Testing
 
 Backend (PHPUnit, uses an in-memory SQLite DB — no setup needed):

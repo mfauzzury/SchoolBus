@@ -27,6 +27,7 @@ import { StudentDetail } from '@/pages/operator/StudentDetail'
 import { Applications } from '@/pages/operator/Applications'
 import { ApplicationReview } from '@/pages/operator/ApplicationReview'
 import { Routes as RoutesPage } from '@/pages/operator/Routes'
+import { RouteFormPage } from '@/pages/operator/RouteForm'
 import { Finances } from '@/pages/operator/Finances'
 import { BillDetail } from '@/pages/operator/BillDetail'
 import { Settings } from '@/pages/operator/Settings'
@@ -50,6 +51,7 @@ import { AdminInboxMessage } from '@/pages/admin/InboxMessage'
 import { AdminAnnouncements } from '@/pages/admin/Announcements'
 import { AdminAnnouncementEdit } from '@/pages/admin/AnnouncementEdit'
 import { AdminSystem } from '@/pages/admin/System'
+import { AdminMessages } from '@/pages/admin/Messages'
 import { AdminPlans } from '@/pages/admin/Plans'
 import { AdminPlanEdit } from '@/pages/admin/PlanEdit'
 import { AdminTeam } from '@/pages/admin/Team'
@@ -93,13 +95,16 @@ function App() {
             <Route path="/operator/settings" element={<SettingsLayout />}>
               <Route index element={<Settings />} />
               <Route path="billing" element={<BillingSettings />} />
-              <Route path="routes" element={<RoutesPage />} />
-              <Route path="buses" element={<Buses />} />
-              <Route path="staff" element={<Staff />} />
             </Route>
-            <Route path="/operator/routes" element={<Navigate to="/operator/settings/routes" replace />} />
-            <Route path="/operator/buses" element={<Navigate to="/operator/settings/buses" replace />} />
-            <Route path="/operator/staff" element={<Navigate to="/operator/settings/staff" replace />} />
+            {/* Fleet management lives in the menu now; the old Settings addresses still work. */}
+            <Route path="/operator/routes" element={<RoutesPage />} />
+            <Route path="/operator/routes/new" element={<RouteFormPage />} />
+            <Route path="/operator/routes/:id/edit" element={<RouteFormPage />} />
+            <Route path="/operator/buses" element={<Buses />} />
+            <Route path="/operator/staff" element={<Staff />} />
+            <Route path="/operator/settings/routes" element={<Navigate to="/operator/routes" replace />} />
+            <Route path="/operator/settings/buses" element={<Navigate to="/operator/buses" replace />} />
+            <Route path="/operator/settings/staff" element={<Navigate to="/operator/staff" replace />} />
           </Route>
         </Route>
 
@@ -136,6 +141,7 @@ function App() {
             <Route path="/admin/announcements/new" element={<AdminAnnouncementEdit />} />
             <Route path="/admin/announcements/:id" element={<AdminAnnouncementEdit />} />
             <Route path="/admin/system" element={<AdminSystem />} />
+            <Route path="/admin/messages" element={<AdminMessages />} />
             <Route path="/admin/team" element={<AdminTeam />} />
             <Route path="/admin/team/new" element={<AdminTeamAdd />} />
             <Route path="/admin/activity" element={<AdminActivityLog />} />

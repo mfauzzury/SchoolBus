@@ -3,7 +3,12 @@ import { apiClient } from './client'
 export interface Bus {
   id: number
   plate_number: string
+  /** Make and model, e.g. "Hino RK1J". Optional. */
+  model: string | null
+  /** Number of seats. */
   capacity: number
+  /** Engine size in cc. Optional. */
+  engine_capacity: number | null
   status: 'active' | 'maintenance' | 'retired'
   avatar_url: string | null
 }

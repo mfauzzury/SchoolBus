@@ -36,9 +36,59 @@ class ParentProfile extends Model
         'emergency_contact_name',
         'emergency_contact_relationship',
         'emergency_contact_phone',
+        'income_range',
+        'occupation',
+        'working_field',
+        'about_saved_at',
+    ];
+
+    /** Monthly household income bands (RM). The parent may also choose not to say. */
+    public const INCOME_RANGES = [
+        'under_3000',
+        '3000_5000',
+        '5000_8000',
+        '8000_12000',
+        'above_12000',
+        'prefer_not_to_say',
+    ];
+
+    /** The industry the parent works in. */
+    public const WORKING_FIELDS = [
+        'government',
+        'education',
+        'healthcare',
+        'manufacturing',
+        'construction',
+        'retail_services',
+        'transport_logistics',
+        'finance_it',
+        'agriculture',
+        'own_business',
+        'homemaker',
+        'not_working',
+        'other',
+    ];
+
+    /**
+     * What the parent tells us about themselves. Hidden from every serialised
+     * profile by default, so it can never leak into an operator's student,
+     * bill or application screens; only the parent's own endpoints reveal it.
+     */
+    public const PRIVATE_FIELDS = ['income_range', 'occupation', 'working_field'];
+
+    protected $hidden = self::PRIVATE_FIELDS;
+
+    protected $casts = [
+        'about_saved_at' => 'datetime',
     ];
 
     protected $appends = ['avatar_url'];
+
+    /** This profile, for its own owner: includes the private About-you answers. */
+    public function forOwner(): static
+    {
+        return $this->makeVisible(self::PRIVATE_FIELDS);
+    }
 
     protected function avatarUrl(): Attribute
     {

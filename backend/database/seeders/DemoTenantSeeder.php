@@ -11,7 +11,7 @@ class DemoTenantSeeder extends Seeder
     public function run(): void
     {
         $operator = BusOperator::create([
-            'company_name' => 'Demo Bus Co',
+            'company_name' => 'Shahrul Transport',
             'operator_code' => '10000',
             'contact_person' => 'Demo Admin',
             'contact_phone' => '+60123456789',
@@ -20,7 +20,7 @@ class DemoTenantSeeder extends Seeder
 
         $admin = User::create([
             'tenant_id' => $operator->id,
-            'name' => 'Demo Admin',
+            'name' => 'Shahrul Abu Bakar',
             'email' => 'admin@demo.test',
             'password' => 'password',
         ]);

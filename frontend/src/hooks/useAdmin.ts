@@ -1,6 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   addOperatorNote,
+  getNotificationOverview,
+  listNotificationLog,
+  setNotificationEnabled,
+  getIntegrationSettings,
+  removeIntegration,
+  saveBrevo,
+  saveWhatsApp,
+  testBrevo,
+  testWhatsApp,
   createAnnouncement,
   deleteAnnouncement,
   getInboxMessage,
@@ -45,6 +54,10 @@ import {
   type ActivityFilters,
   type AnnouncementInput,
   type BillplzSettingsInput,
+  type NotificationLogFilters,
+  type NotificationTypeKey,
+  type BrevoInput,
+  type WhatsAppInput,
   type OperatorDetailsInput,
   type OperatorFilters,
   type PaymentAttemptFilters,
@@ -341,4 +354,65 @@ export function useDeleteAnnouncement() {
 
 export function useSystemHealth() {
   return useQuery({ queryKey: ['admin-system'], queryFn: getSystemHealth })
+}
+
+export function useIntegrationSettings() {
+  return useQuery({ queryKey: ['admin-integrations'], queryFn: getIntegrationSettings })
+}
+
+function useIntegrationMutation<TInput, TResult>(mutationFn: (input: TInput) => Promise<TResult>) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-integrations'] })
+      // The server status card reports which mailer is live.
+      queryClient.invalidateQueries({ queryKey: ['admin-system'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
+  })
+}
+
+export function useSaveBrevo() {
+  return useIntegrationMutation((input: BrevoInput) => saveBrevo(input))
+}
+
+export function useSaveWhatsApp() {
+  return useIntegrationMutation((input: WhatsAppInput) => saveWhatsApp(input))
+}
+
+export function useRemoveIntegration() {
+  return useIntegrationMutation((provider: 'brevo' | 'whatsapp') => removeIntegration(provider))
+}
+
+export function useTestBrevo() {
+  return useMutation({ mutationFn: (to: string) => testBrevo(to) })
+}
+
+export function useTestWhatsApp() {
+  return useMutation({ mutationFn: (to: string) => testWhatsApp(to) })
+}
+
+export function useNotificationOverview() {
+  return useQuery({ queryKey: ['admin-notifications'], queryFn: getNotificationOverview })
+}
+
+export function useSetNotificationEnabled() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ type, enabled }: { type: NotificationTypeKey; enabled: boolean }) =>
+      setNotificationEnabled(type, enabled),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-notifications'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
+  })
+}
+
+export function useNotificationLog(filters: NotificationLogFilters) {
+  return useQuery({
+    queryKey: ['admin-notification-log', filters],
+    queryFn: () => listNotificationLog(filters),
+    placeholderData: (previous) => previous,
+  })
 }

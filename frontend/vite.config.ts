@@ -29,7 +29,7 @@ export default defineConfig({
         name: 'BasSekolah.my',
         short_name: 'BasSekolah',
         description: "Track your child's school bus, pay bills, and manage enrollment.",
-        theme_color: '#eab03e',
+        theme_color: '#ffce1b',
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/parent/dashboard',

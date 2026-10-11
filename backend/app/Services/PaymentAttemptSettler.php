@@ -22,7 +22,9 @@ class PaymentAttemptSettler
      */
     public function settle(PaymentAttempt $attempt, ?CarbonInterface $paidAt = null): bool
     {
-        return DB::transaction(function () use ($attempt, $paidAt) {
+        $payments = [];
+
+        $settled = DB::transaction(function () use ($attempt, $paidAt, &$payments) {
             // The webhook has no tenant context, so bypass TenantScope explicitly.
             $locked = PaymentAttempt::withoutGlobalScopes()
                 ->whereKey($attempt->id)
@@ -40,7 +42,7 @@ class PaymentAttemptSettler
             $paymentDate = Carbon::instance($paidAt)->setTimezone(config('app.billing_timezone'))->toDateString();
 
             foreach ($locked->invoices()->withoutGlobalScopes()->get() as $invoice) {
-                $invoice->recordPayment([
+                $payments[] = $invoice->recordPayment([
                     'method' => 'online',
                     'reference_number' => $locked->billplz_bill_id,
                     'payment_date' => $paymentDate,
@@ -52,5 +54,12 @@ class PaymentAttemptSettler
 
             return true;
         });
+
+        // Only the call that really settled it announces it; Billplz retries land here as no-ops.
+        if ($settled) {
+            app(Notifier::class)->paymentReceived($payments);
+        }
+
+        return $settled;
     }
 }

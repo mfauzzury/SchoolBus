@@ -25,6 +25,16 @@ export interface BusOperator {
   bank_details: BankDetails | null
   logo_path: string | null
   logo_url: string | null
+  /** Optional company details, shown to parents on receipts and the operator card. */
+  legal_name: string | null
+  ssm_number: string | null
+  address_line1: string | null
+  address_line2: string | null
+  postcode: string | null
+  city: string | null
+  state: string | null
+  whatsapp_number: string | null
+  payment_note: string | null
 }
 
 export interface ParentProfile {
@@ -43,6 +53,12 @@ export interface ParentProfile {
   emergency_contact_name: string | null
   emergency_contact_relationship: string | null
   emergency_contact_phone: string | null
+  /** The parent's own optional "About you" answers (never shown to operators). */
+  income_range: string | null
+  occupation: string | null
+  working_field: string | null
+  /** Null until they have saved the About form once; drives the "complete your profile" reminder. */
+  about_saved_at: string | null
 }
 
 export interface MeResponse {

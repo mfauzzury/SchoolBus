@@ -43,6 +43,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Pagination } from '@/components/ui/pagination'
+import { FieldError } from '@/components/FieldError'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useBuses, useCreateBus, useDeleteBus, useUpdateBus, useUploadBusAvatar } from '@/hooks/useBuses'
 import { usePagination } from '@/hooks/usePagination'
@@ -50,7 +51,17 @@ import type { Bus } from '@/api/buses'
 
 const busSchema = z.object({
   plate_number: z.string().min(1),
-  capacity: z.string().refine((v) => Number.isInteger(Number(v)) && Number(v) >= 1),
+  model: z.string().max(100).optional(),
+  capacity: z
+    .string()
+    .refine((v) => Number.isInteger(Number(v)) && Number(v) >= 1, { message: 'operator.buses.errors.seats' }),
+  // Engine size in cc: empty, or a whole number up to 99,999.
+  engine_capacity: z
+    .string()
+    .refine((v) => v === '' || (Number.isInteger(Number(v)) && Number(v) >= 1 && Number(v) <= 99999), {
+      message: 'operator.buses.errors.engine',
+    })
+    .optional(),
   status: z.enum(['active', 'maintenance', 'retired']),
 })
 
@@ -58,8 +69,14 @@ type BusForm = z.infer<typeof busSchema>
 
 function toFormValues(bus?: Bus): BusForm {
   return bus
-    ? { plate_number: bus.plate_number, capacity: String(bus.capacity), status: bus.status }
-    : { plate_number: '', capacity: '1', status: 'active' }
+    ? {
+        plate_number: bus.plate_number,
+        model: bus.model ?? '',
+        capacity: String(bus.capacity),
+        engine_capacity: bus.engine_capacity ? String(bus.engine_capacity) : '',
+        status: bus.status,
+      }
+    : { plate_number: '', model: '', capacity: '1', engine_capacity: '', status: 'active' }
 }
 
 function BusFormDialog({
@@ -99,7 +116,13 @@ function BusFormDialog({
       onOpenChange(false)
       reset()
     }
-    const payload = { ...values, capacity: Number(values.capacity) }
+    const payload = {
+      plate_number: values.plate_number,
+      model: values.model?.trim() || null,
+      capacity: Number(values.capacity),
+      engine_capacity: values.engine_capacity ? Number(values.engine_capacity) : null,
+      status: values.status,
+    }
     if (bus) {
       update.mutate({ id: bus.id, input: payload }, { onSuccess })
     } else {
@@ -113,7 +136,8 @@ function BusFormDialog({
         <DialogHeader>
           <DialogTitle>{bus ? t('operator.buses.editBus') : t('operator.buses.addBus')}</DialogTitle>
         </DialogHeader>
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+        {/* noValidate: our own, translated messages show instead of the browser's pop-up. */}
+        <form className="flex flex-col gap-4" noValidate onSubmit={handleSubmit(onSubmit)}>
           {bus && (
             <AvatarUpload
               shape="square"
@@ -131,11 +155,33 @@ function BusFormDialog({
             )}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="capacity">{t('operator.buses.capacity')}</Label>
-            <Input id="capacity" type="number" {...register('capacity')} />
-            {errors.capacity && (
-              <p className="text-sm text-destructive">{errors.capacity.message}</p>
-            )}
+            <Label htmlFor="model">{t('operator.buses.model')}</Label>
+            <Input
+              id="model"
+              maxLength={100}
+              placeholder={t('operator.buses.modelPlaceholder')}
+              {...register('model')}
+            />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="capacity">{t('operator.buses.capacity')}</Label>
+              <Input id="capacity" type="number" min="1" inputMode="numeric" {...register('capacity')} />
+              <FieldError message={errors.capacity?.message} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="engine_capacity">{t('operator.buses.engineCapacity')}</Label>
+              <Input
+                id="engine_capacity"
+                type="number"
+                min="1"
+                max="99999"
+                inputMode="numeric"
+                placeholder="7684"
+                {...register('engine_capacity')}
+              />
+              <FieldError message={errors.engine_capacity?.message} />
+            </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <Label>{t('operator.buses.status')}</Label>
@@ -210,7 +256,9 @@ export function Buses() {
                 <TableRow>
                   <TableHead className="w-12" />
                   <TableHead>{t('operator.buses.plateNumber')}</TableHead>
+                  <TableHead>{t('operator.buses.model')}</TableHead>
                   <TableHead>{t('operator.buses.capacity')}</TableHead>
+                  <TableHead>{t('operator.buses.engineCapacity')}</TableHead>
                   <TableHead>{t('operator.buses.status')}</TableHead>
                   {isAdmin && <TableHead className="text-right">{t('operator.buses.actions')}</TableHead>}
                 </TableRow>
@@ -228,7 +276,11 @@ export function Buses() {
                       )}
                     </TableCell>
                     <TableCell>{bus.plate_number}</TableCell>
+                    <TableCell>{bus.model ?? '—'}</TableCell>
                     <TableCell>{bus.capacity}</TableCell>
+                    <TableCell>
+                      {bus.engine_capacity ? `${bus.engine_capacity.toLocaleString('en-MY')} cc` : '—'}
+                    </TableCell>
                     <TableCell>
                       <Badge variant={statusVariant[bus.status]}>{t(`common.status.${bus.status}`)}</Badge>
                     </TableCell>
