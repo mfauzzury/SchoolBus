@@ -17,6 +17,8 @@
     "allRoutes": "Semua laluan",
     "allStatuses": "Semua status",
     "search": "Cari",
+    "clearFilters": "Kosongkan",
+    "noMatches": "Tiada yang sepadan dengan carian atau penapis anda.",
     "year": "Tahun",
     "month": "Bulan",
     "allYears": "Semua tahun",
@@ -480,6 +482,10 @@
     "login": {
       "title": "Log masuk",
       "description": "Log masuk ke ruang kerja BasSekolah.my anda",
+      "descriptionParent": "Log masuk untuk lihat anak, bil dan bas anda",
+      "tabsLabel": "Saya ialah",
+      "tabParent": "Ibu bapa",
+      "tabOperator": "Pengendali",
       "email": "Emel",
       "password": "Kata laluan",
       "invalidCredentials": "Kelayakan tidak sah.",
@@ -488,8 +494,11 @@
       "forgotPassword": "Lupa kata laluan?",
       "submit": "Log masuk",
       "submitting": "Sedang log masuk…",
-      "registerParentPrompt": "Ibu bapa baharu? Daftar dengan ID pengendali anda",
-      "registerOperatorPrompt": "Mengendalikan bas sekolah? Cipta akaun"
+      "newParentTitle": "Ibu bapa baharu?",
+      "newParentHint": "Masukkan ID 5-digit pengendali bas anak anda untuk mendaftar.",
+      "newParentAction": "Daftar",
+      "newOperatorTitle": "Mengendalikan bas sekolah?",
+      "newOperatorAction": "Cipta akaun"
     },
     "forgotPassword": {
       "title": "Lupa kata laluan",
@@ -860,7 +869,9 @@
         "integration_updated": "Mengubah tetapan e-mel / WhatsApp",
         "integration_tested": "Menguji tetapan e-mel / WhatsApp",
         "integration_removed": "Membuang tetapan e-mel / WhatsApp",
-        "notification_type_toggled": "Menghidup atau mematikan jenis mesej"
+        "notification_type_toggled": "Menghidup atau mematikan jenis mesej",
+        "email_template_updated": "Mengubah templat e-mel",
+        "email_template_reset": "Menetapkan semula templat e-mel ke ayat asal"
         }
       },
       "notes": {
@@ -1075,6 +1086,77 @@
         "title": "Mesej",
         "tabTypes": "Jenis mesej",
         "tabLog": "Log dihantar",
+        "tabTemplates": "Templat e-mel",
+        "templates": {
+          "intro": "Ini ialah e-mel yang diterima ibu bapa. Ubah ayat dan lihat e-mel berubah. Nama, jumlah dan jadual diisi secara automatik.",
+          "listLabel": "E-mel kepada ibu bapa",
+          "edited": "Diubah",
+          "readOnlyTitle": "E-mel ini tidak boleh diubah",
+          "readOnlyHelp": "Kod pengesahan ialah mesej keselamatan, jadi ayatnya tetap. Anda masih boleh melihat rupanya.",
+          "placeholdersTitle": "Anda boleh guna ini dalam ayat:",
+          "placeholders": {
+            "operator": "nama syarikat bas",
+            "parent": "nama ibu bapa",
+            "student": "nama anak",
+            "total": "jumlah dibayar",
+            "date": "tarikh bayaran"
+          },
+          "blocks": {
+            "subject": "Subjek",
+            "intro": "Ayat pembuka",
+            "button": "Teks butang",
+            "outro": "Ayat penutup",
+            "note": "Nota tambahan"
+          },
+          "blockHelp": {
+            "subject": "Apa yang ibu bapa nampak dalam peti masuk.",
+            "intro": "Dipaparkan di atas senarai anak.",
+            "button": "Perkataan pada butang.",
+            "outro": "Dipaparkan di bawah butang.",
+            "note": "Satu baris terakhir di bawah."
+          },
+          "reset": "Kembali ke ayat asal",
+          "saved": "Disimpan. Ibu bapa akan terima ayat ini mulai sekarang.",
+          "saveError": "Tidak dapat disimpan. Sila cuba lagi.",
+          "previewTitle": "Cara ibu bapa melihatnya",
+          "sampleNote": "Guna nama dan jumlah contoh. Tiada apa dihantar.",
+          "subjectLabel": "Subjek",
+          "previewError": "Tidak dapat melukis pratonton.",
+          "items": {
+            "bill_issued": {
+              "name": "Bil baharu",
+              "when": "Apabila bil dikeluarkan. Satu e-mel bagi setiap ibu bapa."
+            },
+            "payment_received": {
+              "name": "Bayaran diterima",
+              "when": "Apabila bayaran direkod atau dibayar dalam talian."
+            },
+            "reminder_due_soon": {
+              "name": "Peringatan bayaran",
+              "when": "3 hari sebelum bil tamat tempoh."
+            },
+            "reminder_overdue": {
+              "name": "Bil tertunggak",
+              "when": "Sehari selepas bil tamat tempoh."
+            },
+            "application_approved": {
+              "name": "Permohonan diluluskan",
+              "when": "Apabila pengendali meluluskan permohonan anak."
+            },
+            "application_rejected": {
+              "name": "Permohonan tidak diluluskan",
+              "when": "Apabila permohonan ditolak. Sebab daripada pengendali ditambah secara automatik."
+            },
+            "signup_code": {
+              "name": "Kod pendaftaran",
+              "when": "Apabila ibu bapa mengesahkan e-mel semasa mendaftar."
+            },
+            "password_reset_code": {
+              "name": "Kod tetapan semula kata laluan",
+              "when": "Apabila seseorang meminta tetapan semula kata laluan."
+            }
+          }
+        },
         "intro": "E-mel ini dihantar secara automatik. Matikan mana-mana di sini.",
         "notDeliveringTitle": "E-mel belum dihantar sebenarnya",
         "notDeliveringHelp": "Pelayan hanya menulis e-mel ke fail, jadi tiada sesiapa menerimanya. Sediakan Brevo untuk mula menghantar dengan sebenar.",
@@ -1294,6 +1376,7 @@
       }
     },
     "buses": {
+      "searchPlaceholder": "Cari mengikut nombor plat atau model",
       "model": "Model",
       "modelPlaceholder": "Contoh: Hino RK1J",
       "engineCapacity": "Kapasiti enjin (cc)",
@@ -1310,6 +1393,8 @@
       "deleteConfirm": "Padam {{plate}}?"
     },
     "staff": {
+      "searchPlaceholder": "Cari mengikut nama atau telefon",
+      "allRoles": "Semua peranan",
       "title": "Kakitangan",
       "addStaff": "Tambah kakitangan",
       "editStaffMember": "Edit kakitangan",
@@ -1329,6 +1414,12 @@
       "deleteConfirm": "Padam {{name}}?"
     },
     "routes": {
+      "searchPlaceholder": "Cari mengikut nama laluan, zon atau bas",
+      "allSessions": "Semua sesi",
+      "allBuses": "Semua bas",
+      "noBus": "Tiada bas ditetapkan",
+      "allDrivers": "Semua pemandu",
+      "noDriver": "Tiada pemandu ditetapkan",
       "steps": {"details": "Butiran", "stops": "Perhentian", "fares": "Tambang", "crew": "Bas & krew", "review": "Semak"},
       "hints": {"details": "Mulakan dengan asas: apa nama laluan ini, dan ke mana ia pergi?", "stops": "Tambah tempat bas berhenti, mengikut urutan ia singgah. Anda boleh tambah lagi kemudian.", "crew": "Pilih bas dan orang yang mengendalikan laluan ini. Boleh dikosongkan dan ditetapkan kemudian.", "review": "Semak semuanya, kemudian simpan."},
       "noStopsReview": "Belum ada perhentian.",
@@ -1349,14 +1440,14 @@
       "moveUp": "Alih ke atas",
       "moveDown": "Alih ke bawah",
       "saveError": "Tidak dapat simpan laluan ini. Sila semak butiran dan cuba lagi.",
-      "errors": {"nameRequired": "Sila masukkan nama laluan.", "stopRequired": "Sila namakan perhentian ini, atau buangkannya."},
+      "errors": {"sessionRequired": "Sila pilih sesi pagi atau petang.", "nameRequired": "Sila masukkan nama laluan.", "stopRequired": "Sila namakan perhentian ini, atau buangkannya."},
       "title": "Laluan & Tambang",
       "addRoute": "Tambah laluan",
       "editRoute": "Edit laluan",
       "name": "Nama",
       "routeName": "Nama laluan",
       "zone": "Zon",
-      "schoolDestination": "Destinasi sekolah",
+      "schoolDestination": "Destinasi akhir/sekolah",
       "baseMonthlyFee": "Tambang pergi-balik sebulan",
       "bus": "Bas",
       "driver": "Pemandu",
@@ -1370,7 +1461,20 @@
       "deleteConfirm": "Padam {{name}}?",
       "oneWayMonthlyFee": "Tambang sehala sebulan",
       "oneWayFeeHint": "Biarkan tambang sehala kosong untuk caj tambang pergi-balik.",
-      "oneWayFee": "Tambang sehala"
+      "oneWayFee": "Tambang sehala",
+      "session": "Sesi",
+      "sessionMorning": "Sesi pagi",
+      "sessionAfternoon": "Sesi petang",
+      "sessionMorningShort": "Pagi",
+      "sessionAfternoonShort": "Petang",
+      "fare": "Tambang",
+      "fareReturnShort": "Pergi-balik",
+      "fareOneWayShort": "Sehala",
+      "stopsCount": "{{count}} perhentian",
+      "students": "Pelajar",
+      "duplicate": "Salin",
+      "copySuffix": "(salinan)",
+      "deleteInUse": "Pelajar sedang menggunakan laluan ini ({{count}}). Mereka akan tiada laluan jika anda memadamnya."
     },
     "students": {
       "title": "Pelajar",

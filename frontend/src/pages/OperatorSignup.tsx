@@ -145,7 +145,7 @@ export function OperatorSignup() {
               footer={
                 <p className="text-center text-sm text-muted-foreground">
                   {t('auth.operatorSignup.haveAccount')}{' '}
-                  <Link to="/login" className="font-medium text-foreground hover:underline">
+                  <Link to="/login?as=operator" className="font-medium text-foreground hover:underline">
                     {t('auth.operatorSignup.logIn')}
                   </Link>
                 </p>

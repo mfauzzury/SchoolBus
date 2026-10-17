@@ -171,7 +171,7 @@ function OperatorAccessCard() {
           <ArrowRight />
         </Link>
         <Link
-          to="/login"
+          to="/login?as=operator"
           className="text-center text-sm text-primary-foreground/75 hover:text-primary-foreground"
         >
           {t('operatorsPage.operatorCard.alreadyHaveWorkspace')}

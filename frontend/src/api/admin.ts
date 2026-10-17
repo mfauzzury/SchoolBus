@@ -793,3 +793,50 @@ export async function getParentReport(operatorId?: number): Promise<ParentReport
   })
   return data
 }
+
+export type EmailBlockKey = 'subject' | 'intro' | 'button' | 'outro' | 'note'
+
+export interface EmailTemplateBlock {
+  key: EmailBlockKey
+  /** The wording built into the app. */
+  default: string
+  /** What is used now: the Owner's edit, or the default. */
+  value: string
+}
+
+export interface EmailTemplate {
+  template: string
+  editable: boolean
+  customised: boolean
+  /** Names that can be written as {name} in the wording. */
+  placeholders: string[]
+  blocks: EmailTemplateBlock[]
+}
+
+export interface EmailPreview {
+  subject: string
+  /** A complete email page, drawn with sample data. */
+  html: string
+}
+
+export async function listEmailTemplates(): Promise<EmailTemplate[]> {
+  const { data } = await apiClient.get<EmailTemplate[]>('/api/admin/notifications/templates')
+  return data
+}
+
+export async function previewEmailTemplate(
+  template: string,
+  blocks: Partial<Record<EmailBlockKey, string>>,
+): Promise<EmailPreview> {
+  const { data } = await apiClient.post<EmailPreview>(`/api/admin/notifications/templates/${template}/preview`, { blocks })
+  return data
+}
+
+export async function saveEmailTemplate(template: string, blocks: Partial<Record<EmailBlockKey, string>>) {
+  const { data } = await apiClient.put(`/api/admin/notifications/templates/${template}`, { blocks })
+  return data
+}
+
+export async function resetEmailTemplate(template: string): Promise<void> {
+  await apiClient.delete(`/api/admin/notifications/templates/${template}`)
+}

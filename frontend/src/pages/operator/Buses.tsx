@@ -47,6 +47,8 @@ import { FieldError } from '@/components/FieldError'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useBuses, useCreateBus, useDeleteBus, useUpdateBus, useUploadBusAvatar } from '@/hooks/useBuses'
 import { usePagination } from '@/hooks/usePagination'
+import { useListView } from '@/hooks/useListView'
+import { FilterSelect, ListToolbar, SortableHead } from '@/components/ListControls'
 import type { Bus } from '@/api/buses'
 
 const busSchema = z.object({
@@ -228,7 +230,19 @@ export function Buses() {
   const isAdmin = useIsOperatorAdmin()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingBus, setEditingBus] = useState<Bus | undefined>(undefined)
-  const { page, setPage, pageCount, pageItems: pagedBuses } = usePagination(buses ?? [])
+  const view = useListView(buses ?? [], {
+    searchText: (b) => [b.plate_number, b.model],
+    filters: { status: (b, v) => b.status === v },
+    sortValues: {
+      plate: (b) => b.plate_number,
+      model: (b) => b.model,
+      capacity: (b) => b.capacity,
+      engine: (b) => b.engine_capacity,
+      status: (b) => b.status,
+    },
+  })
+  const { page, setPage, pageCount, pageItems: pagedBuses } = usePagination(view.results)
+  useEffect(() => setPage(1), [view.resetKey, setPage])
 
   const openCreate = () => {
     setEditingBus(undefined)
@@ -247,19 +261,39 @@ export function Buses() {
           <CardTitle>{t('operator.buses.title')}</CardTitle>
           {isAdmin && <Button onClick={openCreate}>{t('operator.buses.addBus')}</Button>}
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
+          <ListToolbar
+            query={view.query}
+            onQueryChange={view.setQuery}
+            placeholder={t('operator.buses.searchPlaceholder')}
+            isFiltered={view.isFiltered}
+            onClear={view.clear}
+          >
+            <FilterSelect
+              label={t('operator.buses.status')}
+              allLabel={t('common.allStatuses')}
+              value={view.filterValue('status')}
+              onChange={(v) => view.setFilter('status', v)}
+              options={(['active', 'maintenance', 'retired'] as const).map((s) => ({
+                value: s,
+                label: t(`common.status.${s}`),
+              }))}
+            />
+          </ListToolbar>
           {isLoading ? (
             <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+          ) : view.isFiltered && view.results.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t('common.noMatches')}</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-12" />
-                  <TableHead>{t('operator.buses.plateNumber')}</TableHead>
-                  <TableHead>{t('operator.buses.model')}</TableHead>
-                  <TableHead>{t('operator.buses.capacity')}</TableHead>
-                  <TableHead>{t('operator.buses.engineCapacity')}</TableHead>
-                  <TableHead>{t('operator.buses.status')}</TableHead>
+                  <SortableHead sortKey="plate" sort={view.sort} onSort={view.toggleSort}>{t('operator.buses.plateNumber')}</SortableHead>
+                  <SortableHead sortKey="model" sort={view.sort} onSort={view.toggleSort}>{t('operator.buses.model')}</SortableHead>
+                  <SortableHead sortKey="capacity" sort={view.sort} onSort={view.toggleSort}>{t('operator.buses.capacity')}</SortableHead>
+                  <SortableHead sortKey="engine" sort={view.sort} onSort={view.toggleSort}>{t('operator.buses.engineCapacity')}</SortableHead>
+                  <SortableHead sortKey="status" sort={view.sort} onSort={view.toggleSort}>{t('operator.buses.status')}</SortableHead>
                   {isAdmin && <TableHead className="text-right">{t('operator.buses.actions')}</TableHead>}
                 </TableRow>
               </TableHeader>

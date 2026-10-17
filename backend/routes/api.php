@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardControll
 use App\Http\Controllers\Api\Admin\ImpersonationController;
 use App\Http\Controllers\Api\Admin\IntegrationSettingsController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
+use App\Http\Controllers\Api\Admin\EmailTemplateController;
 use App\Http\Controllers\Api\Admin\NotificationController;
 use App\Http\Controllers\Api\Admin\OperatorNoteController;
 use App\Http\Controllers\Api\Admin\ParentReportController;
@@ -164,6 +165,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::middleware('permission:settings.manage')->prefix('notifications')->group(function () {
             Route::get('/', [NotificationController::class, 'index']);
             Route::get('log', [NotificationController::class, 'log']);
+            // What the parent emails look like, and the wording the Owner can change.
+            Route::get('templates', [EmailTemplateController::class, 'index']);
+            Route::post('templates/{template}/preview', [EmailTemplateController::class, 'preview']);
+            Route::put('templates/{template}', [EmailTemplateController::class, 'update']);
+            Route::delete('templates/{template}', [EmailTemplateController::class, 'destroy']);
             Route::put('{type}', [NotificationController::class, 'update']);
         });
 

@@ -9,6 +9,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { BackLink } from '@/components/BackLink'
 import { FieldError } from '@/components/FieldError'
@@ -23,6 +24,7 @@ import type { Route } from '@/api/routes'
 const UNASSIGNED = 'none'
 
 const routeSchema = z.object({
+  session: z.string().min(1, 'operator.routes.errors.sessionRequired'),
   name: z.string().min(1, 'operator.routes.errors.nameRequired'),
   zone: z.string().optional(),
   school_destination: z.string().optional(),
@@ -40,13 +42,14 @@ const STEPS = ['details', 'stops', 'fares', 'crew', 'review'] as const
 type StepKey = (typeof STEPS)[number]
 
 /** What has to be valid before the operator may leave a step. */
-const STEP_FIELDS: Partial<Record<StepKey, ('name' | 'stops')[]>> = {
-  details: ['name'],
+const STEP_FIELDS: Partial<Record<StepKey, ('session' | 'name' | 'stops')[]>> = {
+  details: ['session', 'name'],
   stops: ['stops'],
 }
 
 function toFormValues(route?: Route): RouteFormValues {
   return {
+    session: route?.session ?? '',
     name: route?.name ?? '',
     zone: route?.zone ?? '',
     school_destination: route?.school_destination ?? '',
@@ -150,6 +153,7 @@ function RouteWizard({ route }: { route?: Route }) {
   const save = handleSubmit((form) => {
     const payload = {
       name: form.name,
+      session: form.session as 'morning' | 'afternoon',
       zone: form.zone || null,
       school_destination: form.school_destination || null,
       base_monthly_fee: form.base_monthly_fee ? Number(form.base_monthly_fee) : null,
@@ -278,6 +282,18 @@ function RouteWizard({ route }: { route?: Route }) {
             t('operator.routes.sectionDetails'),
             t('operator.routes.hints.details'),
             <>
+              <div className="flex flex-col gap-1.5">
+                <Label>{t('operator.routes.session')}</Label>
+                <RadioGroup
+                  value={values.session}
+                  onValueChange={(v) => setValue('session', String(v), { shouldValidate: true })}
+                  className="flex-wrap gap-x-6 gap-y-2"
+                >
+                  <RadioGroupItem value="morning">{t('operator.routes.sessionMorning')}</RadioGroupItem>
+                  <RadioGroupItem value="afternoon">{t('operator.routes.sessionAfternoon')}</RadioGroupItem>
+                </RadioGroup>
+                <FieldError message={errors.session?.message} />
+              </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="name">{t('operator.routes.routeName')}</Label>
                 <Input id="name" autoFocus {...register('name')} />
@@ -449,6 +465,10 @@ function RouteWizard({ route }: { route?: Route }) {
                 t('operator.routes.sectionDetails'),
                 0,
                 <>
+                  {reviewRow(
+                    t('operator.routes.session'),
+                    values.session ? t(values.session === 'morning' ? 'operator.routes.sessionMorning' : 'operator.routes.sessionAfternoon') : null,
+                  )}
                   {reviewRow(t('operator.routes.routeName'), values.name)}
                   {reviewRow(t('operator.routes.zone'), values.zone)}
                   {reviewRow(t('operator.routes.schoolDestination'), values.school_destination)}

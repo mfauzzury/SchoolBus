@@ -63,9 +63,9 @@ export function OperatorLayout() {
     {
       title: t('nav.groupFleet'),
       items: [
-        { to: '/operator/routes', label: t('nav.routesAndFares'), icon: Route },
-        { to: '/operator/buses', label: t('nav.buses'), icon: Bus },
         { to: '/operator/staff', label: t('nav.staff'), icon: IdCard },
+        { to: '/operator/buses', label: t('nav.buses'), icon: Bus },
+        { to: '/operator/routes', label: t('nav.routesAndFares'), icon: Route },
       ],
     },
     {

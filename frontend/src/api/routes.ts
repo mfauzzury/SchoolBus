@@ -11,6 +11,7 @@ export interface RouteStop {
 export interface Route {
   id: number
   name: string
+  session: 'morning' | 'afternoon' | null
   zone: string | null
   school_destination: string | null
   bus_id: number | null
@@ -22,10 +23,13 @@ export interface Route {
   driver: Staff | null
   conductor: Staff | null
   stops: RouteStop[]
+  /** Active students on this route; only the list endpoint fills it in. */
+  students_count?: number
 }
 
 export interface RouteInput {
   name: string
+  session?: 'morning' | 'afternoon' | null
   zone?: string | null
   school_destination?: string | null
   bus_id?: number | null

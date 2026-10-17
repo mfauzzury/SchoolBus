@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\EmailTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 
 class ApplicationDecided extends PlatformNotification
@@ -16,15 +17,23 @@ class ApplicationDecided extends PlatformNotification
 
     public function subjectLine(): string
     {
-        return $this->approved
-            ? 'Permohonan diluluskan / Application approved - '.self::oneLine($this->operator)
-            : 'Keputusan permohonan / Application update - '.self::oneLine($this->operator);
+        return EmailTemplates::text($this->template(), 'subject', $this->values());
+    }
+
+    /** Approving and rejecting are edited separately. */
+    private function template(): string
+    {
+        return $this->approved ? 'application_approved' : 'application_rejected';
+    }
+
+    private function values(): array
+    {
+        return ['operator' => $this->operator, 'parent' => $this->parent, 'student' => $this->student];
     }
 
     public function toMail(object $notifiable): MailMessage
     {
-        $operator = self::plain($this->operator);
-        $student = self::plain($this->student);
+        $template = $this->template();
 
         $mail = (new MailMessage)
             ->subject($this->subjectLine())
@@ -32,20 +41,20 @@ class ApplicationDecided extends PlatformNotification
 
         if ($this->approved) {
             return $mail
-                ->line("Permohonan untuk {$student} dengan {$operator} telah diluluskan.")
-                ->action('Lihat / View', self::url('/parent/dashboard'))
-                ->line("The application for {$student} with {$operator} has been approved.")
+                ->line(EmailTemplates::line($template, 'intro', $this->values()))
+                ->action(EmailTemplates::text($template, 'button'), self::url('/parent/dashboard'))
+                ->line(EmailTemplates::line($template, 'outro', $this->values()))
                 ->salutation(self::brand());
         }
 
-        $mail->line("Maaf, permohonan untuk {$student} dengan {$operator} tidak dapat diluluskan.");
+        $mail->line(EmailTemplates::line($template, 'intro', $this->values()));
         if ($this->reason) {
             $mail->line('Sebab / Reason: '.self::plain($this->reason));
         }
 
         return $mail
-            ->line("Sorry, the application for {$student} with {$operator} could not be approved.")
-            ->line('Sila hubungi pengendali bas untuk maklumat lanjut. / Please contact the bus operator for more details.')
+            ->line(EmailTemplates::line($template, 'outro', $this->values()))
+            ->line(EmailTemplates::line($template, 'note', $this->values()))
             ->salutation(self::brand());
     }
 }

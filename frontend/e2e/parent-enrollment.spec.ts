@@ -31,6 +31,7 @@ test.describe.serial('Parent enrollment golden path', () => {
     // Routes are in the sidebar; adding one is a step-by-step page.
     await page.click('a:has-text("Routes")')
     await page.click('a:has-text("Add route")')
+    await page.getByText('Morning session').click()
     await page.fill('#name', 'Route A')
     await page.click('button:has-text("Next")') // details -> stops
     await page.click('button:has-text("Add stop")')

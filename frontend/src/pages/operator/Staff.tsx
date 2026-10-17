@@ -45,6 +45,8 @@ import { Pagination } from '@/components/ui/pagination'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useCreateStaff, useDeleteStaff, useStaff, useUpdateStaff, useUploadStaffAvatar } from '@/hooks/useStaff'
 import { usePagination } from '@/hooks/usePagination'
+import { useListView } from '@/hooks/useListView'
+import { FilterSelect, ListToolbar, SortableHead } from '@/components/ListControls'
 import type { Staff as StaffMember } from '@/api/staff'
 
 const staffSchema = z.object({
@@ -215,7 +217,21 @@ export function Staff() {
   const isAdmin = useIsOperatorAdmin()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingStaff, setEditingStaff] = useState<StaffMember | undefined>(undefined)
-  const { page, setPage, pageCount, pageItems: pagedStaff } = usePagination(staff ?? [])
+  const view = useListView(staff ?? [], {
+    searchText: (m) => [m.full_name, m.phone],
+    filters: {
+      role: (m, v) => m.role === v,
+      status: (m, v) => m.status === v,
+    },
+    sortValues: {
+      name: (m) => m.full_name,
+      role: (m) => m.role,
+      phone: (m) => m.phone,
+      status: (m) => m.status,
+    },
+  })
+  const { page, setPage, pageCount, pageItems: pagedStaff } = usePagination(view.results)
+  useEffect(() => setPage(1), [view.resetKey, setPage])
 
   const openCreate = () => {
     setEditingStaff(undefined)
@@ -234,18 +250,48 @@ export function Staff() {
           <CardTitle>{t('operator.staff.title')}</CardTitle>
           {isAdmin && <Button onClick={openCreate}>{t('operator.staff.addStaff')}</Button>}
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
+          <ListToolbar
+            query={view.query}
+            onQueryChange={view.setQuery}
+            placeholder={t('operator.staff.searchPlaceholder')}
+            isFiltered={view.isFiltered}
+            onClear={view.clear}
+          >
+            <FilterSelect
+              label={t('operator.staff.role')}
+              allLabel={t('operator.staff.allRoles')}
+              value={view.filterValue('role')}
+              onChange={(v) => view.setFilter('role', v)}
+              options={[
+                { value: 'driver', label: t('operator.staff.driver') },
+                { value: 'conductor', label: t('operator.staff.conductor') },
+              ]}
+            />
+            <FilterSelect
+              label={t('operator.staff.status')}
+              allLabel={t('common.allStatuses')}
+              value={view.filterValue('status')}
+              onChange={(v) => view.setFilter('status', v)}
+              options={[
+                { value: 'active', label: t('common.status.active') },
+                { value: 'inactive', label: t('common.status.inactive') },
+              ]}
+            />
+          </ListToolbar>
           {isLoading ? (
             <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+          ) : view.isFiltered && view.results.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t('common.noMatches')}</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-12" />
-                  <TableHead>{t('operator.staff.name')}</TableHead>
-                  <TableHead>{t('operator.staff.role')}</TableHead>
-                  <TableHead>{t('operator.staff.phone')}</TableHead>
-                  <TableHead>{t('operator.staff.status')}</TableHead>
+                  <SortableHead sortKey="name" sort={view.sort} onSort={view.toggleSort}>{t('operator.staff.name')}</SortableHead>
+                  <SortableHead sortKey="role" sort={view.sort} onSort={view.toggleSort}>{t('operator.staff.role')}</SortableHead>
+                  <SortableHead sortKey="phone" sort={view.sort} onSort={view.toggleSort}>{t('operator.staff.phone')}</SortableHead>
+                  <SortableHead sortKey="status" sort={view.sort} onSort={view.toggleSort}>{t('operator.staff.status')}</SortableHead>
                   {isAdmin && <TableHead className="text-right">{t('operator.staff.actions')}</TableHead>}
                 </TableRow>
               </TableHeader>
