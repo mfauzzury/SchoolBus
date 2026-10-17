@@ -6,28 +6,8 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { ThemeSwitcher } from '@/components/ThemeSwitcher'
 import { useMe } from '@/hooks/useAuth'
+import { BrandLogo } from '@/components/BrandLogo'
 import { cn } from '@/lib/utils'
-
-export function BrandMark() {
-  return (
-    <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <circle cx="2.5" cy="7" r="1.6" fill="currentColor" className="text-primary-foreground" />
-        <circle cx="11.5" cy="7" r="1.6" fill="currentColor" className="text-primary-foreground" />
-        <line
-          x1="4.3"
-          y1="7"
-          x2="9.7"
-          y2="7"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-          className="text-primary-foreground"
-        />
-      </svg>
-    </span>
-  )
-}
 
 export function MarketingLayout() {
   const { t } = useTranslation()
@@ -56,8 +36,7 @@ export function MarketingLayout() {
       <header className="sticky top-0 z-10 border-b bg-background/85 backdrop-blur-sm">
         <div className="mx-auto flex max-w-content items-center justify-between gap-4 px-4 lg:px-8 py-4">
           <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-medium">
-            <BrandMark />
-            BasSekolah<span className="font-mono text-primary">.my</span>
+            <BrandLogo accentDomain />
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
@@ -132,8 +111,7 @@ export function MarketingLayout() {
         <div className="mx-auto flex max-w-content flex-col items-center gap-4 px-4 lg:px-8 text-center text-sm text-muted-foreground sm:flex-row sm:justify-between sm:text-left">
           <div className="flex flex-col items-center gap-2 sm:items-start">
             <span className="flex items-center gap-2 font-medium text-foreground">
-              <BrandMark />
-              BasSekolah.my
+              <BrandLogo />
             </span>
             <span>{t('landing.footer')}</span>
           </div>

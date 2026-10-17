@@ -872,7 +872,9 @@
         "integration_removed": "Removed email / WhatsApp settings",
         "notification_type_toggled": "Switched a message type on or off",
         "email_template_updated": "Edited an email template",
-        "email_template_reset": "Reset an email template to its original wording"
+        "email_template_reset": "Reset an email template to its original wording",
+        "brand_updated": "Changed the platform brand",
+        "brand_reset": "Reset part of the platform brand"
         }
       },
       "notes": {
@@ -1015,6 +1017,39 @@
         "mailNotSent": "Emails are being written to a file, not sent. Password resets and invites will not reach anyone.",
         "debugOn": "Debug mode is on in production. Turn it off: it can show private details in error pages.",
         "tabStatus": "Status",
+        "tabBrand": "Brand",
+        "brand": {
+          "intro": "Your platform's name and logo. They show on the website, in emails and in the mobile app. Anything you don't set uses the BasSekolah brand.",
+          "previewTitle": "How it looks",
+          "previewHelp": "Check your logo is clear on both. A logo with dark text disappears on a dark screen, so a transparent logo that works on both is best.",
+          "onLight": "Light screen",
+          "onDark": "Dark screen",
+          "nameTitle": "Name",
+          "name": "Platform name",
+          "nameHelp": "Used in headers, email subjects and signatures. Leave blank to use {{name}}.",
+          "icon": {
+            "title": "Square icon",
+            "help": "For the browser tab and phones. Square, at least 512 × 512 px."
+          },
+          "logo": {
+            "title": "Wide logo",
+            "help": "For the website header and emails. Wider than tall, at least 300 px wide. Include the name in the image."
+          },
+          "usingDefault": "Using the BasSekolah mark",
+          "imageFile": "PNG, JPG or WebP (needed for emails and the app)",
+          "svgFile": "SVG (optional, sharper on the website)",
+          "uploaded": "Uploaded",
+          "notSet": "Not set",
+          "optional": "Optional",
+          "uploadImage": "Upload image",
+          "replaceImage": "Replace image",
+          "addSvg": "Add SVG",
+          "replaceSvg": "Replace SVG",
+          "removeSvg": "Remove SVG",
+          "useDefault": "Use BasSekolah mark",
+          "svgNeedsImage": "Upload a PNG, JPG or WebP first. The SVG is an extra for the website.",
+          "saveError": "Could not save. Please try again."
+        },
         "tabEmail": "Email (Brevo)",
         "tabWhatsapp": "WhatsApp",
         "loadError": "Could not load this. Please refresh the page. If it keeps happening, the server may need a database update: tell your developer.",

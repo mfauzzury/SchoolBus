@@ -64,6 +64,8 @@ test.describe('Authentication', () => {
   test('a link to a parent page asks for login, then goes straight to that page', async ({ page, context }) => {
     const email = `parent-next-${unique()}@test.com`
     await registerParentViaUi(page, email)
+    // Let in-flight requests finish first: each API reply re-sends the session cookie.
+    await page.waitForLoadState('networkidle')
     await context.clearCookies() // as if they opened the email link in a logged-out browser
 
     await page.goto('/parent/invoices')
@@ -78,6 +80,7 @@ test.describe('Authentication', () => {
   test('a login link cannot send someone to another website', async ({ page }) => {
     const email = `parent-evil-${unique()}@test.com`
     await registerParentViaUi(page, email)
+    await page.waitForLoadState('networkidle')
     await page.context().clearCookies()
 
     await page.goto('/login?next=//evil.example')

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
+import { BrandSettings } from '@/components/admin/BrandSettings'
 import { BrevoSettingsCard } from '@/components/admin/BrevoSettingsCard'
 import { WhatsAppSettingsCard } from '@/components/admin/WhatsAppSettingsCard'
 import { pillTabClass, pillTabListClass } from '@/lib/tabs'
@@ -192,17 +193,18 @@ function SystemStatus() {
   )
 }
 
-type TabKey = 'status' | 'email' | 'whatsapp'
+type TabKey = 'status' | 'brand' | 'email' | 'whatsapp'
 
 /** System settings: server health, plus where the platform's email and WhatsApp notifications are set up. */
 export function AdminSystem() {
   const { t } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const requested = searchParams.get('tab')
-  const tab: TabKey = requested === 'email' || requested === 'whatsapp' ? requested : 'status'
+  const tab: TabKey = requested === 'brand' || requested === 'email' || requested === 'whatsapp' ? requested : 'status'
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: 'status', label: t('admin.system.tabStatus') },
+    { key: 'brand', label: t('admin.system.tabBrand') },
     { key: 'email', label: t('admin.system.tabEmail') },
     { key: 'whatsapp', label: t('admin.system.tabWhatsapp') },
   ]
@@ -225,6 +227,7 @@ export function AdminSystem() {
       </nav>
 
       {tab === 'status' && <SystemStatus />}
+      {tab === 'brand' && <BrandSettings />}
       {tab === 'email' && <BrevoSettingsCard />}
       {tab === 'whatsapp' && <WhatsAppSettingsCard />}
     </div>

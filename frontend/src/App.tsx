@@ -6,6 +6,7 @@ import { MarketingLayout } from '@/layouts/MarketingLayout'
 import { ParentLayout } from '@/layouts/ParentLayout'
 import { SaasAdminLayout } from '@/layouts/SaasAdminLayout'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { BrandHead } from '@/hooks/useBrand'
 import { FEATURES } from '@/lib/features'
 import { Landing } from '@/pages/Landing'
 import { Operators } from '@/pages/Operators'
@@ -62,6 +63,7 @@ import { AdminActivityLog } from '@/pages/admin/ActivityLog'
 function App() {
   return (
     <BrowserRouter>
+      <BrandHead />
       <Routes>
         <Route element={<MarketingLayout />}>
           <Route path="/" element={<Landing />} />
