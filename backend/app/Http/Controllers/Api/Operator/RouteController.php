@@ -13,6 +13,7 @@ class RouteController extends Controller
     public function index()
     {
         return RouteModel::with(['bus', 'driver', 'conductor', 'stops'])
+            ->withCount(['students' => fn ($students) => $students->where('enrollment_status', 'active')])
             ->orderBy('name')
             ->get();
     }
@@ -65,6 +66,8 @@ class RouteController extends Controller
 
         return $request->validate([
             'name' => $prefix.'required|string|max:255',
+            // Not required here so existing routes and API callers keep working; the wizard asks for it.
+            'session' => ['nullable', Rule::in(['morning', 'afternoon'])],
             'zone' => 'nullable|string|max:255',
             'school_destination' => 'nullable|string|max:255',
             // Rule::exists (not the plain 'exists:buses,id' string) — the
@@ -85,7 +88,7 @@ class RouteController extends Controller
     private function routeAttributes(array $data): array
     {
         return array_intersect_key($data, array_flip([
-            'name', 'zone', 'school_destination', 'bus_id', 'driver_id', 'conductor_id', 'base_monthly_fee', 'one_way_monthly_fee',
+            'name', 'session', 'zone', 'school_destination', 'bus_id', 'driver_id', 'conductor_id', 'base_monthly_fee', 'one_way_monthly_fee',
         ]));
     }
 

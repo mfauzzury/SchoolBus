@@ -3,8 +3,10 @@
 namespace Tests\Feature\Operator;
 
 use App\Models\Bus;
+use App\Models\ParentProfile;
 use App\Models\Route;
 use App\Models\Staff;
+use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Concerns\CreatesTestData;
 use Tests\TestCase;
@@ -115,5 +117,37 @@ class RouteControllerTest extends TestCase
         $response = $this->actingAs($admin)->getJson("/api/operator/routes/{$route->id}");
 
         $response->assertOk()->assertJsonCount(1, 'stops');
+    }
+
+    public function test_the_route_list_counts_only_active_students_on_each_route(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+        $parent = ParentProfile::factory()->create(['tenant_id' => $tenant->id]);
+        $busy = Route::factory()->create(['tenant_id' => $tenant->id, 'name' => 'Busy']);
+        $empty = Route::factory()->create(['tenant_id' => $tenant->id, 'name' => 'Empty']);
+
+        Student::factory()->count(2)->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id, 'route_id' => $busy->id]);
+        Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id, 'route_id' => $busy->id, 'enrollment_status' => 'withdrawn']);
+
+        $counts = collect($this->actingAs($admin)->getJson('/api/operator/routes')->assertOk()->json())
+            ->pluck('students_count', 'name');
+
+        $this->assertSame(2, $counts['Busy']);
+        $this->assertSame(0, $counts['Empty']);
+    }
+
+    public function test_a_route_can_be_set_to_the_morning_or_afternoon_session_only(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+
+        $this->actingAs($admin)->postJson('/api/operator/routes', ['name' => 'Route A', 'session' => 'afternoon'])
+            ->assertCreated()
+            ->assertJsonPath('session', 'afternoon');
+
+        $this->actingAs($admin)->postJson('/api/operator/routes', ['name' => 'Route B', 'session' => 'night'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('session');
     }
 }
