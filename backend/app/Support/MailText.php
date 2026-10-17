@@ -74,6 +74,6 @@ class MailText
     /** The name every email is signed with and carries in its header. */
     public static function brand(): string
     {
-        return (string) config('app.name');
+        return Brand::name();
     }
 }
