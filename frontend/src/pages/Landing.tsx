@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, CheckCircle2, XCircle } from 'lucide-react'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
+import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Accordion,
@@ -10,13 +9,8 @@ import {
   AccordionPanel,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from '@/components/ui/input-otp'
 import { useMe } from '@/hooks/useAuth'
-import { useTenantByCode } from '@/hooks/useRegistration'
+import { OperatorCodeLookup } from '@/components/OperatorCodeLookup'
 import { cn } from '@/lib/utils'
 import heroPupils from '@/assets/landing/hero-pupils.webp'
 import journeyVan from '@/assets/landing/journey-van.webp'
@@ -65,14 +59,6 @@ function LoggedInHero({ dashboardPath }: { dashboardPath: string }) {
 
 function ParentAccessCard() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-  const [code, setCode] = useState('')
-  const { data: tenant, isFetching, isError } = useTenantByCode(code)
-  const resolved = code.length === 5 && !isFetching && !isError && tenant
-
-  const onContinue = () => {
-    if (resolved) navigate(`/register/${code}`)
-  }
 
   return (
     <Card className="flex flex-col">
@@ -84,55 +70,14 @@ function ParentAccessCard() {
         <p className="text-sm text-muted-foreground">{t('landing.parentCard.description')}</p>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-3">
-        <InputOTP
-          maxLength={5}
-          value={code}
-          onChange={setCode}
-          inputMode="numeric"
-          onComplete={() => {
-            /* validation runs via useTenantByCode; user confirms with Continue */
-          }}
-        >
-          <InputOTPGroup className="mx-auto gap-2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <InputOTPSlot
-                key={i}
-                index={i}
-                className="size-11 rounded-lg border-l font-mono text-lg"
-              />
-            ))}
-          </InputOTPGroup>
-        </InputOTP>
-
-        <div className="flex min-h-5 items-center justify-center gap-1.5 text-sm">
-          {code.length === 5 && isFetching && (
-            <span className="text-muted-foreground">{t('landing.parentCard.checking')}</span>
-          )}
-          {code.length === 5 && !isFetching && isError && (
-            <span className="flex items-center gap-1 text-destructive">
-              <XCircle className="size-4" /> {t('landing.parentCard.notFound')}
-            </span>
-          )}
-          {resolved && (
-            <span className="flex items-center gap-1 text-foreground">
-              <CheckCircle2 className="size-4 text-primary" />
-              <span className="font-medium">{tenant.company_name}</span>
-            </span>
-          )}
-        </div>
-
-        <div className="mt-auto flex flex-col gap-2 pt-2">
-          <Button disabled={!resolved} onClick={onContinue}>
-            {t('common.continue')}
-            <ArrowRight />
-          </Button>
+        <OperatorCodeLookup>
           <Link
             to="/login"
             className="text-center text-sm text-muted-foreground hover:text-foreground"
           >
             {t('landing.parentCard.alreadyRegistered')}
           </Link>
-        </div>
+        </OperatorCodeLookup>
       </CardContent>
     </Card>
   )

@@ -61,6 +61,32 @@ test.describe('Authentication', () => {
     await registerParentViaUi(page, `parent-login-${unique()}@test.com`)
   })
 
+  test('a link to a parent page asks for login, then goes straight to that page', async ({ page, context }) => {
+    const email = `parent-next-${unique()}@test.com`
+    await registerParentViaUi(page, email)
+    await context.clearCookies() // as if they opened the email link in a logged-out browser
+
+    await page.goto('/parent/invoices')
+    await expect(page).toHaveURL(/\/login\?next=%2Fparent%2Finvoices/)
+
+    await page.fill('#email', email)
+    await page.fill('#password', 'password123')
+    await page.click('button[type="submit"]')
+    await expect(page).toHaveURL(/\/parent\/invoices$/)
+  })
+
+  test('a login link cannot send someone to another website', async ({ page }) => {
+    const email = `parent-evil-${unique()}@test.com`
+    await registerParentViaUi(page, email)
+    await page.context().clearCookies()
+
+    await page.goto('/login?next=//evil.example')
+    await page.fill('#email', email)
+    await page.fill('#password', 'password123')
+    await page.click('button[type="submit"]')
+    await expect(page).toHaveURL(/localhost:5173\/parent\/dashboard/)
+  })
+
   test('a forgotten password is reset with an emailed code', async ({ page }) => {
     const email = `parent-forgot-${unique()}@test.com`
     await registerParentViaUi(page, email)

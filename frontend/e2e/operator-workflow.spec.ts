@@ -51,6 +51,7 @@ test.describe.serial('Operator workflow', () => {
     // Route
     await page.click('a:has-text("Routes")')
     await page.click('a:has-text("Add route")')
+    await page.getByText('Morning session').click()
     await page.fill('#name', 'Route A')
     await page.click('button:has-text("Next")') // details -> stops
     await page.click('button:has-text("Add stop")')

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { loginPathFor } from '@/lib/nextPath'
 import { queryClient } from '@/lib/queryClient'
 
 // Falls back to whatever host served this page (same host, port 8000) when
@@ -28,7 +29,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && wasAuthenticated) {
       queryClient.setQueryData(['me'], null)
       if (!window.location.pathname.startsWith('/login')) {
-        window.location.href = '/login?expired=1'
+        window.location.href = loginPathFor(window.location.pathname + window.location.search, 'expired=1&')
       }
     }
 

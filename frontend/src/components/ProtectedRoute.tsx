@@ -1,17 +1,20 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useMe } from '@/hooks/useAuth'
+import { loginPathFor } from '@/lib/nextPath'
 import { isPlatformUser } from '@/lib/platform'
 import { Suspended } from '@/pages/Suspended'
 
 export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'platform' }) {
   const { data, isLoading, isError } = useMe()
+  const location = useLocation()
 
   if (isLoading) {
     return <div className="flex min-h-screen items-center justify-center">Loading…</div>
   }
 
   if (isError || !data) {
-    return <Navigate to="/login" replace />
+    // Remember the page they wanted (for instance a Pay now link from an email) so login can go back to it.
+    return <Navigate to={loginPathFor(location.pathname + location.search)} replace />
   }
 
   // On hold: operator, its staff and its parents see a plain notice instead of the app.

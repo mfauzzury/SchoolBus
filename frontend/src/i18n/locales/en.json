@@ -17,6 +17,8 @@
     "allRoutes": "All routes",
     "allStatuses": "All statuses",
     "search": "Search",
+    "clearFilters": "Clear",
+    "noMatches": "Nothing matches your search or filters.",
     "year": "Year",
     "month": "Month",
     "allYears": "All years",
@@ -480,6 +482,10 @@
     "login": {
       "title": "Log in",
       "description": "Sign in to your BasSekolah.my workspace",
+      "descriptionParent": "Log in to see your children, bills and bus",
+      "tabsLabel": "I am a",
+      "tabParent": "Parent",
+      "tabOperator": "Operator",
       "email": "Email",
       "password": "Password",
       "invalidCredentials": "Invalid credentials.",
@@ -488,8 +494,11 @@
       "forgotPassword": "Forgot password?",
       "submit": "Log in",
       "submitting": "Logging in…",
-      "registerParentPrompt": "New parent? Register with your operator ID",
-      "registerOperatorPrompt": "Running a bus operator? Create an account"
+      "newParentTitle": "New parent?",
+      "newParentHint": "Enter the 5-digit ID of your child's bus operator to register.",
+      "newParentAction": "Register",
+      "newOperatorTitle": "Running a bus operator?",
+      "newOperatorAction": "Create an account"
     },
     "forgotPassword": {
       "title": "Forgot password",
@@ -861,7 +870,9 @@
         "integration_updated": "Changed email / WhatsApp settings",
         "integration_tested": "Tested email / WhatsApp settings",
         "integration_removed": "Removed email / WhatsApp settings",
-        "notification_type_toggled": "Switched a message type on or off"
+        "notification_type_toggled": "Switched a message type on or off",
+        "email_template_updated": "Edited an email template",
+        "email_template_reset": "Reset an email template to its original wording"
         }
       },
       "notes": {
@@ -1077,6 +1088,77 @@
         "title": "Messages",
         "tabTypes": "Message types",
         "tabLog": "Sent log",
+        "tabTemplates": "Email templates",
+        "templates": {
+          "intro": "These are the emails parents receive. Change the wording and watch the email update. Names, amounts and tables are filled in automatically.",
+          "listLabel": "Emails to parents",
+          "edited": "Edited",
+          "readOnlyTitle": "This email can't be edited",
+          "readOnlyHelp": "Verification codes are a security message, so the wording is fixed. You can still see how it looks.",
+          "placeholdersTitle": "You can use these in the text:",
+          "placeholders": {
+            "operator": "the bus company's name",
+            "parent": "the parent's name",
+            "student": "the child's name",
+            "total": "the amount paid",
+            "date": "the payment date"
+          },
+          "blocks": {
+            "subject": "Subject",
+            "intro": "Opening sentence",
+            "button": "Button text",
+            "outro": "Closing sentence",
+            "note": "Extra note"
+          },
+          "blockHelp": {
+            "subject": "What parents see in their inbox.",
+            "intro": "Shown above the list of children.",
+            "button": "The words on the button.",
+            "outro": "Shown under the button.",
+            "note": "A last line at the bottom."
+          },
+          "reset": "Back to original wording",
+          "saved": "Saved. Parents will get this wording from now on.",
+          "saveError": "Could not save. Please try again.",
+          "previewTitle": "How parents see it",
+          "sampleNote": "Uses sample names and amounts. Nothing is sent.",
+          "subjectLabel": "Subject",
+          "previewError": "Could not draw the preview.",
+          "items": {
+            "bill_issued": {
+              "name": "New bill",
+              "when": "When a bill is issued. One email per parent."
+            },
+            "payment_received": {
+              "name": "Payment received",
+              "when": "When a payment is recorded or paid online."
+            },
+            "reminder_due_soon": {
+              "name": "Payment reminder",
+              "when": "3 days before a bill is due."
+            },
+            "reminder_overdue": {
+              "name": "Overdue bill",
+              "when": "The day after a bill becomes overdue."
+            },
+            "application_approved": {
+              "name": "Application approved",
+              "when": "When the operator approves a child's application."
+            },
+            "application_rejected": {
+              "name": "Application not approved",
+              "when": "When an application is rejected. The operator's reason is added automatically."
+            },
+            "signup_code": {
+              "name": "Sign-up code",
+              "when": "When a parent confirms their email while registering."
+            },
+            "password_reset_code": {
+              "name": "Password reset code",
+              "when": "When someone asks to reset their password."
+            }
+          }
+        },
         "intro": "These emails are sent automatically. Switch any of them off here.",
         "notDeliveringTitle": "Emails are not being delivered yet",
         "notDeliveringHelp": "The server is only writing emails to a file, so nobody receives them. Set up Brevo to start sending for real.",
@@ -1296,6 +1378,7 @@
       }
     },
     "buses": {
+      "searchPlaceholder": "Search by plate number or model",
       "model": "Model",
       "modelPlaceholder": "For example: Hino RK1J",
       "engineCapacity": "Engine capacity (cc)",
@@ -1312,6 +1395,8 @@
       "deleteConfirm": "Delete {{plate}}?"
     },
     "staff": {
+      "searchPlaceholder": "Search by name or phone",
+      "allRoles": "All roles",
       "title": "Staff",
       "addStaff": "Add staff",
       "editStaffMember": "Edit staff member",
@@ -1331,6 +1416,12 @@
       "deleteConfirm": "Delete {{name}}?"
     },
     "routes": {
+      "searchPlaceholder": "Search by route name, zone or bus",
+      "allSessions": "All sessions",
+      "allBuses": "All buses",
+      "noBus": "No bus assigned",
+      "allDrivers": "All drivers",
+      "noDriver": "No driver assigned",
       "steps": {"details": "Details", "stops": "Stops", "fares": "Fares", "crew": "Bus & crew", "review": "Review"},
       "hints": {"details": "Start with the basics: what is this route called, and where does it go?", "stops": "Add the places the bus stops, in the order it visits them. You can add more later.", "crew": "Choose the bus and the people who run this route. You can leave this empty and set it later.", "review": "Check everything, then save."},
       "noStopsReview": "No stops added yet.",
@@ -1351,14 +1442,14 @@
       "moveUp": "Move up",
       "moveDown": "Move down",
       "saveError": "Could not save this route. Please check the details and try again.",
-      "errors": {"nameRequired": "Please enter a route name.", "stopRequired": "Please name this stop, or remove it."},
+      "errors": {"sessionRequired": "Please choose morning or afternoon.", "nameRequired": "Please enter a route name.", "stopRequired": "Please name this stop, or remove it."},
       "title": "Routes & fares",
       "addRoute": "Add route",
       "editRoute": "Edit route",
       "name": "Name",
       "routeName": "Route name",
       "zone": "Zone",
-      "schoolDestination": "School destination",
+      "schoolDestination": "Final stop / school",
       "baseMonthlyFee": "Return fare per month",
       "bus": "Bus",
       "driver": "Driver",
@@ -1372,7 +1463,20 @@
       "deleteConfirm": "Delete {{name}}?",
       "oneWayMonthlyFee": "One-way fare per month",
       "oneWayFeeHint": "Leave the one-way fare blank to charge the return fare.",
-      "oneWayFee": "One-way fare"
+      "oneWayFee": "One-way fare",
+      "session": "Session",
+      "sessionMorning": "Morning session",
+      "sessionAfternoon": "Afternoon session",
+      "sessionMorningShort": "Morning",
+      "sessionAfternoonShort": "Afternoon",
+      "fare": "Fare",
+      "fareReturnShort": "Return",
+      "fareOneWayShort": "One-way",
+      "stopsCount": "{{count}} stops",
+      "students": "Students",
+      "duplicate": "Duplicate",
+      "copySuffix": "(copy)",
+      "deleteInUse": "Students are using this route ({{count}}). They will be left without a route if you delete it."
     },
     "students": {
       "title": "Students",

@@ -22,6 +22,7 @@ import {
   useSetNotificationEnabled,
 } from '@/hooks/useAdmin'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { EmailTemplates } from '@/pages/admin/EmailTemplates'
 import { pillTabClass, pillTabListClass } from '@/lib/tabs'
 import type { NotificationLogEntry, NotificationTypeKey } from '@/api/admin'
 
@@ -37,7 +38,7 @@ const TYPES: NotificationTypeKey[] = [
   'operator_signed_up',
 ]
 
-type Tab = 'types' | 'log'
+type Tab = 'types' | 'templates' | 'log'
 
 const statusVariant: Record<NotificationLogEntry['status'], 'success' | 'destructive' | 'outline' | 'info'> = {
   sent: 'success',
@@ -58,12 +59,17 @@ export function AdminMessages() {
         <button type="button" onClick={() => setTab('types')} className={pillTabClass(tab === 'types')}>
           {t('admin.messages.tabTypes')}
         </button>
+        <button type="button" onClick={() => setTab('templates')} className={pillTabClass(tab === 'templates')}>
+          {t('admin.messages.tabTemplates')}
+        </button>
         <button type="button" onClick={() => setTab('log')} className={pillTabClass(tab === 'log')}>
           {t('admin.messages.tabLog')}
         </button>
       </nav>
 
-      {tab === 'types' ? <MessageTypes /> : <SentLog />}
+      {tab === 'types' && <MessageTypes />}
+      {tab === 'templates' && <EmailTemplates />}
+      {tab === 'log' && <SentLog />}
     </div>
   )
 }

@@ -1,8 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   addOperatorNote,
   getParentReport,
   getNotificationOverview,
+  listEmailTemplates,
+  previewEmailTemplate,
+  resetEmailTemplate,
+  saveEmailTemplate,
+  type EmailBlockKey,
   listNotificationLog,
   setNotificationEnabled,
   getIntegrationSettings,
@@ -423,5 +428,41 @@ export function useParentReport(operatorId?: number) {
     queryKey: ['admin-parent-report', operatorId ?? 'all'],
     queryFn: () => getParentReport(operatorId),
     placeholderData: (previous) => previous,
+  })
+}
+
+export function useEmailTemplates() {
+  return useQuery({ queryKey: ['admin-email-templates'], queryFn: listEmailTemplates })
+}
+
+/** The email drawn with sample data; follows an edit that is not saved yet. */
+export function useEmailPreview(template: string, blocks: Partial<Record<EmailBlockKey, string>>) {
+  return useQuery({
+    queryKey: ['admin-email-preview', template, blocks],
+    queryFn: () => previewEmailTemplate(template, blocks),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useSaveEmailTemplate() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ template, blocks }: { template: string; blocks: Partial<Record<EmailBlockKey, string>> }) =>
+      saveEmailTemplate(template, blocks),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-email-templates'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
+  })
+}
+
+export function useResetEmailTemplate() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (template: string) => resetEmailTemplate(template),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-email-templates'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] })
+    },
   })
 }
