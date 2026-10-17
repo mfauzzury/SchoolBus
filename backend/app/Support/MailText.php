@@ -15,7 +15,13 @@ class MailText
     /** For message bodies: Markdown characters are escaped and line breaks flattened. */
     public static function plain(?string $value): string
     {
-        return preg_replace('/([\\\\`*_{}\\[\\]()#+!|<>~])/', '\\\\$1', self::oneLine($value)) ?? '';
+        return self::escape(self::oneLine($value));
+    }
+
+    /** Escapes Markdown characters only; spacing is left alone so it can be used on part of a sentence. */
+    public static function escape(string $value): string
+    {
+        return preg_replace('/([\\\\`*_{}\\[\\]()#+!|<>~])/', '\\\\$1', $value) ?? '';
     }
 
     /** For subject lines: plain text already, but must stay on one line. */

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\EmailTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 
 class PaymentReminder extends PlatformNotification
@@ -23,15 +24,23 @@ class PaymentReminder extends PlatformNotification
 
     public function subjectLine(): string
     {
-        return $this->kind === self::OVERDUE
-            ? 'Bil tertunggak / Overdue bill - '.self::oneLine($this->operator)
-            : 'Peringatan bayaran / Payment reminder - '.self::oneLine($this->operator);
+        return EmailTemplates::text($this->template(), 'subject', $this->values());
+    }
+
+    /** Which wording to use: the due-soon reminder and the overdue one are edited separately. */
+    private function template(): string
+    {
+        return $this->kind === self::OVERDUE ? 'reminder_overdue' : 'reminder_due_soon';
+    }
+
+    private function values(): array
+    {
+        return ['operator' => $this->operator, 'parent' => $this->parent];
     }
 
     public function toMail(object $notifiable): MailMessage
     {
-        $overdue = $this->kind === self::OVERDUE;
-        $operator = self::plain($this->operator);
+        $template = $this->template();
 
         $rows = array_map(
             fn ($line) => [$line['student'], self::date($line['due_date']), self::money($line['amount'])],
@@ -41,15 +50,11 @@ class PaymentReminder extends PlatformNotification
         return (new MailMessage)
             ->subject($this->subjectLine())
             ->greeting('Salam '.self::plain($this->parent).',')
-            ->line($overdue
-                ? "Bil berikut dengan {$operator} telah tamat tempoh:"
-                : "Peringatan mesra: bil berikut dengan {$operator} hampir tamat tempoh:")
+            ->line(EmailTemplates::line($template, 'intro', $this->values()))
             ->line(self::table(['Murid / Student', 'Tarikh akhir / Due', 'Baki / Balance'], $rows))
-            ->action('Bayar sekarang / Pay now', self::url('/parent/invoices'))
-            ->line($overdue
-                ? "The bills listed above with {$operator} are now overdue."
-                : "A friendly reminder: the bills listed above with {$operator} are due soon.")
-            ->line('Jika anda sudah membayar, sila abaikan e-mel ini. / If you have already paid, please ignore this email.')
+            ->action(EmailTemplates::text($template, 'button'), self::url('/parent/invoices'))
+            ->line(EmailTemplates::line($template, 'outro', $this->values()))
+            ->line(EmailTemplates::line($template, 'note', $this->values()))
             ->salutation(self::brand());
     }
 }
