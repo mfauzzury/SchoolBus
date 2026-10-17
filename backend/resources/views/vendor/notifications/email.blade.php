@@ -35,7 +35,7 @@
 @if (! empty($salutation))
 {{ $salutation }}
 @else
-{{ config('app.name') }}
+{{ \App\Support\Brand::name() }}
 @endif
 
 {{-- Subcopy --}}

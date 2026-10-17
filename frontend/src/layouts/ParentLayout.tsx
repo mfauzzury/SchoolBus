@@ -2,7 +2,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
 import { useMyInvoices } from '@/hooks/useParentPortal'
-import { BrandMark } from '@/layouts/MarketingLayout'
+import { BrandLogo } from '@/components/BrandLogo'
 import { ParentBottomNav } from '@/components/ParentBottomNav'
 import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
@@ -34,8 +34,7 @@ export function ParentLayout() {
       <header className="hidden border-b lg:block">
         <div className="mx-auto flex max-w-content items-center justify-between gap-2 px-4 py-4 lg:px-8">
           <Link to="/" className="flex shrink-0 items-center gap-2 font-medium hover:text-primary">
-            <BrandMark />
-            BasSekolah.my
+            <BrandLogo />
           </Link>
 
           <nav className="flex items-center gap-4">

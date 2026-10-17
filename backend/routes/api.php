@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardControll
 use App\Http\Controllers\Api\Admin\ImpersonationController;
 use App\Http\Controllers\Api\Admin\IntegrationSettingsController;
 use App\Http\Controllers\Api\Admin\OperatorController as AdminOperatorController;
+use App\Http\Controllers\Api\Admin\BrandController;
 use App\Http\Controllers\Api\Admin\EmailTemplateController;
 use App\Http\Controllers\Api\Admin\NotificationController;
 use App\Http\Controllers\Api\Admin\OperatorNoteController;
@@ -43,6 +44,7 @@ use App\Http\Controllers\Api\ParentPortal\QuoteController;
 use App\Http\Controllers\Api\ParentPortal\RouteController as ParentRouteController;
 use App\Http\Controllers\Api\ParentPortal\StudentApplicationController as ParentStudentApplicationController;
 use App\Http\Controllers\Api\ParentPortal\StudentController as ParentStudentController;
+use App\Http\Controllers\Api\Public\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\Public\ContactController;
 use App\Http\Controllers\Api\Public\EmailCodeController;
 use App\Http\Controllers\Api\Public\OperatorRegistrationController;
@@ -64,6 +66,9 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset']);
 Route::post('/register-operator', [OperatorRegistrationController::class, 'store'])->middleware('throttle:public-forms');
 
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:public-forms');
+
+// The platform's name and logo, for the login page and the mobile apps before anyone logs in.
+Route::get('/brand', [PublicBrandController::class, 'show']);
 
 Route::get('/register/{operatorCode}', [RegistrationController::class, 'show']);
 Route::post('/register/{operatorCode}', [RegistrationController::class, 'store']);
@@ -162,6 +167,14 @@ Route::middleware('auth:sanctum')->group(function () {
             ->middleware('permission:reports.view');
 
         // Owner only: which automatic messages are on, and what was sent.
+        // Owner only: the platform's own name, icon and logo.
+        Route::middleware('permission:settings.manage')->prefix('brand')->group(function () {
+            Route::get('/', [BrandController::class, 'show']);
+            Route::put('/', [BrandController::class, 'update']);
+            Route::post('{part}', [BrandController::class, 'upload']);
+            Route::delete('{part}', [BrandController::class, 'destroy']);
+        });
+
         Route::middleware('permission:settings.manage')->prefix('notifications')->group(function () {
             Route::get('/', [NotificationController::class, 'index']);
             Route::get('log', [NotificationController::class, 'log']);

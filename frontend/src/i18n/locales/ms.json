@@ -871,7 +871,9 @@
         "integration_removed": "Membuang tetapan e-mel / WhatsApp",
         "notification_type_toggled": "Menghidup atau mematikan jenis mesej",
         "email_template_updated": "Mengubah templat e-mel",
-        "email_template_reset": "Menetapkan semula templat e-mel ke ayat asal"
+        "email_template_reset": "Menetapkan semula templat e-mel ke ayat asal",
+        "brand_updated": "Mengubah jenama platform",
+        "brand_reset": "Menetapkan semula sebahagian jenama platform"
         }
       },
       "notes": {
@@ -1013,6 +1015,39 @@
         "mailNotSent": "E-mel ditulis ke fail, tidak dihantar. Set semula kata laluan dan jemputan tidak akan sampai kepada sesiapa.",
         "debugOn": "Mod nyahpepijat hidup dalam pengeluaran. Matikannya: ia boleh mendedahkan butiran peribadi pada halaman ralat.",
         "tabStatus": "Status",
+        "tabBrand": "Jenama",
+        "brand": {
+          "intro": "Nama dan logo platform anda. Dipaparkan di laman web, dalam e-mel dan dalam aplikasi mudah alih. Apa yang tidak ditetapkan akan guna jenama BasSekolah.",
+          "previewTitle": "Rupanya",
+          "previewHelp": "Pastikan logo jelas pada kedua-duanya. Logo bertulisan gelap akan hilang pada skrin gelap, jadi logo lutsinar yang sesuai untuk kedua-duanya adalah terbaik.",
+          "onLight": "Skrin cerah",
+          "onDark": "Skrin gelap",
+          "nameTitle": "Nama",
+          "name": "Nama platform",
+          "nameHelp": "Digunakan pada pengepala, subjek dan tandatangan e-mel. Biarkan kosong untuk guna {{name}}.",
+          "icon": {
+            "title": "Ikon segi empat",
+            "help": "Untuk tab pelayar dan telefon. Segi empat sama, sekurang-kurangnya 512 × 512 px."
+          },
+          "logo": {
+            "title": "Logo lebar",
+            "help": "Untuk pengepala laman web dan e-mel. Lebih lebar daripada tinggi, sekurang-kurangnya 300 px lebar. Masukkan nama dalam imej."
+          },
+          "usingDefault": "Menggunakan tanda BasSekolah",
+          "imageFile": "PNG, JPG atau WebP (diperlukan untuk e-mel dan aplikasi)",
+          "svgFile": "SVG (pilihan, lebih tajam di laman web)",
+          "uploaded": "Dimuat naik",
+          "notSet": "Belum ditetapkan",
+          "optional": "Pilihan",
+          "uploadImage": "Muat naik imej",
+          "replaceImage": "Ganti imej",
+          "addSvg": "Tambah SVG",
+          "replaceSvg": "Ganti SVG",
+          "removeSvg": "Buang SVG",
+          "useDefault": "Guna tanda BasSekolah",
+          "svgNeedsImage": "Muat naik PNG, JPG atau WebP dahulu. SVG ialah tambahan untuk laman web.",
+          "saveError": "Tidak dapat disimpan. Sila cuba lagi."
+        },
         "tabEmail": "E-mel (Brevo)",
         "tabWhatsapp": "WhatsApp",
         "loadError": "Tidak dapat memuatkan ini. Sila muat semula halaman. Jika ia berterusan, pelayan mungkin perlukan kemas kini pangkalan data: maklumkan pembangun anda.",
