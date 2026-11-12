@@ -51,4 +51,13 @@ class BillingConfigControllerTest extends TestCase
         $this->actingAs($staff)->getJson('/api/operator/billing-config')->assertOk();
         $this->actingAs($staff)->putJson('/api/operator/billing-config', ['due_day' => 5])->assertStatus(403);
     }
+
+    public function test_bills_are_automatic_until_the_admin_switches_to_manual(): void
+    {
+        $admin = $this->createOperatorAdmin($this->createTenant());
+
+        $this->actingAs($admin)->getJson('/api/operator/billing-config')->assertJsonPath('mode', 'auto');
+        $this->putJson('/api/operator/billing-config', ['mode' => 'manual'])->assertOk()->assertJsonPath('mode', 'manual')->assertJsonPath('due_day', 7);
+        $this->putJson('/api/operator/billing-config', ['mode' => 'sometimes'])->assertStatus(422)->assertJsonValidationErrors(['mode']);
+    }
 }

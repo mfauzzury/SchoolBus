@@ -179,6 +179,9 @@ class BusOperator extends Model
     public const DEFAULT_BILLING_CONFIG = [
         'due_day' => 7,
         'billed_months' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        // 'auto': the daily job makes every bill. 'manual': the operator
+        // reviews the Next bills list and creates them.
+        'mode' => 'auto',
     ];
 
     /**
@@ -195,7 +198,39 @@ class BusOperator extends Model
         return [
             'due_day' => (int) ($config['due_day'] ?? self::DEFAULT_BILLING_CONFIG['due_day']),
             'billed_months' => array_values(array_unique($months)),
+            'mode' => ($config['mode'] ?? null) === 'manual' ? 'manual' : 'auto',
         ];
+    }
+
+    /** True when this operator creates bills themselves instead of the daily job. */
+    public function billsAreManual(): bool
+    {
+        return $this->resolvedBillingConfig()['mode'] === 'manual';
+    }
+
+    /**
+     * When bills were last made and how, for the Next bills page. Kept in the
+     * billing settings JSON; a quiet day with nothing to bill doesn't overwrite it.
+     *
+     * @return array{at: string, source: string, generated: int, skipped: int}|null
+     */
+    public function lastBillRun(): ?array
+    {
+        return ($this->billing_config ?? [])['last_run'] ?? null;
+    }
+
+    public function recordBillRun(string $source, int $generated, int $skipped): void
+    {
+        $this->update([
+            'billing_config' => array_replace($this->billing_config ?? [], [
+                'last_run' => [
+                    'at' => now()->toIso8601String(),
+                    'source' => $source,
+                    'generated' => $generated,
+                    'skipped' => $skipped,
+                ],
+            ]),
+        ]);
     }
 
     /** The things the dashboard's "needs attention" list (and the matching list filter) is made of. */

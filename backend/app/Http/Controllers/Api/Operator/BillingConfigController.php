@@ -19,6 +19,7 @@ class BillingConfigController extends Controller
             'due_day' => 'sometimes|integer|min:1|max:28',
             'billed_months' => 'sometimes|array|min:1',
             'billed_months.*' => 'integer|distinct|min:1|max:12',
+            'mode' => 'sometimes|in:auto,manual',
         ]);
 
         $tenant = $request->user()->busOperator;

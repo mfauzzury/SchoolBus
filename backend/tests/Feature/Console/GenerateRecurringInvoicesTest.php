@@ -151,4 +151,20 @@ class GenerateRecurringInvoicesTest extends TestCase
         $this->runBilling();
         $this->assertSame(1, $student->invoices()->count());
     }
+
+    public function test_operators_who_create_their_own_bills_are_left_alone_and_others_record_the_run(): void
+    {
+        $this->travelTo('2026-10-01 02:00:00');
+        $manual = $this->createTenant(['billing_config' => ['mode' => 'manual']]);
+        $manualStudent = $this->createBillableStudent($manual);
+        $auto = $this->createTenant();
+        $autoStudent = $this->createBillableStudent($auto);
+
+        $this->runBilling();
+
+        $this->assertSame(0, $manualStudent->invoices()->count());
+        $this->assertNull($manual->fresh()->lastBillRun());
+        $this->assertSame(1, $autoStudent->invoices()->count());
+        $this->assertSame(['source' => 'auto', 'generated' => 1, 'skipped' => 0], collect($auto->fresh()->lastBillRun())->only(['source', 'generated', 'skipped'])->all());
+    }
 }

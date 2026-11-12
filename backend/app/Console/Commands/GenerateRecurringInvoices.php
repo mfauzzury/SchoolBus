@@ -47,12 +47,20 @@ class GenerateRecurringInvoices extends Command
         $count = 0;
         $skipped = 0;
         $issued = [];
+        // Per operator, so each one's Next bills page can say what last happened.
+        $byOperator = [];
+        $operators = [];
 
         Student::query()
             ->where('enrollment_status', 'active')
             ->with(['busOperator', 'route'])
-            ->chunkById(100, function ($students) use ($generator, $month, &$count, &$skipped, &$issued) {
+            ->chunkById(100, function ($students) use ($generator, $month, &$count, &$skipped, &$issued, &$byOperator, &$operators) {
                 foreach ($students as $student) {
+                    // These operators review and create their own bills (Next bills page).
+                    if ($student->busOperator->billsAreManual()) {
+                        continue;
+                    }
+
                     if (! $generator->isBillable($student, $month) || $generator->invoiceForMonth($student, $month)) {
                         continue;
                     }
@@ -60,9 +68,13 @@ class GenerateRecurringInvoices extends Command
                     try {
                         $issued[] = $generator->generateForMonth($student, $month);
                         $count++;
+                        $operators[$student->tenant_id] = $student->busOperator;
+                        $byOperator[$student->tenant_id]['generated'] = ($byOperator[$student->tenant_id]['generated'] ?? 0) + 1;
                     } catch (RuntimeException $e) {
                         // One student without a route or price must not stop everyone else's bills.
                         $skipped++;
+                        $operators[$student->tenant_id] = $student->busOperator;
+                        $byOperator[$student->tenant_id]['skipped'] = ($byOperator[$student->tenant_id]['skipped'] ?? 0) + 1;
                         $this->warn("Skipped student #{$student->id}: {$e->getMessage()}");
                     }
                 }
@@ -70,6 +82,10 @@ class GenerateRecurringInvoices extends Command
 
         // After the whole run, so a parent with three children gets one email, not three.
         $notifier->billsIssued($issued);
+
+        foreach ($byOperator as $tenantId => $numbers) {
+            $operators[$tenantId]->recordBillRun('auto', $numbers['generated'] ?? 0, $numbers['skipped'] ?? 0);
+        }
 
         SystemStatus::record('invoices_generate_recurring', [
             'ok' => true,

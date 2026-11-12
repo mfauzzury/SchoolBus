@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\Operator\DashboardController;
 use App\Http\Controllers\Api\Operator\DiscountConfigController;
 use App\Http\Controllers\Api\Operator\InvoiceController;
 use App\Http\Controllers\Api\Operator\InvoiceItemController;
+use App\Http\Controllers\Api\Operator\NextBillsController;
 use App\Http\Controllers\Api\Operator\OutstandingController;
 use App\Http\Controllers\Api\Operator\PaymentController;
 use App\Http\Controllers\Api\Operator\ProfileController;
@@ -205,6 +206,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::apiResource('routes', RouteController::class)->except(['store', 'update', 'destroy']);
             Route::get('discount-config', [DiscountConfigController::class, 'show']);
             Route::get('billing-config', [BillingConfigController::class, 'show']);
+            Route::get('next-bills', [NextBillsController::class, 'index']);
+            Route::get('next-bills/summary', [NextBillsController::class, 'summary']);
             Route::get('invoices', [InvoiceController::class, 'index']);
             Route::get('invoices/export', [InvoiceController::class, 'export']);
             Route::get('invoices/{invoice}', [InvoiceController::class, 'show']);
@@ -225,6 +228,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::apiResource('routes', RouteController::class)->only(['store', 'update', 'destroy']);
                 Route::put('discount-config', [DiscountConfigController::class, 'update']);
                 Route::put('billing-config', [BillingConfigController::class, 'update']);
+                Route::post('next-bills', [NextBillsController::class, 'store']);
                 Route::post('invoices', [InvoiceController::class, 'store']);
                 Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store']);
                 Route::post('invoices/{invoice}/items', [InvoiceItemController::class, 'store']);

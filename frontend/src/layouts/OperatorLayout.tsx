@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import {
   Building2,
+  CalendarClock,
   Bus,
   ClipboardList,
   Eye,
@@ -15,6 +16,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
 import { useStudentApplications } from '@/hooks/useStudentApplications'
+import { useNextBillsSummary } from '@/hooks/useNextBills'
 import { useStopImpersonation } from '@/hooks/useAdmin'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 import { SidebarShell, type SidebarGroup } from '@/components/SidebarShell'
@@ -26,6 +28,7 @@ export function OperatorLayout() {
   const { data } = useMe()
   const logout = useLogout()
   const { data: pendingApplications } = useStudentApplications({ status: 'pending' })
+  const { data: nextBills } = useNextBillsSummary()
   const stopImpersonation = useStopImpersonation()
 
   const tenant = data?.tenant
@@ -70,7 +73,16 @@ export function OperatorLayout() {
     },
     {
       title: t('nav.groupMoney'),
-      items: [{ to: '/operator/finances', label: t('nav.finances'), icon: Wallet }],
+      items: [
+        { to: '/operator/finances', label: t('nav.finances'), icon: Wallet },
+        {
+          to: '/operator/next-bills',
+          label: t('nav.nextBills'),
+          icon: CalendarClock,
+          // Only for operators who create their own bills, and only while some are waiting.
+          badge: nextBills?.waiting ? nextBills.waiting : undefined,
+        },
+      ],
     },
     {
       title: t('nav.groupSettings'),

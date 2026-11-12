@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useBillingConfig, useUpdateBillingConfig } from '@/hooks/useBillingConfig'
@@ -133,11 +134,13 @@ function BillingConfigCard() {
   const updateConfig = useUpdateBillingConfig()
   const [dueDay, setDueDay] = useState('7')
   const [billedMonths, setBilledMonths] = useState<number[]>(MONTHS)
+  const [mode, setMode] = useState<'auto' | 'manual'>('auto')
 
   useEffect(() => {
     if (config) {
       setDueDay(String(config.due_day))
       setBilledMonths(config.billed_months)
+      setMode(config.mode)
     }
   }, [config])
 
@@ -153,7 +156,7 @@ function BillingConfigCard() {
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()
     if (!valid) return
-    updateConfig.mutate({ due_day: Number(dueDay), billed_months: billedMonths })
+    updateConfig.mutate({ due_day: Number(dueDay), billed_months: billedMonths, mode })
   }
 
   return (
@@ -167,7 +170,26 @@ function BillingConfigCard() {
           <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
         ) : (
           <form className="flex flex-col gap-4" onSubmit={onSubmit}>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium">{t('operator.settings.billMode')}</p>
+              <RadioGroup
+                className="flex-col items-start gap-3"
+                value={mode}
+                onValueChange={(value) => setMode(value as 'auto' | 'manual')}
+                disabled={!isAdmin}
+              >
+                <div>
+                  <RadioGroupItem value="auto">{t('operator.settings.billModeAuto')}</RadioGroupItem>
+                  <p className="ml-6 text-xs text-muted-foreground">{t('operator.settings.billModeAutoHint')}</p>
+                </div>
+                <div>
+                  <RadioGroupItem value="manual">{t('operator.settings.billModeManual')}</RadioGroupItem>
+                  <p className="ml-6 text-xs text-muted-foreground">{t('operator.settings.billModeManualHint')}</p>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="flex flex-col gap-1.5 border-t pt-4">
               <Label htmlFor="due_day">{t('operator.settings.dueDay')}</Label>
               <Input
                 id="due_day"
