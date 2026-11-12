@@ -78,3 +78,16 @@ export async function alightStudent(tripId: number, studentId: number): Promise<
   )
   return data
 }
+
+export interface LocationPing {
+  lat: number
+  lng: number
+  // Degrees, 0-360. Null when the phone can't tell which way it is moving.
+  heading: number | null
+  // km/h, as parents see it. Null when unknown.
+  speed: number | null
+}
+
+export async function postLocation(tripId: number, ping: LocationPing): Promise<void> {
+  await apiClient.post(`/api/driver/trips/${tripId}/location`, ping)
+}

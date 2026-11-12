@@ -112,6 +112,21 @@ class TripControllerTest extends TestCase
         $this->assertEquals(3.15, (float) $trip->location()->first()->lat);
     }
 
+    public function test_location_is_refused_unless_the_trip_is_in_progress(): void
+    {
+        $tenant = $this->createTenant();
+        [$driverUser, $staff, $route] = $this->setUpDriverWithRoute($tenant);
+        $notStarted = Trip::create(['tenant_id' => $tenant->id, 'route_id' => $route->id, 'staff_id' => $staff->id, 'direction' => 'pickup', 'status' => 'scheduled']);
+        $finished = Trip::create(['tenant_id' => $tenant->id, 'route_id' => $route->id, 'staff_id' => $staff->id, 'direction' => 'dropoff', 'status' => 'completed']);
+
+        foreach ([$notStarted, $finished] as $trip) {
+            $this->actingAs($driverUser)->postJson("/api/driver/trips/{$trip->id}/location", ['lat' => 3.1390, 'lng' => 101.6869])
+                ->assertStatus(409);
+        }
+
+        $this->assertSame(0, \App\Models\TripLocation::count());
+    }
+
     public function test_roster_orders_students_by_stop_sequence_and_reflects_boarding_status(): void
     {
         $tenant = $this->createTenant();

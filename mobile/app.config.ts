@@ -30,7 +30,35 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: 'bassekolah',
     scheme: app.scheme,
     ios: { ...config.ios, bundleIdentifier: app.id },
-    android: { ...config.android, package: app.id },
+    android: {
+      ...config.android,
+      package: app.id,
+      // The location package is installed for the driver app, and Expo adds its
+      // permissions to every app that has it. The parent app never uses location.
+      ...(variant === 'parent'
+        ? { blockedPermissions: ['android.permission.ACCESS_COARSE_LOCATION', 'android.permission.ACCESS_FINE_LOCATION'] }
+        : {}),
+    },
     extra: { ...config.extra, appVariant: variant },
+    plugins: [
+      ...(config.plugins ?? []),
+      // Only the driver app follows the bus, so only it asks for location.
+      ...(variant === 'driver'
+        ? ([
+            [
+              'expo-location',
+              {
+                locationAlwaysAndWhenInUsePermission:
+                  'BasSekolah Driver shares the bus location with parents while a trip is running.',
+                locationWhenInUsePermission:
+                  'BasSekolah Driver shares the bus location with parents while a trip is running.',
+                isIosBackgroundLocationEnabled: true,
+                isAndroidBackgroundLocationEnabled: true,
+                isAndroidForegroundServiceEnabled: true,
+              },
+            ],
+          ] as NonNullable<ExpoConfig['plugins']>)
+        : []),
+    ],
   }
 }

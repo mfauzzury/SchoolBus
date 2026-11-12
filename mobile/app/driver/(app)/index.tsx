@@ -1,8 +1,10 @@
+import { useEffect } from 'react'
 import { View, Text, Pressable, ActivityIndicator, StyleSheet, FlatList } from 'react-native'
 import { router } from 'expo-router'
 import { useMe, useLogout } from '../../../src/hooks/useAuth'
 import { useStartTrip, useTodayTrips } from '../../../src/hooks/useTrips'
 import type { Trip } from '../../../src/api/trips'
+import { startTracking, stopTracking, trackedTripId } from '../../../src/lib/tripTracking'
 
 const DIRECTION_LABEL: Record<Trip['direction'], string> = {
   pickup: 'Morning pickup',
@@ -49,6 +51,17 @@ export default function TodayScreen() {
   const { data: me } = useMe()
   const { data: trips, isLoading, isError, refetch, isRefetching } = useTodayTrips()
   const logout = useLogout()
+
+  // Keep location sharing in step with the trips: pick it back up if the app was
+  // closed mid-trip, and stop it if no trip is running any more.
+  const activeTripId = trips?.find((trip) => trip.status === 'active')?.id
+  useEffect(() => {
+    if (!trips) return
+    void (async () => {
+      if (activeTripId === undefined) await stopTracking()
+      else if ((await trackedTripId()) !== activeTripId) await startTracking(activeTripId)
+    })()
+  }, [trips, activeTripId])
 
   return (
     <View style={styles.container}>

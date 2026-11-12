@@ -70,6 +70,10 @@ class TripController extends Controller
     {
         $this->authorizeTrip($request, $trip);
 
+        // A trip that isn't running has no bus to follow. The app stops sharing
+        // location when it sees this, so a forgotten tracker can't run all day.
+        abort_unless($trip->status === 'active', 409, 'This trip is not in progress.');
+
         $data = $request->validate([
             'lat' => 'required|numeric|between:-90,90',
             'lng' => 'required|numeric|between:-180,180',

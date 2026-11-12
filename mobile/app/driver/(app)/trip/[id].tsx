@@ -5,7 +5,11 @@ import {
   useBoardStudent,
   useEndTrip,
   useRoster,
+  useTodayTrips,
 } from '../../../../src/hooks/useTrips'
+import { useTripTracking, type SharingState } from '../../../../src/hooks/useTripTracking'
+import { stopTracking } from '../../../../src/lib/tripTracking'
+import { colors } from '../../../../src/theme'
 import type { RosterStudent } from '../../../../src/api/trips'
 
 function StudentRow({
@@ -55,9 +59,52 @@ function StudentRow({
   )
 }
 
+/** Tells the driver, in plain words, whether parents can see the bus. */
+function SharingStatus({ state, onRetry }: { state: SharingState; onRetry: () => void }) {
+  if (state === 'sharing') {
+    return (
+      <View style={[styles.sharing, { backgroundColor: colors.successSoft }]}>
+        <Text style={[styles.sharingText, { color: colors.success }]}>Parents can see the bus on the map.</Text>
+      </View>
+    )
+  }
+
+  if (state === 'starting') {
+    return (
+      <View style={[styles.sharing, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.sharingText, { color: colors.muted }]}>Turning on location…</Text>
+      </View>
+    )
+  }
+
+  return (
+    <View style={[styles.sharing, { backgroundColor: colors.dangerSoft }]}>
+      <Text style={[styles.sharingText, { color: colors.danger }]}>
+        {state === 'denied'
+          ? 'Location is off, so parents cannot see the bus. Please allow location for this app.'
+          : 'Could not turn on location. Parents cannot see the bus.'}
+      </Text>
+      <View style={styles.sharingActions}>
+        {state === 'denied' && (
+          <Pressable onPress={() => Linking.openSettings()}>
+            <Text style={styles.sharingLink}>Open settings</Text>
+          </Pressable>
+        )}
+        <Pressable onPress={onRetry}>
+          <Text style={styles.sharingLink}>Try again</Text>
+        </Pressable>
+      </View>
+    </View>
+  )
+}
+
 export default function TripScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const tripId = Number(id)
+
+  const { data: trips } = useTodayTrips()
+  const inProgress = trips?.find((trip) => trip.id === tripId)?.status === 'active'
+  const sharing = useTripTracking(tripId, inProgress)
 
   const { data: students, isLoading, isError } = useRoster(tripId)
   const endTrip = useEndTrip()
@@ -65,7 +112,12 @@ export default function TripScreen() {
   const alightStudent = useAlightStudent(tripId)
 
   const onEndTrip = () => {
-    endTrip.mutate(tripId, { onSuccess: () => router.back() })
+    endTrip.mutate(tripId, {
+      onSuccess: async () => {
+        await stopTracking()
+        router.back()
+      },
+    })
   }
 
   return (
@@ -82,6 +134,8 @@ export default function TripScreen() {
           <Text style={styles.endButtonText}>{endTrip.isPending ? 'Ending…' : 'End trip'}</Text>
         </Pressable>
       </View>
+
+      {inProgress && <SharingStatus state={sharing.state} onRetry={sharing.retry} />}
 
       <Text style={styles.sectionTitle}>Roster</Text>
 
@@ -114,6 +168,10 @@ const styles = StyleSheet.create({
   back: { fontSize: 15, color: '#f59e0b', fontWeight: '600' },
   endButton: { backgroundColor: '#dc2626', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 14 },
   endButtonText: { color: 'white', fontWeight: '600', fontSize: 13 },
+  sharing: { borderRadius: 8, padding: 12, marginBottom: 16, gap: 8 },
+  sharingText: { fontSize: 14, fontWeight: '500' },
+  sharingActions: { flexDirection: 'row', gap: 20 },
+  sharingLink: { fontSize: 14, fontWeight: '700', color: colors.text, textDecorationLine: 'underline' },
   sectionTitle: { fontSize: 13, fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: 8 },
   center: { textAlign: 'center', marginTop: 40, color: '#6b7280' },
   studentRow: {
