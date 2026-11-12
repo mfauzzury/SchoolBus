@@ -1,32 +1,56 @@
-import { View, Text, Pressable, ActivityIndicator, StyleSheet, FlatList, Image, Linking } from 'react-native'
+import { View, Text, Pressable, ActivityIndicator, StyleSheet, FlatList, Image, Linking, Alert } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
-import {
-  useAlightStudent,
-  useBoardStudent,
-  useEndTrip,
-  useRoster,
-  useTodayTrips,
-} from '../../../../src/hooks/useTrips'
+import { useBoardingRoster, useEndTrip, useTodayTrips } from '../../../../src/hooks/useTrips'
 import { useTripTracking, type SharingState } from '../../../../src/hooks/useTripTracking'
+import { queueStatus } from '../../../../src/lib/boardingQueue'
 import { stopTracking } from '../../../../src/lib/tripTracking'
+import type { RosterStudent, StudentStatus, TripDirection } from '../../../../src/api/trips'
 import { colors } from '../../../../src/theme'
-import type { RosterStudent } from '../../../../src/api/trips'
+
+/**
+ * The words for each step depend on the trip. The two steps are the same in the
+ * data (on the bus, then off it) but a driver thinks about them differently:
+ * in the morning a child is picked up and then reaches school; in the
+ * afternoon a child gets on at school and is dropped off at home.
+ */
+const WORDS: Record<
+  TripDirection,
+  { title: string; first: string; second: string; secondDone: string; firstDone: string }
+> = {
+  pickup: {
+    title: 'Morning pickup',
+    first: 'Picked up',
+    second: 'At school',
+    firstDone: 'on the bus',
+    secondDone: 'at school',
+  },
+  dropoff: {
+    title: 'Afternoon dropoff',
+    first: 'On the bus',
+    second: 'Dropped off',
+    firstDone: 'on the bus',
+    secondDone: 'dropped off',
+  },
+}
+
+// Children still to do come first, then those on the bus, then those finished.
+const ORDER: Record<StudentStatus, number> = { waiting: 0, boarded: 1, alighted: 2, absent: 2 }
 
 function StudentRow({
   student,
-  onBoard,
-  onAlight,
-  isUpdating,
+  direction,
+  onSet,
 }: {
   student: RosterStudent
-  onBoard: () => void
-  onAlight: () => void
-  isUpdating: boolean
+  direction: TripDirection
+  onSet: (status: StudentStatus) => void
 }) {
+  const words = WORDS[direction]
   const classLine = [student.class_name, student.teacher_name].filter(Boolean).join(' · ')
+  const done = student.status === 'alighted' || student.status === 'absent'
 
   return (
-    <View style={styles.studentRow}>
+    <View style={[styles.studentRow, done && styles.studentRowDone]}>
       {student.avatar_url ? (
         <Image source={{ uri: student.avatar_url }} style={styles.avatar} />
       ) : (
@@ -34,6 +58,7 @@ function StudentRow({
           <Text style={styles.avatarInitial}>{student.full_name.charAt(0).toUpperCase()}</Text>
         </View>
       )}
+
       <View style={styles.studentInfo}>
         <Text style={styles.studentName}>{student.full_name}</Text>
         <Text style={styles.stopName}>{student.pickup_stop?.name ?? 'No stop assigned'}</Text>
@@ -44,19 +69,66 @@ function StudentRow({
           </Pressable>
         )}
       </View>
-      {student.alighted ? (
-        <Text style={styles.alightedBadge}>Alighted</Text>
-      ) : student.boarded ? (
-        <Pressable style={styles.alightButton} onPress={onAlight} disabled={isUpdating}>
-          <Text style={styles.alightButtonText}>Alight</Text>
-        </Pressable>
-      ) : (
-        <Pressable style={styles.boardButton} onPress={onBoard} disabled={isUpdating}>
-          <Text style={styles.boardButtonText}>Board</Text>
-        </Pressable>
-      )}
+
+      <View style={styles.actions}>
+        {student.status === 'waiting' && (
+          <>
+            <Pressable style={styles.primaryButton} onPress={() => onSet('boarded')}>
+              <Text style={styles.primaryButtonText}>{words.first}</Text>
+            </Pressable>
+            <Pressable hitSlop={8} onPress={() => onSet('absent')}>
+              <Text style={styles.link}>Not coming</Text>
+            </Pressable>
+          </>
+        )}
+
+        {student.status === 'boarded' && (
+          <>
+            <Pressable style={[styles.primaryButton, styles.secondStep]} onPress={() => onSet('alighted')}>
+              <Text style={[styles.primaryButtonText, styles.secondStepText]}>{words.second}</Text>
+            </Pressable>
+            <Pressable hitSlop={8} onPress={() => onSet('waiting')}>
+              <Text style={styles.link}>Undo</Text>
+            </Pressable>
+          </>
+        )}
+
+        {student.status === 'alighted' && (
+          <>
+            <Text style={styles.doneBadge}>✓ {words.second}</Text>
+            <Pressable hitSlop={8} onPress={() => onSet('boarded')}>
+              <Text style={styles.link}>Undo</Text>
+            </Pressable>
+          </>
+        )}
+
+        {student.status === 'absent' && (
+          <>
+            <Text style={styles.absentBadge}>Not coming</Text>
+            <Pressable hitSlop={8} onPress={() => onSet('waiting')}>
+              <Text style={styles.link}>Undo</Text>
+            </Pressable>
+          </>
+        )}
+      </View>
     </View>
   )
+}
+
+/** "3 of 12 picked up · 2 at school · 1 not coming" */
+function summaryLine(students: RosterStudent[], direction: TripDirection): string {
+  const words = WORDS[direction]
+  const onBus = students.filter((s) => s.status === 'boarded' || s.status === 'alighted').length
+  const finished = students.filter((s) => s.status === 'alighted').length
+  const absent = students.filter((s) => s.status === 'absent').length
+
+  return [
+    `${onBus} of ${students.length} ${words.first.toLowerCase()}`,
+    finished > 0 && `${finished} ${words.secondDone}`,
+    absent > 0 && `${absent} not coming`,
+  ]
+    .filter(Boolean)
+    .join(' · ')
 }
 
 /** Tells the driver, in plain words, whether parents can see the bus. */
@@ -103,21 +175,44 @@ export default function TripScreen() {
   const tripId = Number(id)
 
   const { data: trips } = useTodayTrips()
-  const inProgress = trips?.find((trip) => trip.id === tripId)?.status === 'active'
+  const trip = trips?.find((t) => t.id === tripId)
+  const direction: TripDirection = trip?.direction ?? 'pickup'
+  const inProgress = trip?.status === 'active'
   const sharing = useTripTracking(tripId, inProgress)
 
-  const { data: students, isLoading, isError } = useRoster(tripId)
+  const { students, unsent, isLoading, isError } = useBoardingRoster(tripId)
   const endTrip = useEndTrip()
-  const boardStudent = useBoardStudent(tripId)
-  const alightStudent = useAlightStudent(tripId)
 
-  const onEndTrip = () => {
-    endTrip.mutate(tripId, {
-      onSuccess: async () => {
-        await stopTracking()
-        router.back()
-      },
-    })
+  const sorted = students
+    ? students
+        .map((student, index) => ({ student, index }))
+        .sort((a, b) => ORDER[a.student.status] - ORDER[b.student.status] || a.index - b.index)
+        .map(({ student }) => student)
+    : undefined
+
+  const confirmEndTrip = () => {
+    const notFinished = (students ?? []).filter((s) => s.status === 'waiting' || s.status === 'boarded').length
+
+    Alert.alert(
+      'End this trip?',
+      notFinished > 0
+        ? `${notFinished} ${notFinished === 1 ? 'child is' : 'children are'} not finished yet. Parents will stop seeing the bus.`
+        : 'Parents will stop seeing the bus.',
+      [
+        { text: 'Keep going', style: 'cancel' },
+        {
+          text: 'End trip',
+          style: 'destructive',
+          onPress: () =>
+            endTrip.mutate(tripId, {
+              onSuccess: async () => {
+                await stopTracking()
+                router.back()
+              },
+            }),
+        },
+      ],
+    )
   }
 
   return (
@@ -126,36 +221,36 @@ export default function TripScreen() {
         <Pressable onPress={() => router.back()}>
           <Text style={styles.back}>‹ Today</Text>
         </Pressable>
-        <Pressable
-          style={styles.endButton}
-          onPress={onEndTrip}
-          disabled={endTrip.isPending}
-        >
+        <Pressable style={styles.endButton} onPress={confirmEndTrip} disabled={endTrip.isPending}>
           <Text style={styles.endButtonText}>{endTrip.isPending ? 'Ending…' : 'End trip'}</Text>
         </Pressable>
       </View>
 
-      {inProgress && <SharingStatus state={sharing.state} onRetry={sharing.retry} />}
+      <Text style={styles.title}>{trip ? `${WORDS[direction].title} · ${trip.route.name}` : 'Trip'}</Text>
+      {students && students.length > 0 && <Text style={styles.summary}>{summaryLine(students, direction)}</Text>}
 
-      <Text style={styles.sectionTitle}>Roster</Text>
+      {unsent > 0 && (
+        <View style={[styles.sharing, { backgroundColor: colors.warning + '22' }]}>
+          <Text style={[styles.sharingText, { color: colors.warning }]}>
+            {unsent === 1 ? '1 tap is' : `${unsent} taps are`} waiting for signal. It will be sent by itself.
+          </Text>
+        </View>
+      )}
+
+      {inProgress && <SharingStatus state={sharing.state} onRetry={sharing.retry} />}
 
       {isLoading ? (
         <ActivityIndicator style={styles.center} />
       ) : isError ? (
-        <Text style={styles.center}>Could not load the roster.</Text>
+        <Text style={styles.center}>Could not load the list of children.</Text>
       ) : (
         <FlatList
-          data={students}
+          data={sorted}
           keyExtractor={(student) => String(student.id)}
           renderItem={({ item }) => (
-            <StudentRow
-              student={item}
-              onBoard={() => boardStudent.mutate(item.id)}
-              onAlight={() => alightStudent.mutate(item.id)}
-              isUpdating={boardStudent.isPending || alightStudent.isPending}
-            />
+            <StudentRow student={item} direction={direction} onSet={(status) => queueStatus(tripId, item.id, status)} />
           )}
-          ListEmptyComponent={<Text style={styles.center}>No students on this route yet.</Text>}
+          ListEmptyComponent={<Text style={styles.center}>No children on this route yet.</Text>}
         />
       )}
     </View>
@@ -164,16 +259,17 @@ export default function TripScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 64, paddingHorizontal: 20 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   back: { fontSize: 15, color: '#f59e0b', fontWeight: '600' },
   endButton: { backgroundColor: '#dc2626', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 14 },
   endButtonText: { color: 'white', fontWeight: '600', fontSize: 13 },
-  sharing: { borderRadius: 8, padding: 12, marginBottom: 16, gap: 8 },
+  title: { fontSize: 20, fontWeight: '700', color: colors.text },
+  summary: { fontSize: 14, color: colors.muted, marginTop: 2, marginBottom: 16 },
+  center: { textAlign: 'center', marginTop: 40, color: '#6b7280' },
+  sharing: { borderRadius: 8, padding: 12, marginBottom: 12, gap: 8 },
   sharingText: { fontSize: 14, fontWeight: '500' },
   sharingActions: { flexDirection: 'row', gap: 20 },
   sharingLink: { fontSize: 14, fontWeight: '700', color: colors.text, textDecorationLine: 'underline' },
-  sectionTitle: { fontSize: 13, fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: 8 },
-  center: { textAlign: 'center', marginTop: 40, color: '#6b7280' },
   studentRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -183,6 +279,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#e5e7eb',
   },
+  studentRowDone: { opacity: 0.6 },
   avatar: { width: 44, height: 44, borderRadius: 22 },
   avatarFallback: { backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' },
   avatarInitial: { fontSize: 18, fontWeight: '700', color: '#6b7280' },
@@ -190,9 +287,19 @@ const styles = StyleSheet.create({
   schoolPhone: { fontSize: 13, color: '#f59e0b', fontWeight: '600', marginTop: 2 },
   studentName: { fontSize: 16, fontWeight: '600' },
   stopName: { fontSize: 13, color: '#6b7280' },
-  boardButton: { backgroundColor: '#111827', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 16 },
-  boardButtonText: { color: 'white', fontWeight: '600', fontSize: 13 },
-  alightButton: { backgroundColor: '#f59e0b', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 16 },
-  alightButtonText: { color: '#111827', fontWeight: '600', fontSize: 13 },
-  alightedBadge: { color: '#059669', fontWeight: '600', fontSize: 13 },
+  actions: { alignItems: 'center', gap: 8, minWidth: 104 },
+  primaryButton: {
+    backgroundColor: '#111827',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+  },
+  primaryButtonText: { color: 'white', fontWeight: '700', fontSize: 14 },
+  secondStep: { backgroundColor: '#f59e0b' },
+  secondStepText: { color: '#111827' },
+  link: { fontSize: 13, color: colors.muted, textDecorationLine: 'underline' },
+  doneBadge: { color: colors.success, fontWeight: '700', fontSize: 14 },
+  absentBadge: { color: colors.muted, fontWeight: '700', fontSize: 14 },
 })

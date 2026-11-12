@@ -22,6 +22,14 @@ export interface Trip {
   route: TripRoute
 }
 
+/**
+ * Where a child is on this trip. "boarded" and "alighted" mean on the bus and
+ * off the bus; what that means for the driver depends on the direction (picked
+ * up / at school on the morning trip, on the bus / dropped off on the afternoon one).
+ * "absent" is "not coming today".
+ */
+export type StudentStatus = 'waiting' | 'boarded' | 'alighted' | 'absent'
+
 export interface RosterStudent {
   id: number
   full_name: string
@@ -35,6 +43,8 @@ export interface RosterStudent {
   pickup_stop: { id: number; name: string; sequence: number } | null
   boarded: boolean
   alighted: boolean
+  absent: boolean
+  status: StudentStatus
 }
 
 export interface BoardingEvent {
@@ -90,4 +100,11 @@ export interface LocationPing {
 
 export async function postLocation(tripId: number, ping: LocationPing): Promise<void> {
   await apiClient.post(`/api/driver/trips/${tripId}/location`, ping)
+}
+
+/** Says where the child should be. Safe to send twice, which is what lets a tap be retried. */
+export async function setStudentStatus(tripId: number, studentId: number, status: StudentStatus): Promise<void> {
+  // Short limit: on a dead connection a request can hang for a minute, and the
+  // taps waiting behind it would not get sent until it gave up.
+  await apiClient.put(`/api/driver/trips/${tripId}/students/${studentId}/status`, { status }, { timeout: 10_000 })
 }

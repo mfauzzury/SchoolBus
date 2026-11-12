@@ -234,4 +234,107 @@ class TripControllerTest extends TestCase
         $this->actingAs($parentUser)->getJson("/api/driver/trips/{$trip->id}/roster")
             ->assertStatus(403);
     }
+
+    private function tripWithStudent(): array
+    {
+        $tenant = $this->createTenant();
+        [$driverUser, $staff, $route] = $this->setUpDriverWithRoute($tenant);
+        [, $parent] = $this->createParent($tenant);
+        $student = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id, 'route_id' => $route->id]);
+        $trip = Trip::create(['tenant_id' => $tenant->id, 'route_id' => $route->id, 'staff_id' => $staff->id, 'direction' => 'pickup', 'status' => 'active']);
+
+        return [$driverUser, $trip, $student, $tenant];
+    }
+
+    private function setStatus($driverUser, Trip $trip, Student $student, string $status)
+    {
+        return $this->actingAs($driverUser)->putJson("/api/driver/trips/{$trip->id}/students/{$student->id}/status", ['status' => $status]);
+    }
+
+    private function rosterStatusOf($driverUser, Trip $trip, Student $student): string
+    {
+        return collect($this->actingAs($driverUser)->getJson("/api/driver/trips/{$trip->id}/roster")->json())
+            ->firstWhere('id', $student->id)['status'];
+    }
+
+    public function test_a_child_moves_through_boarded_alighted_and_can_be_undone_step_by_step(): void
+    {
+        [$driverUser, $trip, $student] = $this->tripWithStudent();
+
+        $this->assertSame('waiting', $this->rosterStatusOf($driverUser, $trip, $student));
+
+        $this->setStatus($driverUser, $trip, $student, 'boarded')->assertOk()->assertJsonPath('status', 'boarded');
+        $this->assertSame('boarded', $this->rosterStatusOf($driverUser, $trip, $student));
+
+        $this->setStatus($driverUser, $trip, $student, 'alighted')->assertOk();
+        $this->assertSame('alighted', $this->rosterStatusOf($driverUser, $trip, $student));
+
+        // Undo one step: still on the bus, and the first tap's record is untouched.
+        $boardedAt = \App\Models\BoardingEvent::where('event_type', 'boarded')->value('recorded_at');
+        $this->setStatus($driverUser, $trip, $student, 'boarded')->assertOk();
+        $this->assertSame('boarded', $this->rosterStatusOf($driverUser, $trip, $student));
+        $this->assertEquals($boardedAt, \App\Models\BoardingEvent::where('event_type', 'boarded')->value('recorded_at'));
+
+        $this->setStatus($driverUser, $trip, $student, 'waiting')->assertOk();
+        $this->assertSame('waiting', $this->rosterStatusOf($driverUser, $trip, $student));
+        $this->assertSame(0, \App\Models\BoardingEvent::count());
+    }
+
+    public function test_setting_the_same_status_twice_changes_nothing(): void
+    {
+        [$driverUser, $trip, $student] = $this->tripWithStudent();
+
+        $this->setStatus($driverUser, $trip, $student, 'alighted')->assertOk();
+        $this->setStatus($driverUser, $trip, $student, 'alighted')->assertOk();
+
+        // Getting off implies getting on: one of each, never duplicated.
+        $this->assertSame(2, \App\Models\BoardingEvent::where('trip_id', $trip->id)->count());
+    }
+
+    public function test_a_child_can_be_marked_not_coming_and_it_is_undone_by_going_back_to_waiting(): void
+    {
+        [$driverUser, $trip, $student] = $this->tripWithStudent();
+
+        $this->setStatus($driverUser, $trip, $student, 'absent')->assertOk();
+        $this->assertSame('absent', $this->rosterStatusOf($driverUser, $trip, $student));
+
+        // Turned up after all.
+        $this->setStatus($driverUser, $trip, $student, 'boarded')->assertOk();
+        $this->assertSame('boarded', $this->rosterStatusOf($driverUser, $trip, $student));
+        $this->assertSame(0, \App\Models\BoardingEvent::where('event_type', 'absent')->count());
+
+        $this->setStatus($driverUser, $trip, $student, 'absent')->assertOk();
+        $this->assertSame('absent', $this->rosterStatusOf($driverUser, $trip, $student));
+        $this->assertSame(0, \App\Models\BoardingEvent::where('event_type', 'boarded')->count());
+    }
+
+    public function test_status_must_be_one_of_the_known_values_and_the_child_must_be_on_the_route(): void
+    {
+        [$driverUser, $trip, $student, $tenant] = $this->tripWithStudent();
+        $this->setStatus($driverUser, $trip, $student, 'flying')->assertStatus(422);
+
+        $stranger = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $student->parent_id, 'route_id' => Route::factory()->create(['tenant_id' => $tenant->id])->id]);
+        $this->setStatus($driverUser, $trip, $stranger, 'boarded')->assertStatus(422);
+    }
+
+    public function test_a_driver_cannot_set_status_on_another_drivers_trip(): void
+    {
+        [, $trip, $student, $tenant] = $this->tripWithStudent();
+        [$otherDriver] = $this->setUpDriverWithRoute($tenant);
+
+        $this->setStatus($otherDriver, $trip, $student, 'boarded')->assertForbidden();
+    }
+
+    public function test_roster_only_lists_children_who_still_ride(): void
+    {
+        [$driverUser, $trip, $student, $tenant] = $this->tripWithStudent();
+        $withdrawn = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $student->parent_id, 'route_id' => $trip->route_id, 'enrollment_status' => 'withdrawn']);
+        $suspended = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $student->parent_id, 'route_id' => $trip->route_id, 'enrollment_status' => 'suspended']);
+
+        $ids = collect($this->actingAs($driverUser)->getJson("/api/driver/trips/{$trip->id}/roster")->json())->pluck('id');
+
+        $this->assertTrue($ids->contains($student->id));
+        $this->assertFalse($ids->contains($withdrawn->id));
+        $this->assertFalse($ids->contains($suspended->id));
+    }
 }

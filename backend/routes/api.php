@@ -252,6 +252,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('trips/{trip}/end', [DriverTripController::class, 'end']);
             Route::post('trips/{trip}/location', [DriverTripController::class, 'postLocation']);
             Route::get('trips/{trip}/roster', [DriverTripController::class, 'roster']);
+            Route::put('trips/{trip}/students/{student}/status', [DriverTripController::class, 'setStudentStatus']);
             Route::post('trips/{trip}/students/{student}/board', [DriverTripController::class, 'boardStudent']);
             Route::post('trips/{trip}/students/{student}/alight', [DriverTripController::class, 'alightStudent']);
         });
