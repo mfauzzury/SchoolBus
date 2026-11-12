@@ -30,6 +30,7 @@ import { ApplicationReview } from '@/pages/operator/ApplicationReview'
 import { Routes as RoutesPage } from '@/pages/operator/Routes'
 import { RouteFormPage } from '@/pages/operator/RouteForm'
 import { Finances } from '@/pages/operator/Finances'
+import { NextBills } from '@/pages/operator/NextBills'
 import { BillDetail } from '@/pages/operator/BillDetail'
 import { Settings } from '@/pages/operator/Settings'
 import { BillingSettings } from '@/pages/operator/BillingSettings'
@@ -94,6 +95,7 @@ function App() {
             <Route path="/operator/applications" element={<Applications />} />
             <Route path="/operator/applications/:id" element={<ApplicationReview />} />
             <Route path="/operator/finances" element={<Finances />} />
+            <Route path="/operator/next-bills" element={<NextBills />} />
             <Route path="/operator/finances/bills/:id" element={<BillDetail />} />
             <Route path="/operator/settings" element={<SettingsLayout />}>
               <Route index element={<Settings />} />

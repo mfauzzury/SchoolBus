@@ -5,6 +5,8 @@ export interface BillingConfig {
   due_day: number
   // Months of the year (1-12) that are billed; school-holiday months are left out.
   billed_months: number[]
+  // 'auto': bills are made by themselves each morning. 'manual': the operator creates them from Next bills.
+  mode: 'auto' | 'manual'
 }
 
 export async function getBillingConfig(): Promise<BillingConfig> {

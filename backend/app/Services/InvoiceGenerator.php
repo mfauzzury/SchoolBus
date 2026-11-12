@@ -232,7 +232,7 @@ class InvoiceGenerator
      * The operator's due day in the billed month. A bill raised after that day
      * has passed (late join, re-issue) gets 7 days instead of being born overdue.
      */
-    private function dueDate(Student $student, Carbon $periodStart): Carbon
+    public function dueDate(Student $student, Carbon $periodStart): Carbon
     {
         $dueDay = $student->busOperator->resolvedBillingConfig()['due_day'];
         $due = $periodStart->copy()->day(min($dueDay, $periodStart->daysInMonth));

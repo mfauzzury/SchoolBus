@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ClipboardList } from 'lucide-react'
+import { CalendarClock, ClipboardList } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,6 +12,7 @@ import { useStaff } from '@/hooks/useStaff'
 import { useRoutes } from '@/hooks/useRoutes'
 import { useOperatorStudents } from '@/hooks/useOperatorStudents'
 import { useStudentApplications } from '@/hooks/useStudentApplications'
+import { useNextBillsSummary } from '@/hooks/useNextBills'
 import { RegistrationShareCard } from '@/components/RegistrationShareCard'
 import { MonthlyCollectionsChart } from '@/components/charts/MonthlyCollectionsChart'
 import { SeatUsageMeters } from '@/components/charts/SeatUsageMeters'
@@ -50,6 +51,7 @@ export function OperatorDashboard() {
   const { data: routes } = useRoutes()
   const { data: students } = useOperatorStudents({})
   const { data: pendingApplications } = useStudentApplications({ status: 'pending' })
+  const { data: nextBills } = useNextBillsSummary()
   const pendingCount = pendingApplications?.length ?? 0
 
   const collectionRate =
@@ -102,6 +104,33 @@ export function OperatorDashboard() {
           )}
         </CardContent>
       </Card>
+
+      {nextBills && nextBills.waiting > 0 && (
+        <Card
+          size="sm"
+          className="bg-amber-50 text-amber-950 ring-amber-300/70 dark:bg-amber-400/10 dark:text-amber-100 dark:ring-amber-400/30"
+        >
+          <CardContent className="flex flex-wrap items-center gap-x-4 gap-y-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-200 text-amber-900 dark:bg-amber-400/20 dark:text-amber-200">
+              <CalendarClock className="size-5" />
+            </span>
+            <div className="flex min-w-40 flex-1 flex-col">
+              <span className="font-medium" data-testid="bills-waiting">
+                {t('operator.dashboard.billsWaiting', { count: nextBills.waiting })}
+              </span>
+              <span className="text-sm text-amber-900/80 dark:text-amber-100/80">
+                {t('operator.dashboard.billsWaitingHint')}
+              </span>
+            </div>
+            <Link
+              to="/operator/next-bills"
+              className={cn(buttonVariants({ size: 'sm' }), 'bg-amber-500 text-amber-950 hover:bg-amber-400')}
+            >
+              {t('operator.dashboard.billsWaitingButton')}
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard
