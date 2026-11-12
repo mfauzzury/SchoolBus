@@ -23,16 +23,9 @@ import { cn } from '@/lib/utils'
 
 type Audience = 'parent' | 'operator'
 
-const AUDIENCE_KEY = 'login-audience'
-
-// The ?as= link wins, then whichever tab this browser used last, then parent.
+// The ?as= link picks a tab; otherwise the page always opens on parent.
 function initialAudience(asParam: string | null): Audience {
-  if (asParam === 'operator' || asParam === 'parent') return asParam
-  try {
-    return localStorage.getItem(AUDIENCE_KEY) === 'operator' ? 'operator' : 'parent'
-  } catch {
-    return 'parent'
-  }
+  return asParam === 'operator' ? 'operator' : 'parent'
 }
 
 const loginSchema = z.object({
@@ -49,14 +42,7 @@ export function Login() {
   const [searchParams] = useSearchParams()
   const sessionExpired = searchParams.get('expired') === '1'
   const [audience, setAudience] = useState<Audience>(() => initialAudience(searchParams.get('as')))
-  const pickAudience = (next: Audience) => {
-    setAudience(next)
-    try {
-      localStorage.setItem(AUDIENCE_KEY, next)
-    } catch {
-      // Remembering the tab is a convenience only.
-    }
-  }
+  const pickAudience = (next: Audience) => setAudience(next)
   const login = useLogin()
   const {
     register,
