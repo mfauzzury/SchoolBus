@@ -1859,7 +1859,8 @@
       "adminOnly": "Hanya admin boleh mencipta bil.",
       "lastRunAuto": "Terakhir dibuat secara automatik pada {{date}}: {{generated}} bil dibuat, {{skipped}} dilangkau.",
       "lastRunManual": "Terakhir dicipta oleh anda pada {{date}}: {{generated}} bil dibuat, {{skipped}} tidak dapat dibuat.",
-      "noLastRun": "Belum ada bil dibuat."
+      "noLastRun": "Belum ada bil dibuat.",
+      "includesExtra": "termasuk {{label}} RM {{amount}}"
     },
     "settings": {
       "title": "Tetapan",
@@ -1979,7 +1980,13 @@
       "center": "Pusat transit",
       "empty": "Tiada permohonan di sini.",
       "intro": "Pusat transit memohon bas untuk membawa kanak-kanak ke dan dari pusat mereka. Hubungi ibu bapa sebelum meluluskan.",
-      "title": "Permohonan transit"
+      "title": "Permohonan transit",
+      "firstBill": "Bil pertama dengan caj ini",
+      "billStartMonth": "Mulai {{month}}",
+      "billNextMonth": "Mulai bulan berikutnya ({{month}})",
+      "billedNow": "Ditambah ke bil yang sudah dibuat untuk {{months}}.",
+      "paidBills": "Bil untuk {{months}} sudah dibayar, jadi caj tidak diubah di situ. Laraskan sendiri jika perlu.",
+      "approvedDone": "Diluluskan."
     }
   },
   "parent": {
@@ -2254,7 +2261,8 @@
   "billing": {
     "item": {
       "fee": "Yuran bas",
-      "discount": "Diskaun"
+      "discount": "Diskaun",
+      "transitCenter": "Pusat transit: {{name}}"
     },
     "paidSoFar": "Sudah dibayar",
     "balance": "Baki perlu dibayar"

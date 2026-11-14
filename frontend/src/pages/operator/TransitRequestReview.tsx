@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { BackLink } from '@/components/BackLink'
 import { CenterPlacement } from '@/components/CenterPlacement'
@@ -17,9 +18,9 @@ import { useRoutes } from '@/hooks/useRoutes'
 import { useApproveTransitRequest, useRejectTransitRequest, useTransitRequest } from '@/hooks/useTransitRequests'
 import type { Route } from '@/api/routes'
 import type { TransitLeg } from '@/api/billingConfig'
-import type { OperatorTransitRequestDetail } from '@/api/transitRequests'
+import type { OperatorTransitRequestDetail, TransitBillingResult } from '@/api/transitRequests'
 import { dateInput, showDate, transitStatusVariant } from '@/lib/transit'
-import { formatMoney } from '@/lib/utils'
+import { formatMoney, formatPeriod } from '@/lib/utils'
 
 const HOME_LEGS: TransitLeg[] = ['center_to_home', 'home_to_center']
 
@@ -43,8 +44,36 @@ function apiMessage(error: unknown): string | undefined {
   return errors ? Object.values(errors)[0]?.[0] : error.response?.data?.message
 }
 
-function StartDecision({ request, routes }: { request: OperatorTransitRequestDetail; routes: Route[] }) {
-  const { t } = useTranslation()
+/** After approving: which bills already made got the change, and which were paid and left alone. */
+function BillingNotice({ billing }: { billing: TransitBillingResult }) {
+  const { t, i18n } = useTranslation()
+  const months = (list: string[]) => list.map((m) => formatPeriod(m, i18n.language)).join(', ')
+
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-2 pt-6 text-sm">
+        <p className="font-medium">{t('operator.transitRequests.approvedDone')}</p>
+        {billing.added.length > 0 && <p>{t('operator.transitRequests.billedNow', { months: months(billing.added) })}</p>}
+        {billing.not_changed.length > 0 && (
+          <p className="rounded-md bg-amber-50 p-2 text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            {t('operator.transitRequests.paidBills', { months: months(billing.not_changed) })}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function StartDecision({
+  request,
+  routes,
+  onDone,
+}: {
+  request: OperatorTransitRequestDetail
+  routes: Route[]
+  onDone: (billing: TransitBillingResult) => void
+}) {
+  const { t, i18n } = useTranslation()
   const approve = useApproveTransitRequest(request.id)
   const centerId = request.transit_center.id
   const legs = request.legs ?? []
@@ -56,6 +85,13 @@ function StartDecision({ request, routes }: { request: OperatorTransitRequestDet
   const [amount, setAmount] = useState(request.indicative_amount ? String(Number(request.indicative_amount)) : '')
   const startDefault = request.starts_on && request.starts_on >= dateInput(0) ? request.starts_on : dateInput(0)
   const [startsOn, setStartsOn] = useState(startDefault)
+  const [billFrom, setBillFrom] = useState<'start_month' | 'next_month'>('start_month')
+  const startMonth = startsOn ? `${startsOn.slice(0, 7)}-01` : ''
+  const nextMonth = (() => {
+    if (!startMonth) return ''
+    const [y, m] = startMonth.split('-').map(Number)
+    return m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`
+  })()
 
   useEffect(() => {
     const route = routes.find((r) => String(r.id) === childRouteId)
@@ -83,13 +119,14 @@ function StartDecision({ request, routes }: { request: OperatorTransitRequestDet
     approve.mutate({
       monthly_amount: Number(amount),
       starts_on: startsOn,
+      bill_from: billFrom,
       legs: legs.map((leg) => ({
         leg,
         route_id: Number(choices[leg].routeId),
         center_after_stop_id: placements[choices[leg].routeId] ?? null,
         home_stop_id: HOME_LEGS.includes(leg) ? Number(choices[leg].homeStopId) : null,
       })),
-    })
+    }, { onSuccess: (result) => onDone(result.billing) })
   }
 
   // The first leg on a route shows where the center goes; later legs on the same route reuse it.
@@ -212,6 +249,23 @@ function StartDecision({ request, routes }: { request: OperatorTransitRequestDet
               onChange={(e) => setStartsOn(e.target.value)}
             />
           </div>
+          {startMonth && (
+            <div className="flex flex-col gap-2">
+              <Label>{t('operator.transitRequests.firstBill')}</Label>
+              <RadioGroup
+                className="flex-col items-start gap-2"
+                value={billFrom}
+                onValueChange={(value) => setBillFrom(value as 'start_month' | 'next_month')}
+              >
+                <RadioGroupItem value="start_month">
+                  {t('operator.transitRequests.billStartMonth', { month: formatPeriod(startMonth, i18n.language) })}
+                </RadioGroupItem>
+                <RadioGroupItem value="next_month">
+                  {t('operator.transitRequests.billNextMonth', { month: formatPeriod(nextMonth, i18n.language) })}
+                </RadioGroupItem>
+              </RadioGroup>
+            </div>
+          )}
           {approve.isError && (
             <p role="alert" className="text-sm text-destructive">
               {apiMessage(approve.error) ?? t('operator.transitRequests.error')}
@@ -226,7 +280,13 @@ function StartDecision({ request, routes }: { request: OperatorTransitRequestDet
   )
 }
 
-function StopDecision({ request }: { request: OperatorTransitRequestDetail }) {
+function StopDecision({
+  request,
+  onDone,
+}: {
+  request: OperatorTransitRequestDetail
+  onDone: (billing: TransitBillingResult) => void
+}) {
   const { t } = useTranslation()
   const approve = useApproveTransitRequest(request.id)
   const [endsOn, setEndsOn] = useState(request.ends_on ?? dateInput(0))
@@ -254,7 +314,7 @@ function StopDecision({ request }: { request: OperatorTransitRequestDetail }) {
             {apiMessage(approve.error) ?? t('operator.transitRequests.error')}
           </p>
         )}
-        <Button className="w-fit" disabled={!endsOn || approve.isPending} onClick={() => approve.mutate({ ends_on: endsOn })}>
+        <Button className="w-fit" disabled={!endsOn || approve.isPending} onClick={() => approve.mutate({ ends_on: endsOn }, { onSuccess: (result) => onDone(result.billing) })}>
           {approve.isPending ? t('common.saving') : t('operator.transitRequests.approveStop')}
         </Button>
       </CardContent>
@@ -304,6 +364,7 @@ export function TransitRequestReview() {
   const isAdmin = useIsOperatorAdmin()
   const { data: request, isLoading } = useTransitRequest(Number(id))
   const { data: routes } = useRoutes()
+  const [billing, setBilling] = useState<TransitBillingResult | null>(null)
 
   if (isLoading || !request) {
     return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
@@ -376,6 +437,8 @@ export function TransitRequestReview() {
         </Card>
       </div>
 
+      {billing && <BillingNotice billing={billing} />}
+
       {!pending ? (
         <Card>
           <CardContent className="flex flex-col gap-1 pt-6 text-sm">
@@ -394,7 +457,11 @@ export function TransitRequestReview() {
         <p className="text-sm text-muted-foreground">{t('operator.transitRequests.adminOnly')}</p>
       ) : (
         <>
-          {request.kind === 'stop' ? <StopDecision request={request} /> : <StartDecision request={request} routes={routes ?? []} />}
+          {request.kind === 'stop' ? (
+            <StopDecision request={request} onDone={setBilling} />
+          ) : (
+            <StartDecision request={request} routes={routes ?? []} onDone={setBilling} />
+          )}
           <RejectCard requestId={request.id} />
         </>
       )}

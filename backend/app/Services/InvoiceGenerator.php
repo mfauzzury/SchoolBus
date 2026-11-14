@@ -7,6 +7,8 @@ use App\Enums\InvoiceStatus;
 use App\Enums\PackageType;
 use App\Models\Invoice;
 use App\Models\Student;
+use App\Models\StudentExtra;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -113,10 +115,12 @@ class InvoiceGenerator
                 childPosition: $this->childPosition($student),
                 isCustomFee: $student->fee_override !== null,
             );
+            $extras = $this->extrasFor($student, $month);
 
             return [
                 'month' => $month->toDateString(),
-                'amount' => $fee['final_amount'],
+                'amount' => round($fee['final_amount'] + $extras->sum(fn (StudentExtra $e) => (float) $e->monthly_amount), 2),
+                'extras' => $extras->map(fn (StudentExtra $e) => ['label' => $e->label, 'amount' => (float) $e->monthly_amount])->values()->all(),
                 'amount_before_discount' => $fee['amount_before_discount'],
                 'sibling_discount_rate' => $fee['sibling_discount_rate'],
                 'due_date' => $this->dueDate($student, $month)->toDateString(),
@@ -203,6 +207,11 @@ class InvoiceGenerator
                 $this->addItem($invoice, InvoiceItemType::Discount, "Sibling discount ({$rate}%)", -$fee['discount_amount']);
             }
 
+            // No sibling discount on extras: it is for the bus fee only.
+            foreach ($this->extrasFor($student, $periodStart) as $extra) {
+                $this->addItem($invoice, InvoiceItemType::Extra, $extra->label, (float) $extra->monthly_amount, $extra->id);
+            }
+
             if ($firstMonthAmount !== null && round($firstMonthAmount - $fee['final_amount'], 2) != 0) {
                 $this->addItem(
                     $invoice,
@@ -218,14 +227,111 @@ class InvoiceGenerator
         });
     }
 
-    private function addItem(Invoice $invoice, InvoiceItemType $type, string $description, float $amount): void
+    private function addItem(Invoice $invoice, InvoiceItemType $type, string $description, float $amount, ?int $extraId = null): void
     {
         $invoice->items()->create([
             'tenant_id' => $invoice->tenant_id,
+            'student_extra_id' => $extraId,
             'type' => $type,
             'description' => $description,
             'amount' => $amount,
         ]);
+    }
+
+    /**
+     * The student's monthly extras billed in this month (e.g. a transit center).
+     *
+     * @return Collection<int, StudentExtra>
+     */
+    public function extrasFor(Student $student, Carbon $month): Collection
+    {
+        return StudentExtra::withoutGlobalScopes()
+            ->where('student_id', $student->id)
+            ->billedInMonth($month)
+            ->orderBy('id')
+            ->get();
+    }
+
+    /**
+     * Puts a new extra on bills that were already made for its months, so a
+     * plan approved after the month's bill went out is still charged. Paid
+     * bills (or one being paid online right now) are left alone.
+     *
+     * @return array{added: list<string>, not_changed: list<string>} months (YYYY-MM-01)
+     */
+    public function addExtraToExistingBills(StudentExtra $extra): array
+    {
+        $result = ['added' => [], 'not_changed' => []];
+
+        if ((float) $extra->monthly_amount <= 0 || ! $extra->billing_starts_on) {
+            return $result;
+        }
+
+        $invoices = Invoice::withoutGlobalScopes()
+            ->where('student_id', $extra->student_id)
+            ->where('status', '!=', InvoiceStatus::Void)
+            ->whereDate('period_start', '>=', $extra->billing_starts_on->toDateString())
+            ->when($extra->ends_on, fn ($q) => $q->whereDate('period_start', '<=', $extra->ends_on->copy()->startOfMonth()->toDateString()))
+            ->orderBy('period_start')
+            ->get();
+
+        foreach ($invoices as $invoice) {
+            $month = $invoice->period_start->copy()->startOfMonth()->toDateString();
+
+            if ($invoice->items()->where('student_extra_id', $extra->id)->exists()) {
+                continue;
+            }
+
+            if (! $this->canChange($invoice)) {
+                $result['not_changed'][] = $month;
+
+                continue;
+            }
+
+            $this->addItem($invoice, InvoiceItemType::Extra, $extra->label, (float) $extra->monthly_amount, $extra->id);
+            $invoice->recalculateTotals();
+            $result['added'][] = $month;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Takes an extra's line off unpaid bills for months it no longer covers:
+     * every month after $lastDay's month, or every month when $lastDay is null
+     * (the extra is being removed altogether).
+     *
+     * @return list<string> months whose bill already had the line and couldn't be changed
+     */
+    public function removeExtraFromBills(StudentExtra $extra, ?Carbon $lastDay): array
+    {
+        $notChanged = [];
+
+        $invoices = Invoice::withoutGlobalScopes()
+            ->where('student_id', $extra->student_id)
+            ->where('status', '!=', InvoiceStatus::Void)
+            ->whereHas('items', fn ($q) => $q->where('student_extra_id', $extra->id))
+            ->when($lastDay, fn ($q) => $q->whereDate('period_start', '>=', $lastDay->copy()->startOfMonth()->addMonth()->toDateString()))
+            ->get();
+
+        foreach ($invoices as $invoice) {
+            if (! $this->canChange($invoice)) {
+                $notChanged[] = $invoice->period_start->copy()->startOfMonth()->toDateString();
+
+                continue;
+            }
+
+            $invoice->items()->where('student_extra_id', $extra->id)->delete();
+            $invoice->recalculateTotals();
+        }
+
+        return $notChanged;
+    }
+
+    /** The same rule as an operator editing a bill: unpaid, and nobody paying it online right now. */
+    private function canChange(Invoice $invoice): bool
+    {
+        return $invoice->status === InvoiceStatus::Issued && ! $invoice->isBeingPaidOnline();
     }
 
     /**

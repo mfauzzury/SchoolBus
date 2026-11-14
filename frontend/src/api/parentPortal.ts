@@ -48,7 +48,7 @@ export interface QuoteInput {
 
 export interface InvoiceItem {
   id: number
-  type: 'fee' | 'discount' | 'adjustment'
+  type: 'fee' | 'discount' | 'adjustment' | 'extra'
   description: string
   // Signed: discounts and reductions are negative.
   amount: string

@@ -32,7 +32,7 @@ import { usePagination } from '@/hooks/usePagination'
 import type { OperatorStudentDetail } from '@/api/operatorStudents'
 import { receiptUrl, type LedgerInvoice } from '@/api/finances'
 import { calculateGrade, cn, formatMoney, formatPeriod, isInvoiceOverdue } from '@/lib/utils'
-import { routeFeeFor } from '@/lib/billing'
+import { routeFeeFor, extraLabel } from '@/lib/billing'
 import { BackLink } from '@/components/BackLink'
 
 type EnrollmentStatus = OperatorStudentDetail['enrollment_status']
@@ -146,6 +146,11 @@ function RecurringBill({ student }: { student: OperatorStudentDetail }) {
                 {next.sibling_discount_rate > 0 &&
                   ` · ${t('operator.students.afterSiblingDiscount', { rate: next.sibling_discount_rate })}`}
               </p>
+              {next.extras.map((extra) => (
+                <p key={extra.label} className="text-sm text-muted-foreground">
+                  {t('operator.nextBills.includesExtra', { label: extraLabel(extra.label, t), amount: formatMoney(extra.amount) })}
+                </p>
+              ))}
             </>
           ) : (
             <p className="text-sm">

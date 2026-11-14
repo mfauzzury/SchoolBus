@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { extraLabel } from '@/lib/billing'
 import { AlertTriangle } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -249,6 +250,11 @@ export function NextBills() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div>RM {formatMoney(row.amount)}</div>
+                          {row.extras.map((extra) => (
+                            <div key={extra.label} className="text-xs text-muted-foreground">
+                              {t('operator.nextBills.includesExtra', { label: extraLabel(extra.label, t), amount: formatMoney(extra.amount) })}
+                            </div>
+                          ))}
                           {row.sibling_discount_rate > 0 && (
                             <div className="text-xs text-muted-foreground">
                               {t('operator.nextBills.siblingDiscount', { rate: row.sibling_discount_rate })}

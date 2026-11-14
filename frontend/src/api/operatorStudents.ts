@@ -48,6 +48,7 @@ export type NextBill =
   | {
       month: string
       amount: number
+      extras: { label: string; amount: number }[]
       amount_before_discount: number
       sibling_discount_rate: number
       due_date: string

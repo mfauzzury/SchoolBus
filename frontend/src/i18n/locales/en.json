@@ -1862,7 +1862,8 @@
       "adminOnly": "Only an admin can create bills.",
       "lastRunAuto": "Last made automatically on {{date}}: {{generated}} bills made, {{skipped}} skipped.",
       "lastRunManual": "Last created by you on {{date}}: {{generated}} bills made, {{skipped}} could not be made.",
-      "noLastRun": "No bills have been made yet."
+      "noLastRun": "No bills have been made yet.",
+      "includesExtra": "incl. {{label}} RM {{amount}}"
     },
     "settings": {
       "title": "Settings",
@@ -1983,7 +1984,13 @@
       "center": "Transit center",
       "empty": "No requests here.",
       "intro": "Transit centers ask for a bus to bring children to and from their center. Call the parent before you approve.",
-      "title": "Transit requests"
+      "title": "Transit requests",
+      "firstBill": "First bill with this charge",
+      "billStartMonth": "From {{month}}",
+      "billNextMonth": "From the month after ({{month}})",
+      "billedNow": "Added to the bill already made for {{months}}.",
+      "paidBills": "Bills for {{months}} were already paid, so the charge was not changed there. Adjust them by hand if needed.",
+      "approvedDone": "Approved."
     }
   },
   "parent": {
@@ -2258,7 +2265,8 @@
   "billing": {
     "item": {
       "fee": "Bus fee",
-      "discount": "Discount"
+      "discount": "Discount",
+      "transitCenter": "Transit center: {{name}}"
     },
     "paidSoFar": "Paid so far",
     "balance": "Balance due"

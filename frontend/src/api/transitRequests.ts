@@ -55,8 +55,14 @@ export interface LegPlan {
 }
 
 export type ApproveTransitInput =
-  | { monthly_amount: number; starts_on: string; legs: LegPlan[] }
+  | { monthly_amount: number; starts_on: string; bill_from: 'start_month' | 'next_month'; legs: LegPlan[] }
   | { ends_on: string }
+
+/** What approving did to bills already made: months (YYYY-MM-01) changed, and paid ones left alone. */
+export interface TransitBillingResult {
+  added: string[]
+  not_changed: string[]
+}
 
 export async function listTransitRequests(status?: string): Promise<OperatorTransitRequest[]> {
   const { data } = await apiClient.get<OperatorTransitRequest[]>('/api/operator/transit-requests', {
@@ -70,8 +76,11 @@ export async function getTransitRequest(id: number): Promise<OperatorTransitRequ
   return data
 }
 
-export async function approveTransitRequest(id: number, input: ApproveTransitInput): Promise<OperatorTransitRequestDetail> {
-  const { data } = await apiClient.post<OperatorTransitRequestDetail>(`/api/operator/transit-requests/${id}/approve`, input)
+export async function approveTransitRequest(
+  id: number,
+  input: ApproveTransitInput,
+): Promise<OperatorTransitRequestDetail & { billing: TransitBillingResult }> {
+  const { data } = await apiClient.post<OperatorTransitRequestDetail & { billing: TransitBillingResult }>(`/api/operator/transit-requests/${id}/approve`, input)
   return data
 }
 

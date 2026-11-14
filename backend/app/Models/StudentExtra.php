@@ -21,18 +21,34 @@ class StudentExtra extends Model
         'monthly_amount',
         'starts_on',
         'ends_on',
+        'billing_starts_on',
     ];
 
     protected $casts = [
         'monthly_amount' => 'decimal:2',
         'starts_on' => 'date',
         'ends_on' => 'date',
+        'billing_starts_on' => 'date',
     ];
 
     /** Still running on (or after) this day: not ended before it. */
     public function scopeNotEndedBy(Builder $query, CarbonInterface $date): Builder
     {
         return $query->where(fn (Builder $q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>=', $date->toDateString()));
+    }
+
+    /**
+     * Billed in this month: billing has started by then and the plan hasn't
+     * ended before the month began. Bills cover whole months.
+     */
+    public function scopeBilledInMonth(Builder $query, CarbonInterface $month): Builder
+    {
+        $start = $month->copy()->startOfMonth()->toDateString();
+
+        return $query->where('monthly_amount', '>', 0)
+            ->whereNotNull('billing_starts_on')
+            ->whereDate('billing_starts_on', '<=', $start)
+            ->where(fn (Builder $q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>=', $start));
     }
 
     public function student(): BelongsTo

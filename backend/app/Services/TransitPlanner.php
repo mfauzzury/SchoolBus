@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\DB;
  */
 class TransitPlanner
 {
+    public function __construct(private readonly InvoiceGenerator $invoices) {}
+
     /**
      * The price the center sees before sending a request: the operator's
      * price for each leg added up. Null when any chosen leg has no price yet.
@@ -67,17 +69,21 @@ class TransitPlanner
     /**
      * Approves a start request.
      *
+     * Bills cover whole months: the charge starts in the month of $startsOn,
+     * or the month after when $billNextMonth.
+     *
      * @param  list<array{leg: string, route_id: int, center_after_stop_id: ?int, home_stop_id: ?int}>  $legPlans
+     * @return array{added: list<string>, not_changed: list<string>} months whose bill was already made
      */
-    public function approveStart(TransitRequest $request, array $legPlans, float $monthlyAmount, CarbonInterface $startsOn, User $reviewer): void
+    public function approveStart(TransitRequest $request, array $legPlans, float $monthlyAmount, CarbonInterface $startsOn, User $reviewer, bool $billNextMonth = false): array
     {
-        DB::transaction(function () use ($request, $legPlans, $monthlyAmount, $startsOn, $reviewer) {
+        return DB::transaction(function () use ($request, $legPlans, $monthlyAmount, $startsOn, $reviewer, $billNextMonth) {
             $student = $request->student;
             $center = $request->transitCenter;
 
             // A child is at one center per part of the day: whatever plan covered
             // these trips before ends the day before this one starts.
-            $this->endPlansCovering($student, $request->directions(), $startsOn->copy()->subDay());
+            $notChanged = $this->endPlansCovering($student, $request->directions(), $startsOn->copy()->subDay());
 
             foreach ($legPlans as $plan) {
                 $leg = TransitLeg::from($plan['leg']);
@@ -104,14 +110,17 @@ class TransitPlanner
                 ]);
             }
 
-            StudentExtra::create([
+            $extra = StudentExtra::create([
                 'tenant_id' => $student->tenant_id,
                 'student_id' => $student->id,
                 'transit_request_id' => $request->id,
                 'label' => 'Transit center: '.$center->name,
                 'monthly_amount' => $monthlyAmount,
                 'starts_on' => $startsOn->toDateString(),
+                'billing_starts_on' => Carbon::parse($startsOn)->startOfMonth()->addMonths($billNextMonth ? 1 : 0)->toDateString(),
             ]);
+
+            $billing = $this->invoices->addExtraToExistingBills($extra);
 
             $request->update([
                 'status' => 'approved',
@@ -120,15 +129,25 @@ class TransitPlanner
                 'reviewed_by' => $reviewer->id,
                 'reviewed_at' => now(),
             ]);
+
+            return [
+                'added' => $billing['added'],
+                'not_changed' => array_values(array_unique([...$billing['not_changed'], ...$notChanged])),
+            ];
         });
     }
 
-    /** Approves a stop request: the plan from this center ends after $lastDay. */
-    public function approveStop(TransitRequest $request, CarbonInterface $lastDay, User $reviewer): void
+    /**
+     * Approves a stop request: the plan from this center ends after $lastDay.
+     *
+     * @return array{added: list<string>, not_changed: list<string>} not_changed: paid bills that still carry the charge
+     */
+    public function approveStop(TransitRequest $request, CarbonInterface $lastDay, User $reviewer): array
     {
-        DB::transaction(function () use ($request, $lastDay, $reviewer) {
+        return DB::transaction(function () use ($request, $lastDay, $reviewer) {
+            $notChanged = [];
             foreach ($this->runningPlans($request->student, $request->transitCenter, $lastDay) as $plan) {
-                $this->endPlan($plan, $lastDay);
+                $notChanged = [...$notChanged, ...$this->endPlan($plan, $lastDay)];
             }
 
             $request->update([
@@ -137,23 +156,42 @@ class TransitPlanner
                 'reviewed_by' => $reviewer->id,
                 'reviewed_at' => now(),
             ]);
+
+            return ['added' => [], 'not_changed' => array_values(array_unique($notChanged))];
         });
     }
 
-    /** @param  list<string>  $directions */
-    private function endPlansCovering(Student $student, array $directions, CarbonInterface $lastDay): void
+    /**
+     * @param  list<string>  $directions
+     * @return list<string> months of paid bills that still carry an ended charge
+     */
+    private function endPlansCovering(Student $student, array $directions, CarbonInterface $lastDay): array
     {
+        $notChanged = [];
         foreach ($this->runningPlans($student, null, $lastDay) as $plan) {
             if (array_intersect($plan->directions(), $directions)) {
-                $this->endPlan($plan, $lastDay);
+                $notChanged = [...$notChanged, ...$this->endPlan($plan, $lastDay)];
             }
         }
+
+        return $notChanged;
     }
 
-    /** Ends a plan's rides and charge after $lastDay; parts not started by then are removed. */
-    private function endPlan(TransitRequest $plan, CarbonInterface $lastDay): void
+    /**
+     * Ends a plan's rides and charge after $lastDay; parts not started by then
+     * are removed. Its line comes off unpaid bills for months after the end.
+     *
+     * @return list<string> months of paid bills that still carry the charge
+     */
+    private function endPlan(TransitRequest $plan, CarbonInterface $lastDay): array
     {
         $day = $lastDay->toDateString();
+        $notChanged = [];
+
+        foreach (StudentExtra::where('transit_request_id', $plan->id)->get() as $extra) {
+            $removedEntirely = $extra->starts_on->toDateString() > $day;
+            $notChanged = [...$notChanged, ...$this->invoices->removeExtraFromBills($extra, $removedEntirely ? null : Carbon::parse($lastDay))];
+        }
 
         foreach ([StudentRide::class, StudentExtra::class] as $model) {
             $model::where('transit_request_id', $plan->id)->whereDate('starts_on', '>', $day)->delete();
@@ -161,6 +199,8 @@ class TransitPlanner
                 ->where(fn ($q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>', $day))
                 ->update(['ends_on' => $day]);
         }
+
+        return $notChanged;
     }
 
     /**

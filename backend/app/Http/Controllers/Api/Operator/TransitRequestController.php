@@ -61,12 +61,14 @@ class TransitRequestController extends Controller
 
         if ($transitRequest->kind === 'stop') {
             $data = $request->validate(['ends_on' => 'required|date|after_or_equal:today']);
-            $this->planner->approveStop($transitRequest, Carbon::parse($data['ends_on']), $request->user());
+            $billing = $this->planner->approveStop($transitRequest, Carbon::parse($data['ends_on']), $request->user());
         } else {
             $tenantId = $request->user()->tenant_id;
             $data = $request->validate([
                 'monthly_amount' => 'required|numeric|min:0|max:99999',
                 'starts_on' => 'required|date|after_or_equal:today',
+                // Bills cover whole months: charge the start month, or begin with the next one.
+                'bill_from' => ['nullable', Rule::in(['start_month', 'next_month'])],
                 'legs' => 'required|array',
                 'legs.*.leg' => ['required', 'distinct', Rule::in($transitRequest->legs ?? [])],
                 'legs.*.route_id' => ['required', Rule::exists('routes', 'id')->where('tenant_id', $tenantId)],
@@ -76,18 +78,21 @@ class TransitRequestController extends Controller
 
             $this->checkLegPlans($transitRequest, $data['legs']);
 
-            $this->planner->approveStart(
+            $billing = $this->planner->approveStart(
                 $transitRequest,
                 $data['legs'],
                 (float) $data['monthly_amount'],
                 Carbon::parse($data['starts_on']),
                 $request->user(),
+                ($data['bill_from'] ?? 'start_month') === 'next_month',
             );
         }
 
         app(Notifier::class)->transitPlanChanged($transitRequest->fresh());
 
-        return $this->show($transitRequest->fresh());
+        // `billing` says which bills already made were changed (added) and which
+        // were paid and could not be (not_changed), so the operator can sort those by hand.
+        return [...$this->show($transitRequest->fresh()), 'billing' => $billing];
     }
 
     public function reject(Request $request, TransitRequest $transitRequest)
