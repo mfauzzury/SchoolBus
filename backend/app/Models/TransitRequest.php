@@ -33,8 +33,8 @@ class TransitRequest extends Model
 
     protected $casts = [
         'legs' => 'array',
-        'starts_on' => 'date',
-        'ends_on' => 'date',
+        'starts_on' => 'date:Y-m-d',
+        'ends_on' => 'date:Y-m-d',
         'indicative_amount' => 'decimal:2',
         'approved_amount' => 'decimal:2',
         'reviewed_at' => 'datetime',

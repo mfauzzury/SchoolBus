@@ -113,7 +113,9 @@ class TransitPlanViewsTest extends TestCase
         $this->roster($this->driverB, $this->staffB, $this->routeB, 'dropoff')
             ->assertJsonPath('0.transit.action', 'pick')
             ->assertJsonPath('0.transit.leave_center_at', '18:00')
-            ->assertJsonPath('0.alight_stop.name', 'Taman Abu');
+            ->assertJsonPath('0.alight_stop.name', 'Taman Abu')
+            // Listed where the driver collects him: at the center.
+            ->assertJsonPath('0.pickup_stop.name', 'Bright Kids TC');
 
         // The morning is unchanged and says nothing about the center.
         $this->roster($this->driverA, $this->staffA, $this->routeA, 'pickup')

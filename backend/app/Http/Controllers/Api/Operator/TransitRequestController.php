@@ -119,6 +119,19 @@ class TransitRequestController extends Controller
             throw ValidationException::withMessages(['legs' => 'Choose a bus for every part of the day the center asked for.']);
         }
 
+        // A route makes one afternoon (and one morning) trip a day, so the same
+        // route can't take a child to the center and fetch them later as well.
+        $routeByDirection = [];
+        foreach ($legPlans as $i => $plan) {
+            $direction = TransitLeg::from($plan['leg'])->direction();
+            if (($routeByDirection[$direction] ?? null) === (int) $plan['route_id']) {
+                throw ValidationException::withMessages([
+                    "legs.$i.route_id" => 'This route already does the first part of this trip. Choose another bus run, such as an evening route.',
+                ]);
+            }
+            $routeByDirection[$direction] = (int) $plan['route_id'];
+        }
+
         foreach ($legPlans as $i => $plan) {
             $onRoute = fn (?int $stopId) => $stopId === null
                 || RouteStop::where('route_id', $plan['route_id'])->whereKey($stopId)->exists();

@@ -2000,7 +2000,9 @@
       "billNextMonth": "From the month after ({{month}})",
       "billedNow": "Added to the bill already made for {{months}}.",
       "paidBills": "Bills for {{months}} were already paid, so the charge was not changed there. Adjust them by hand if needed.",
-      "approvedDone": "Approved."
+      "approvedDone": "Approved.",
+      "sameBusTwice": "This route already does the first part of this trip. Choose another bus run, such as an evening route.",
+      "pickLaterRun": "Choose the bus run that picks up from the center (leaves at {{time}}). It must be a different run from the one above."
     }
   },
   "parent": {

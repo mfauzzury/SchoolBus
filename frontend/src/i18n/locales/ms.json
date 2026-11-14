@@ -1996,7 +1996,9 @@
       "billNextMonth": "Mulai bulan berikutnya ({{month}})",
       "billedNow": "Ditambah ke bil yang sudah dibuat untuk {{months}}.",
       "paidBills": "Bil untuk {{months}} sudah dibayar, jadi caj tidak diubah di situ. Laraskan sendiri jika perlu.",
-      "approvedDone": "Diluluskan."
+      "approvedDone": "Diluluskan.",
+      "sameBusTwice": "Laluan ini sudah membuat bahagian pertama perjalanan ini. Pilih perjalanan bas lain, seperti laluan petang.",
+      "pickLaterRun": "Pilih perjalanan bas yang mengambil dari pusat (keluar pada {{time}}). Ia mesti perjalanan berbeza daripada yang di atas."
     }
   },
   "parent": {

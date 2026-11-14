@@ -24,6 +24,16 @@ import { formatMoney, formatPeriod } from '@/lib/utils'
 
 const HOME_LEGS: TransitLeg[] = ['center_to_home', 'home_to_center']
 
+/**
+ * The part of a trip that starts at the center, paired with the part that
+ * ends there. A route makes one trip each way a day, so when both are asked
+ * for, the second needs a different bus run (e.g. an evening route).
+ */
+const SECOND_PART: Partial<Record<TransitLeg, TransitLeg>> = {
+  center_to_home: 'school_to_center',
+  center_to_school: 'home_to_center',
+}
+
 interface LegChoice {
   routeId: string
   homeStopId: string
@@ -83,7 +93,8 @@ function StartDecision({
   // Where the center goes, per route (only for routes it isn't on yet).
   const [placements, setPlacements] = useState<Record<string, number | null>>({})
   const [amount, setAmount] = useState(request.indicative_amount ? String(Number(request.indicative_amount)) : '')
-  const startDefault = request.starts_on && request.starts_on >= dateInput(0) ? request.starts_on : dateInput(0)
+  const askedStart = request.starts_on?.slice(0, 10)
+  const startDefault = askedStart && askedStart >= dateInput(0) ? askedStart : dateInput(0)
   const [startsOn, setStartsOn] = useState(startDefault)
   const [billFrom, setBillFrom] = useState<'start_month' | 'next_month'>('start_month')
   const startMonth = startsOn ? `${startsOn.slice(0, 7)}-01` : ''
@@ -95,7 +106,15 @@ function StartDecision({
 
   useEffect(() => {
     const route = routes.find((r) => String(r.id) === childRouteId)
-    setChoices(Object.fromEntries(legs.map((leg) => [leg, { routeId: childRouteId, homeStopId: guessHomeStop(route, request) }])))
+    setChoices(
+      Object.fromEntries(
+        legs.map((leg) => {
+          // The second part can't be the child's own route if that route already does the first part.
+          const needsOtherBus = SECOND_PART[leg] !== undefined && legs.includes(SECOND_PART[leg]!)
+          return [leg, needsOtherBus ? { routeId: '', homeStopId: '' } : { routeId: childRouteId, homeStopId: guessHomeStop(route, request) }]
+        }),
+      ),
+    )
     if (childRouteId) setPlacements({ [childRouteId]: request.center_after_stop_id })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [request.id, routes.length])
@@ -108,7 +127,14 @@ function StartDecision({
     setPlacements((p) => (routeId in p ? p : { ...p, [routeId]: null }))
   }
 
+  /** True when this leg is on the same route as the other part of its trip. */
+  const clashes = (leg: TransitLeg) => {
+    const first = SECOND_PART[leg]
+    return !!first && legs.includes(first) && !!choices[leg]?.routeId && choices[leg]?.routeId === choices[first]?.routeId
+  }
+
   const ready =
+    legs.every((leg) => !clashes(leg)) &&
     amount !== '' &&
     Number(amount) >= 0 &&
     !!startsOn &&
@@ -161,8 +187,16 @@ function StartDecision({
                     ))}
                   </SelectContent>
                 </Select>
-                {String(route?.id ?? '') === childRouteId && (
-                  <p className="text-xs text-muted-foreground">{t('operator.transitRequests.childsOwnRoute')}</p>
+                {clashes(leg) ? (
+                  <p className="text-sm text-destructive">{t('operator.transitRequests.sameBusTwice')}</p>
+                ) : SECOND_PART[leg] && legs.includes(SECOND_PART[leg]!) && !choice?.routeId ? (
+                  <p className="text-xs text-muted-foreground">
+                    {t('operator.transitRequests.pickLaterRun', { time: request.leave_center_at ?? '—' })}
+                  </p>
+                ) : (
+                  String(route?.id ?? '') === childRouteId && (
+                    <p className="text-xs text-muted-foreground">{t('operator.transitRequests.childsOwnRoute')}</p>
+                  )
                 )}
               </div>
 
@@ -289,7 +323,7 @@ function StopDecision({
 }) {
   const { t } = useTranslation()
   const approve = useApproveTransitRequest(request.id)
-  const [endsOn, setEndsOn] = useState(request.ends_on ?? dateInput(0))
+  const [endsOn, setEndsOn] = useState(request.ends_on?.slice(0, 10) ?? dateInput(0))
 
   return (
     <Card>

@@ -261,6 +261,19 @@ class TransitRequestFlowTest extends TestCase
         $this->assertSame('pending', TransitRequest::find($id)->status);
     }
 
+    public function test_one_route_cannot_take_the_child_to_the_center_and_home_again(): void
+    {
+        $id = $this->ask()->json('id');
+
+        $sameBus = $this->approvePayload();
+        $sameBus['legs'][1]['route_id'] = $this->routeA->id;
+        $sameBus['legs'][1]['home_stop_id'] = $this->homeOnA->id;
+
+        $this->actingAs($this->admin)->postJson("/api/operator/transit-requests/{$id}/approve", $sameBus)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('legs.1.route_id');
+    }
+
     public function test_rejecting_needs_a_reason_and_changes_nothing(): void
     {
         $id = $this->ask()->json('id');

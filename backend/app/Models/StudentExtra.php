@@ -26,9 +26,9 @@ class StudentExtra extends Model
 
     protected $casts = [
         'monthly_amount' => 'decimal:2',
-        'starts_on' => 'date',
-        'ends_on' => 'date',
-        'billing_starts_on' => 'date',
+        'starts_on' => 'date:Y-m-d',
+        'ends_on' => 'date:Y-m-d',
+        'billing_starts_on' => 'date:Y-m-d',
     ];
 
     /** Still running on (or after) this day: not ended before it. */

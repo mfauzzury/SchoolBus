@@ -58,16 +58,23 @@ class TripRoster
             ])
             ->get()
             ->unique('student_id')
-            ->map(fn (StudentRide $ride) => [
-                'student' => $ride->student,
-                'board_stop' => $ride->boardStop,
-                'alight_stop' => $ride->alightStop,
-                // The stop on this route where the driver deals with the child.
-                'stop' => $trip->direction === 'pickup'
-                    ? ($ride->boardStop ?? $ride->alightStop)
-                    : ($ride->alightStop ?? $ride->boardStop),
-                'transit' => $this->transitNote($ride),
-            ]);
+            ->map(function (StudentRide $ride) use ($trip) {
+                $transit = $this->transitNote($ride);
+
+                return [
+                    'student' => $ride->student,
+                    'board_stop' => $ride->boardStop,
+                    'alight_stop' => $ride->alightStop,
+                    // The stop on this route where the driver deals with the child, which also
+                    // sets their place in the list. Collecting a child from a center happens at the center.
+                    'stop' => match (true) {
+                        ($transit['action'] ?? null) === 'pick' => $ride->boardStop,
+                        $trip->direction === 'pickup' => $ride->boardStop ?? $ride->alightStop,
+                        default => $ride->alightStop ?? $ride->boardStop,
+                    },
+                    'transit' => $transit,
+                ];
+            });
 
         return $usual->concat($changed)
             ->sortBy(fn (array $row) => $row['stop']?->sequence)

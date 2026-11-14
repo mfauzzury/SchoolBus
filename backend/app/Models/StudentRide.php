@@ -29,8 +29,8 @@ class StudentRide extends Model
     ];
 
     protected $casts = [
-        'starts_on' => 'date',
-        'ends_on' => 'date',
+        'starts_on' => 'date:Y-m-d',
+        'ends_on' => 'date:Y-m-d',
     ];
 
     public function scopeActiveOn(Builder $query, CarbonInterface $date): Builder
