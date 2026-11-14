@@ -89,6 +89,50 @@ class RouteControllerTest extends TestCase
         $this->assertDatabaseMissing('route_stops', ['name' => 'Old Stop']);
     }
 
+    public function test_renaming_or_moving_stops_keeps_the_children_who_use_them(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+        $route = Route::factory()->create(['tenant_id' => $tenant->id]);
+        $first = $route->stops()->create(['tenant_id' => $tenant->id, 'name' => 'Taman Melati', 'sequence' => 1]);
+        $second = $route->stops()->create(['tenant_id' => $tenant->id, 'name' => 'Pasar', 'sequence' => 2]);
+        [, $parent] = $this->createParent($tenant);
+        $child = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id, 'route_id' => $route->id, 'pickup_stop_id' => $first->id]);
+
+        $this->actingAs($admin)->putJson("/api/operator/routes/{$route->id}", [
+            'name' => $route->name,
+            'stops' => [
+                ['name' => 'Pasar', 'sequence' => 1],
+                ['id' => $first->id, 'name' => 'Taman Melati Jaya', 'sequence' => 2],
+            ],
+        ])->assertOk()
+            ->assertJsonPath('stops.0.id', $second->id)
+            ->assertJsonPath('stops.1.id', $first->id)
+            ->assertJsonPath('stops.1.name', 'Taman Melati Jaya');
+
+        $this->assertSame($first->id, $child->fresh()->pickup_stop_id);
+    }
+
+    public function test_removing_a_stop_clears_it_only_for_the_children_who_used_it(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createOperatorAdmin($tenant);
+        $route = Route::factory()->create(['tenant_id' => $tenant->id]);
+        $kept = $route->stops()->create(['tenant_id' => $tenant->id, 'name' => 'Kept', 'sequence' => 1]);
+        $gone = $route->stops()->create(['tenant_id' => $tenant->id, 'name' => 'Gone', 'sequence' => 2]);
+        [, $parent] = $this->createParent($tenant);
+        $atKept = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id, 'route_id' => $route->id, 'pickup_stop_id' => $kept->id]);
+        $atGone = Student::factory()->create(['tenant_id' => $tenant->id, 'parent_id' => $parent->id, 'route_id' => $route->id, 'pickup_stop_id' => $gone->id]);
+
+        $this->actingAs($admin)->putJson("/api/operator/routes/{$route->id}", [
+            'name' => $route->name,
+            'stops' => [['name' => 'Kept', 'sequence' => 1]],
+        ])->assertOk()->assertJsonCount(1, 'stops');
+
+        $this->assertSame($kept->id, $atKept->fresh()->pickup_stop_id);
+        $this->assertNull($atGone->fresh()->pickup_stop_id);
+    }
+
     public function test_omitting_stops_on_update_leaves_existing_stops_untouched(): void
     {
         $tenant = $this->createTenant();

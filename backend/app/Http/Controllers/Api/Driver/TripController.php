@@ -8,11 +8,16 @@ use App\Models\Route;
 use App\Models\Student;
 use App\Models\Trip;
 use App\Models\TripLocation;
+use App\Services\TripRoster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TripController extends Controller
 {
+    public function __construct(private readonly TripRoster $roster)
+    {
+    }
+
     /**
      * Trips aren't pre-scheduled by any generator today — the driver's
      * assigned routes are materialized into (find-or-create) today's pickup
@@ -94,17 +99,12 @@ class TripController extends Controller
     {
         $this->authorizeTrip($request, $trip);
 
-        // Only children who still ride: a suspended or withdrawn child is not waiting at a stop.
-        $students = $trip->route->students()
-            ->where('enrollment_status', 'active')
-            ->with(['parentProfile:id,full_name,phone,email', 'pickupStop:id,name,sequence'])
-            ->get()
-            ->sortBy('pickupStop.sequence')
-            ->values();
+        $rows = $this->roster->for($trip);
 
         $eventsByStudent = BoardingEvent::where('trip_id', $trip->id)->get()->groupBy('student_id');
 
-        return $students->map(function (Student $student) use ($eventsByStudent) {
+        return $rows->map(function (array $row) use ($eventsByStudent) {
+            $student = $row['student'];
             $events = $eventsByStudent->get($student->id, collect());
 
             // Only what the driver needs on the bus — never fees, billing or the
@@ -118,7 +118,11 @@ class TripController extends Controller
                 'class_name' => $student->class_name,
                 'school_phone' => $student->school_phone,
                 'parent_profile' => $student->parentProfile,
-                'pickup_stop' => $student->pickupStop,
+                // The stop where the driver picks up or drops off this child on this trip.
+                // Usually their own pickup stop; a transit center when their day goes through one.
+                'pickup_stop' => $row['stop'],
+                'board_stop' => $row['board_stop'],
+                'alight_stop' => $row['alight_stop'],
                 'boarded' => $events->contains('event_type', 'boarded'),
                 'alighted' => $events->contains('event_type', 'alighted'),
                 'absent' => $events->contains('event_type', 'absent'),
@@ -150,7 +154,7 @@ class TripController extends Controller
 
         $data = $request->validate(['status' => 'required|in:waiting,boarded,alighted,absent']);
 
-        if ($student->route_id !== $trip->route_id) {
+        if (! $this->roster->includes($trip, $student)) {
             abort(422, 'This student is not on this trip\'s route.');
         }
 
@@ -191,7 +195,7 @@ class TripController extends Controller
     {
         $this->authorizeTrip($request, $trip);
 
-        if ($student->route_id !== $trip->route_id) {
+        if (! $this->roster->includes($trip, $student)) {
             abort(422, 'This student is not on this trip\'s route.');
         }
 

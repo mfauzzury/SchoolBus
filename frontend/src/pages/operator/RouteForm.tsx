@@ -33,7 +33,13 @@ const routeSchema = z.object({
   bus_id: z.string(),
   driver_id: z.string(),
   conductor_id: z.string(),
-  stops: z.array(z.object({ name: z.string().min(1, 'operator.routes.errors.stopRequired') })),
+  stops: z.array(
+    z.object({
+      // The saved stop's id, so renaming or moving it keeps the children who use it.
+      stopId: z.number().optional(),
+      name: z.string().min(1, 'operator.routes.errors.stopRequired'),
+    }),
+  ),
 })
 
 type RouteFormValues = z.infer<typeof routeSchema>
@@ -59,7 +65,7 @@ function toFormValues(route?: Route): RouteFormValues {
     driver_id: route?.driver_id ? String(route.driver_id) : UNASSIGNED,
     conductor_id: route?.conductor_id ? String(route.conductor_id) : UNASSIGNED,
     stops: route?.stops.length
-      ? [...route.stops].sort((a, b) => a.sequence - b.sequence).map((s) => ({ name: s.name }))
+      ? [...route.stops].sort((a, b) => a.sequence - b.sequence).map((s) => ({ stopId: s.id, name: s.name }))
       : [],
   }
 }
@@ -161,7 +167,7 @@ function RouteWizard({ route }: { route?: Route }) {
       bus_id: form.bus_id === UNASSIGNED ? null : Number(form.bus_id),
       driver_id: form.driver_id === UNASSIGNED ? null : Number(form.driver_id),
       conductor_id: form.conductor_id === UNASSIGNED ? null : Number(form.conductor_id),
-      stops: form.stops.map((s, i) => ({ name: s.name, sequence: i + 1 })),
+      stops: form.stops.map((s, i) => ({ id: s.stopId, name: s.name, sequence: i + 1 })),
     }
     const onSuccess = () => navigate('/operator/routes')
 

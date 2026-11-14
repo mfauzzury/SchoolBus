@@ -88,4 +88,10 @@ class Student extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    /** Legs that differ from this child's normal route (e.g. via a transit center). */
+    public function rides(): HasMany
+    {
+        return $this->hasMany(StudentRide::class);
+    }
 }
