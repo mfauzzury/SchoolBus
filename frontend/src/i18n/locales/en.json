@@ -1,4 +1,23 @@
 {
+  "transit": {
+    "portal": {
+      "groupCenter": "My center",
+      "home": "Home",
+      "welcome": "Welcome, {{name}}",
+      "intro": "{{operator}} is your bus operator. Here you can ask them to carry your children to and from your center.",
+      "prices": "Bus prices",
+      "pricesHint": "Extra per child per month, added to the parent's bus bill. The operator confirms the final price.",
+      "askOperator": "Ask the operator",
+      "month": "month",
+      "operator": "Your bus operator"
+    },
+    "legs": {
+      "school_to_center": "School → transit center",
+      "center_to_home": "Transit center → home",
+      "home_to_center": "Home → transit center",
+      "center_to_school": "Transit center → school"
+    }
+  },
   "common": {
     "save": "Save",
     "saving": "Saving…",
@@ -77,7 +96,8 @@
     "invoices": "Invoices",
     "profile": "Profile",
     "track": "Track",
-    "live": "Live"
+    "live": "Live",
+    "transitCenters": "Transit centers"
   },
   "marketingNav": {
     "parents": "For Parents",
@@ -1375,6 +1395,35 @@
     }
   },
   "operator": {
+    "transitCenters": {
+      "title": "Transit centers",
+      "intro": "Tuition and daycare centers where children stay between school and home. A center can ask for a bus for its children; you approve each request.",
+      "add": "Add transit center",
+      "addHelp": "After saving, send the center a login so it can ask for buses.",
+      "addButton": "Save",
+      "back": "Transit centers",
+      "searchPlaceholder": "Search by name, phone or email",
+      "empty": "No transit centers yet.",
+      "name": "Center name",
+      "contact": "Contact",
+      "contactPerson": "Contact person",
+      "phone": "Phone",
+      "email": "Email",
+      "emailHint": "The center logs in with this email.",
+      "emailTaken": "This email is already used. Please use another one.",
+      "address": "Address",
+      "status": "Status",
+      "inactiveHint": "The center can no longer log in. Children already riding are not changed.",
+      "login": "Login",
+      "loginSent": "Login sent",
+      "noLogin": "No login yet",
+      "noLoginHelp": "The center can't log in yet. Send a login and we'll email {{email}} a link to set a password.",
+      "loginSentHelp": "A login was sent to {{email}}. If they lost the email, send it again.",
+      "sendLogin": "Send login",
+      "resendLogin": "Send login again",
+      "loginEmailed": "Done. Ask the center to check its email.",
+      "loginError": "Could not send the login. Please try again."
+    },
     "dashboard": {
       "welcome": "Welcome, {{name}} — {{company}}",
       "operatorId": "Your Operator ID",
@@ -1797,6 +1846,12 @@
       "accountHolder": "Account holder",
       "saveChanges": "Save changes",
       "saveError": "Could not save changes. Try again.",
+      "transitPrices": "Transit center prices",
+      "transitPricesDescription": "Extra monthly fee for each part of the day a transit center asks the bus to cover.",
+      "transitAfterSchool": "After school",
+      "transitBeforeSchool": "Before school",
+      "transitPricesHint": "Centers see these as an estimate. You can change the price when you approve each request.",
+      "transitPricesError": "Prices cannot be less than zero.",
       "discountRates": "Discount rates",
       "discountRatesDescription": "Percentage off the monthly fee for a parent's second and later children. Not applied to a child with a custom fee.",
       "siblingDiscount": "Sibling discount",

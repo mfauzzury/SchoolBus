@@ -4,7 +4,7 @@ import { loginPathFor } from '@/lib/nextPath'
 import { isPlatformUser } from '@/lib/platform'
 import { Suspended } from '@/pages/Suspended'
 
-export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'platform' }) {
+export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'platform' | 'transit' }) {
   const { data, isLoading, isError } = useMe()
   const location = useLocation()
 
@@ -30,7 +30,14 @@ export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'platf
 
   const isParent = data.roles.includes('parent')
   const isPlatform = isPlatformUser(data.roles)
-  const homePath = isPlatform ? '/admin/dashboard' : isParent ? '/parent/dashboard' : '/operator/dashboard'
+  const isTransit = data.roles.includes('transit_center')
+  const homePath = isPlatform
+    ? '/admin/dashboard'
+    : isParent
+      ? '/parent/dashboard'
+      : isTransit
+        ? '/transit/home'
+        : '/operator/dashboard'
 
   if (role === 'platform' && !isPlatform) {
     return <Navigate to={homePath} replace />
@@ -40,7 +47,11 @@ export function ProtectedRoute({ role }: { role?: 'operator' | 'parent' | 'platf
     return <Navigate to={homePath} replace />
   }
 
-  if (role === 'operator' && (isParent || isPlatform)) {
+  if (role === 'transit' && !isTransit) {
+    return <Navigate to={homePath} replace />
+  }
+
+  if (role === 'operator' && (isParent || isPlatform || isTransit)) {
     return <Navigate to={homePath} replace />
   }
 

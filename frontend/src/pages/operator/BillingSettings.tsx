@@ -13,6 +13,7 @@ import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useBillingConfig, useUpdateBillingConfig } from '@/hooks/useBillingConfig'
 import { useDiscountConfig, useUpdateDiscountConfig } from '@/hooks/useDiscountConfig'
 import type { DiscountConfig } from '@/api/discountConfig'
+import { TRANSIT_LEGS, type TransitLeg } from '@/api/billingConfig'
 
 const percentField = z.string().refine((v) => v !== '' && Number(v) >= 0 && Number(v) <= 100)
 
@@ -245,15 +246,116 @@ function BillingConfigCard() {
 }
 
 /**
+ * What a transit center sees as the indicative monthly price for each part of
+ * the day it asks the bus to cover. The operator can still change the price
+ * when approving each request.
+ */
+function TransitPricesCard() {
+  const { t } = useTranslation()
+  const isAdmin = useIsOperatorAdmin()
+  const { data: config, isLoading } = useBillingConfig()
+  const updateConfig = useUpdateBillingConfig()
+  const [prices, setPrices] = useState<Record<TransitLeg, string>>({
+    school_to_center: '',
+    center_to_home: '',
+    home_to_center: '',
+    center_to_school: '',
+  })
+
+  useEffect(() => {
+    if (config?.transit_prices) {
+      setPrices(
+        Object.fromEntries(
+          TRANSIT_LEGS.map((leg) => [leg, config.transit_prices[leg] === null ? '' : String(config.transit_prices[leg])]),
+        ) as Record<TransitLeg, string>,
+      )
+    }
+  }, [config])
+
+  const valid = TRANSIT_LEGS.every((leg) => prices[leg] === '' || Number(prices[leg]) >= 0)
+
+  const onSubmit = (event: FormEvent) => {
+    event.preventDefault()
+    if (!valid) return
+    updateConfig.mutate({
+      transit_prices: Object.fromEntries(
+        TRANSIT_LEGS.map((leg) => [leg, prices[leg] === '' ? null : Number(prices[leg])]),
+      ) as Record<TransitLeg, number | null>,
+    })
+  }
+
+  const groups: { title: string; legs: TransitLeg[] }[] = [
+    { title: t('operator.settings.transitAfterSchool'), legs: ['school_to_center', 'center_to_home'] },
+    { title: t('operator.settings.transitBeforeSchool'), legs: ['home_to_center', 'center_to_school'] },
+  ]
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t('operator.settings.transitPrices')}</CardTitle>
+        <p className="text-sm text-muted-foreground">{t('operator.settings.transitPricesDescription')}</p>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+        ) : (
+          <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+            {groups.map((group, index) => (
+              <div key={group.title} className={index > 0 ? 'border-t pt-4' : undefined}>
+                <p className="mb-3 text-sm font-medium">{group.title}</p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {group.legs.map((leg) => (
+                    <div key={leg} className="flex flex-col gap-1.5">
+                      <Label htmlFor={`transit_${leg}`}>{t(`transit.legs.${leg}`)}</Label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">RM</span>
+                        <Input
+                          id={`transit_${leg}`}
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                          disabled={!isAdmin}
+                          value={prices[leg]}
+                          onChange={(e) => setPrices((p) => ({ ...p, [leg]: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <p className="text-xs text-muted-foreground">{t('operator.settings.transitPricesHint')}</p>
+
+            {!valid && <p className="text-sm text-destructive">{t('operator.settings.transitPricesError')}</p>}
+            {updateConfig.isError && <p className="text-sm text-destructive">{t('operator.settings.saveError')}</p>}
+            {updateConfig.isSuccess && <p className="text-sm text-muted-foreground">{t('common.saved')}</p>}
+
+            {isAdmin && (
+              <Button type="submit" disabled={!valid || updateConfig.isPending}>
+                {updateConfig.isPending ? t('common.saving') : t('operator.settings.saveChanges')}
+              </Button>
+            )}
+          </form>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+/**
  * Everything that decides how families are billed, on one tab: when bills are
- * due and which months are billed, and the sibling discount. (What each route
+ * due and which months are billed, the sibling discount, and transit-center prices. (What each route
  * costs is set on the Routes tab.)
  */
 export function BillingSettings() {
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
       <BillingConfigCard />
-      <DiscountConfigCard />
+      <div className="flex flex-col gap-6">
+        <DiscountConfigCard />
+        <TransitPricesCard />
+      </div>
     </div>
   )
 }

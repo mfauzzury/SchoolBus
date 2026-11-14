@@ -8,7 +8,7 @@ export function useBillingConfig() {
 export function useUpdateBillingConfig() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (input: BillingConfig) => updateBillingConfig(input),
+    mutationFn: (input: Partial<BillingConfig>) => updateBillingConfig(input),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['billing-config'] }),
   })
 }

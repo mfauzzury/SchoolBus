@@ -1,4 +1,23 @@
 {
+  "transit": {
+    "portal": {
+      "groupCenter": "Pusat saya",
+      "home": "Utama",
+      "welcome": "Selamat datang, {{name}}",
+      "intro": "{{operator}} ialah pengendali bas anda. Di sini anda boleh memohon mereka membawa kanak-kanak anda ke dan dari pusat anda.",
+      "prices": "Harga bas",
+      "pricesHint": "Tambahan bagi setiap kanak-kanak sebulan, dimasukkan ke dalam bil bas ibu bapa. Pengendali mengesahkan harga akhir.",
+      "askOperator": "Tanya pengendali",
+      "month": "bulan",
+      "operator": "Pengendali bas anda"
+    },
+    "legs": {
+      "school_to_center": "Sekolah → pusat transit",
+      "center_to_home": "Pusat transit → rumah",
+      "home_to_center": "Rumah → pusat transit",
+      "center_to_school": "Pusat transit → sekolah"
+    }
+  },
   "common": {
     "save": "Simpan",
     "saving": "Menyimpan…",
@@ -77,7 +96,8 @@
     "invoices": "Bil",
     "profile": "Profil",
     "track": "Jejak",
-    "live": "Langsung"
+    "live": "Langsung",
+    "transitCenters": "Pusat transit"
   },
   "marketingNav": {
     "parents": "Untuk Ibu Bapa",
@@ -1373,6 +1393,35 @@
     }
   },
   "operator": {
+    "transitCenters": {
+      "title": "Pusat transit",
+      "intro": "Pusat tuisyen dan jagaan di mana kanak-kanak tinggal antara sekolah dan rumah. Pusat boleh memohon bas untuk kanak-kanaknya; anda luluskan setiap permohonan.",
+      "add": "Tambah pusat transit",
+      "addHelp": "Selepas simpan, hantar log masuk kepada pusat supaya ia boleh memohon bas.",
+      "addButton": "Simpan",
+      "back": "Pusat transit",
+      "searchPlaceholder": "Cari ikut nama, telefon atau e-mel",
+      "empty": "Belum ada pusat transit.",
+      "name": "Nama pusat",
+      "contact": "Hubungi",
+      "contactPerson": "Orang untuk dihubungi",
+      "phone": "Telefon",
+      "email": "E-mel",
+      "emailHint": "Pusat log masuk dengan e-mel ini.",
+      "emailTaken": "E-mel ini sudah digunakan. Sila guna e-mel lain.",
+      "address": "Alamat",
+      "status": "Status",
+      "inactiveHint": "Pusat tidak boleh log masuk lagi. Kanak-kanak yang sedang menaiki bas tidak berubah.",
+      "login": "Log masuk",
+      "loginSent": "Log masuk dihantar",
+      "noLogin": "Belum ada log masuk",
+      "noLoginHelp": "Pusat belum boleh log masuk. Hantar log masuk dan kami akan e-mel pautan kepada {{email}} untuk menetapkan kata laluan.",
+      "loginSentHelp": "Log masuk telah dihantar kepada {{email}}. Jika e-mel hilang, hantar sekali lagi.",
+      "sendLogin": "Hantar log masuk",
+      "resendLogin": "Hantar log masuk sekali lagi",
+      "loginEmailed": "Selesai. Minta pusat menyemak e-melnya.",
+      "loginError": "Tidak dapat menghantar log masuk. Sila cuba lagi."
+    },
     "dashboard": {
       "welcome": "Selamat datang, {{name}} — {{company}}",
       "operatorId": "ID Pengendali Anda",
@@ -1793,6 +1842,12 @@
       "accountHolder": "Pemegang akaun",
       "saveChanges": "Simpan perubahan",
       "saveError": "Tidak dapat menyimpan perubahan. Cuba lagi.",
+      "transitPrices": "Harga pusat transit",
+      "transitPricesDescription": "Yuran bulanan tambahan bagi setiap bahagian hari yang dimohon oleh pusat transit.",
+      "transitAfterSchool": "Selepas sekolah",
+      "transitBeforeSchool": "Sebelum sekolah",
+      "transitPricesHint": "Pusat melihat harga ini sebagai anggaran. Anda boleh ubah harga semasa meluluskan setiap permohonan.",
+      "transitPricesError": "Harga tidak boleh kurang daripada sifar.",
       "discountRates": "Kadar diskaun",
       "discountRatesDescription": "Peratusan potongan yuran bulanan untuk anak kedua dan seterusnya. Tidak digunakan untuk anak dengan yuran khas.",
       "siblingDiscount": "Diskaun adik-beradik",

@@ -65,6 +65,8 @@ export interface MeResponse {
   user: User
   tenant: BusOperator | null
   parentProfile: ParentProfile | null
+  /** Set when this login belongs to a transit center. */
+  transitCenter: { id: number; name: string; status: 'active' | 'inactive' } | null
   roles: string[]
   /** Set while a platform-team member is logged in as this operator. */
   impersonating: { admin_name: string } | null

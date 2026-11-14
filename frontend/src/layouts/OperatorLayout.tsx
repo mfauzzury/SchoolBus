@@ -11,6 +11,7 @@ import {
   Radio,
   ReceiptText,
   Route,
+  School,
   Wallet,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -61,6 +62,7 @@ export function OperatorLayout() {
           icon: ClipboardList,
           badge: pendingApplications?.length ?? 0,
         },
+        { to: '/operator/transit-centers', label: t('nav.transitCenters'), icon: School },
       ],
     },
     {
