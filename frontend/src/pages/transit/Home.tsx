@@ -1,8 +1,10 @@
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useMyCenter } from '@/hooks/useTransitPortal'
 import { TRANSIT_LEGS } from '@/api/billingConfig'
-import { formatMoney } from '@/lib/utils'
+import { cn, formatMoney } from '@/lib/utils'
 
 /** Start page for a transit center: who its bus operator is and what each leg costs. */
 export function TransitHome() {
@@ -15,11 +17,16 @@ export function TransitHome() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">{t('transit.portal.welcome', { name: center.name })}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t('transit.portal.intro', { operator: center.operator.company_name })}
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold">{t('transit.portal.welcome', { name: center.name })}</h1>
+          <p className="text-sm text-muted-foreground">
+            {t('transit.portal.intro', { operator: center.operator.company_name })}
+          </p>
+        </div>
+        <Link to="/transit/new" className={cn(buttonVariants({ size: 'lg' }))}>
+          {t('transit.portal.askForBus')}
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">

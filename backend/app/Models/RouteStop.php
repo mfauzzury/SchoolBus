@@ -15,6 +15,7 @@ class RouteStop extends Model
     protected $fillable = [
         'tenant_id',
         'route_id',
+        'transit_center_id',
         'name',
         'sequence',
     ];
@@ -22,6 +23,12 @@ class RouteStop extends Model
     public function route(): BelongsTo
     {
         return $this->belongsTo(Route::class);
+    }
+
+    /** Set when this stop is a transit center. */
+    public function transitCenter(): BelongsTo
+    {
+        return $this->belongsTo(TransitCenter::class);
     }
 
     public function students(): HasMany

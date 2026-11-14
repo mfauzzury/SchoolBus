@@ -9,13 +9,81 @@
       "pricesHint": "Tambahan bagi setiap kanak-kanak sebulan, dimasukkan ke dalam bil bas ibu bapa. Pengendali mengesahkan harga akhir.",
       "askOperator": "Tanya pengendali",
       "month": "bulan",
-      "operator": "Pengendali bas anda"
+      "operator": "Pengendali bas anda",
+      "requests": "Permohonan",
+      "askForBus": "Mohon bas"
     },
     "legs": {
       "school_to_center": "Sekolah → pusat transit",
       "center_to_home": "Pusat transit → rumah",
       "home_to_center": "Rumah → pusat transit",
       "center_to_school": "Pusat transit → sekolah"
+    },
+    "placement": {
+      "hint": "Seret pusat ke tempatnya dalam perjalanan, atau guna anak panah.",
+      "moveUp": "Naik",
+      "moveDown": "Turun"
+    },
+    "status": {
+      "pending": "Menunggu",
+      "approved": "Diluluskan",
+      "rejected": "Tidak diluluskan",
+      "cancelled": "Dibatalkan"
+    },
+    "request": {
+      "title": "Mohon bas",
+      "findTitle": "Cari kanak-kanak",
+      "findHelp": "Taip nama kanak-kanak, atau nombor telefon ibu bapa.",
+      "findPlaceholder": "Nama kanak-kanak atau telefon ibu bapa",
+      "typeMore": "Taip sekurang-kurangnya 3 huruf atau nombor.",
+      "noneFound": "Tiada kanak-kanak dijumpai. Semak ejaan, atau tanya ibu bapa syarikat bas mana yang mereka guna.",
+      "choose": "Pilih",
+      "parentLine": "Ibu bapa: {{name}} · telefon berakhir {{phone}}",
+      "changeChild": "Tukar kanak-kanak",
+      "replacesPlan": "Kanak-kanak ini sudah datang ke pusat anda dengan bas. Permohonan ini akan menggantikan pelan sekarang selepas diluluskan.",
+      "whatTitle": "Apa yang bas perlu buat?",
+      "pickOne": "Pilih sekurang-kurangnya satu.",
+      "whereTitle": "Di mana pusat anda dalam perjalanan?",
+      "whereHelp": "Ini laluan bas kanak-kanak ({{route}}). Letak pusat anda di tempatnya dalam perjalanan.",
+      "alreadyOnRoute": "Pusat anda sudah menjadi hentian di laluan ini ({{route}}).",
+      "noRoute": "Kanak-kanak ini belum ada laluan bas. Pengendali akan meletakkan pusat anda.",
+      "whenTitle": "Bila?",
+      "startsOn": "Hari pertama",
+      "leaveAt": "Masa kanak-kanak keluar dari pusat",
+      "note": "Nota untuk pengendali (pilihan)",
+      "estimate": "Anggaran tambahan sebulan",
+      "estimateHint": "Pengendali bas akan menyemak dengan ibu bapa dan mengesahkan harga akhir. Ia dimasukkan ke dalam bil bas ibu bapa.",
+      "error": "Tidak dapat dihantar. Sila cuba lagi.",
+      "send": "Hantar kepada pengendali bas"
+    },
+    "children": {
+      "title": "Kanak-kanak saya",
+      "empty": "Belum ada kanak-kanak. Mohon bas untuk bermula.",
+      "child": "Kanak-kanak",
+      "bus": "Bas",
+      "dates": "Tarikh",
+      "price": "Sebulan",
+      "from": "Mulai {{date}}",
+      "until": "Hingga {{date}}",
+      "stopAsked": "Henti dimohon",
+      "stop": "Henti"
+    },
+    "stop": {
+      "title": "Henti bas melalui pusat untuk {{name}}",
+      "help": "Selepas hari terakhir, bas membawa kanak-kanak dalam perjalanan biasa semula. Pengendali akan mengesahkan.",
+      "notFound": "Kanak-kanak ini tiada pelan berjalan dengan pusat anda.",
+      "lastDay": "Hari terakhir",
+      "send": "Hantar kepada pengendali bas"
+    },
+    "requests": {
+      "empty": "Belum ada permohonan.",
+      "what": "Apa",
+      "status": "Status",
+      "sent": "Dihantar {{date}}",
+      "stopAfter": "Henti selepas {{date}}",
+      "estimate": "anggaran",
+      "cancel": "Batal permohonan",
+      "cancelConfirm": "Batalkan permohonan untuk {{name}}?"
     }
   },
   "common": {
@@ -97,7 +165,8 @@
     "profile": "Profil",
     "track": "Jejak",
     "live": "Langsung",
-    "transitCenters": "Pusat transit"
+    "transitCenters": "Pusat transit",
+    "transitRequests": "Permohonan transit"
   },
   "marketingNav": {
     "parents": "Untuk Ibu Bapa",
@@ -1255,6 +1324,14 @@
           "operator_signed_up": {
             "title": "Pengendali baharu mendaftar",
             "help": "Pemilik platform dimaklumkan apabila syarikat bas baharu membuat akaun."
+          },
+          "transit_plan_changed": {
+            "help": "Ibu bapa dimaklumkan apabila bas anak mula atau berhenti melalui pusat transit, serta yuran bulanan tambahan.",
+            "title": "Pelan pusat transit berubah"
+          },
+          "transit_request_received": {
+            "help": "Pemilik pengendali dimaklumkan apabila pusat transit memohon untuk mula atau berhenti menghantar kanak-kanak melalui pusat.",
+            "title": "Permohonan pusat transit baharu"
           }
         },
         "searchPlaceholder": "Nama atau e-mel",
@@ -1868,6 +1945,41 @@
       "billModeAutoHint": "Sistem membuat setiap bil pada 1hb setiap bulan. Anda masih boleh melihat halaman Bil seterusnya dahulu.",
       "billModeManual": "Saya cipta sendiri",
       "billModeManualHint": "Tiada bil dibuat sendiri. Anda semak halaman Bil seterusnya dan tekan Cipta."
+    },
+    "transitRequests": {
+      "adminOnly": "Hanya pemilik boleh meluluskan atau menolak.",
+      "decidedBy": "Diputuskan oleh {{name}} pada {{date}}",
+      "rejectedBecause": "Sebab: {{reason}}",
+      "approvedAt": "Diluluskan pada RM {{amount}} sebulan.",
+      "callParent": "Hubungi ibu bapa untuk mengesahkan sebelum meluluskan.",
+      "parent": "Ibu bapa",
+      "currentPlans": "Pelan sekarang",
+      "leavesAt": "Keluar dari pusat pada {{time}}",
+      "rejectReason": "Sebab (pusat akan melihat ini)",
+      "reject": "Tolak",
+      "approveStop": "Lulus henti",
+      "stopHelp": "Selepas hari terakhir bas kembali ke perjalanan biasa dan caj tambahan berhenti.",
+      "stopTitle": "Henti pelan",
+      "approve": "Lulus",
+      "error": "Tidak dapat disimpan. Sila semak dan cuba lagi.",
+      "noEstimate": "Pusat tidak melihat harga (belum ditetapkan dalam tetapan).",
+      "centerSaw": "Pusat melihat RM {{amount}} sebagai anggaran.",
+      "monthlyAmount": "Tambahan sebulan",
+      "priceAndDate": "Harga dan tarikh mula",
+      "pickHomeStop": "Pilih hentian",
+      "homeStop": "Hentian rumah kanak-kanak di laluan ini",
+      "samePlaceAbove": "Tempat sama seperti di atas.",
+      "alreadyAStop": "Pusat sudah menjadi hentian di laluan ini.",
+      "centerStop": "Di mana pusat di laluan ini",
+      "childsOwnRoute": "Ini laluan kanak-kanak sendiri.",
+      "whichBus": "Bas mana?",
+      "view": "Lihat",
+      "startSummary_other": "{{count}} perjalanan mulai {{date}}",
+      "startSummary_one": "{{count}} perjalanan mulai {{date}}",
+      "center": "Pusat transit",
+      "empty": "Tiada permohonan di sini.",
+      "intro": "Pusat transit memohon bas untuk membawa kanak-kanak ke dan dari pusat mereka. Hubungi ibu bapa sebelum meluluskan.",
+      "title": "Permohonan transit"
     }
   },
   "parent": {

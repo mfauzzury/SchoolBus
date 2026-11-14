@@ -39,6 +39,7 @@ use App\Http\Controllers\Api\Operator\StudentApplicationController;
 use App\Http\Controllers\Api\Operator\StudentController;
 use App\Http\Controllers\Api\Operator\TransactionController;
 use App\Http\Controllers\Api\Operator\TransitCenterController;
+use App\Http\Controllers\Api\Operator\TransitRequestController;
 use App\Http\Controllers\Api\ParentPortal\InvoiceController as ParentInvoiceController;
 use App\Http\Controllers\Api\ParentPortal\PaymentController as ParentPaymentController;
 use App\Http\Controllers\Api\ParentPortal\ProfileController as ParentProfileController;
@@ -48,6 +49,8 @@ use App\Http\Controllers\Api\ParentPortal\StudentApplicationController as Parent
 use App\Http\Controllers\Api\ParentPortal\StudentController as ParentStudentController;
 use App\Http\Controllers\Api\Public\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\Transit\CenterController as TransitCenterSelfController;
+use App\Http\Controllers\Api\Transit\RequestController as TransitPortalRequestController;
+use App\Http\Controllers\Api\Transit\StudentController as TransitPortalStudentController;
 use App\Http\Controllers\Api\Public\ContactController;
 use App\Http\Controllers\Api\Public\EmailCodeController;
 use App\Http\Controllers\Api\Public\OperatorRegistrationController;
@@ -225,6 +228,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('student-applications/{studentApplication}', [StudentApplicationController::class, 'show']);
             Route::get('transit-centers', [TransitCenterController::class, 'index']);
             Route::get('transit-centers/{transitCenter}', [TransitCenterController::class, 'show']);
+            Route::get('transit-requests', [TransitRequestController::class, 'index']);
+            Route::get('transit-requests/{transitRequest}', [TransitRequestController::class, 'show']);
 
             Route::middleware('role:operator_admin')->group(function () {
                 Route::apiResource('buses', BusController::class)->only(['store', 'update', 'destroy']);
@@ -249,6 +254,8 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::post('transit-centers', [TransitCenterController::class, 'store']);
                 Route::put('transit-centers/{transitCenter}', [TransitCenterController::class, 'update']);
                 Route::post('transit-centers/{transitCenter}/login', [TransitCenterController::class, 'sendLogin']);
+                Route::post('transit-requests/{transitRequest}/approve', [TransitRequestController::class, 'approve']);
+                Route::post('transit-requests/{transitRequest}/reject', [TransitRequestController::class, 'reject']);
             });
         });
 
@@ -266,6 +273,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::middleware('role:transit_center')->prefix('transit')->group(function () {
             Route::get('center', [TransitCenterSelfController::class, 'show']);
+            Route::get('students', [TransitPortalStudentController::class, 'index']);
+            Route::get('students/{student}', [TransitPortalStudentController::class, 'show']);
+            Route::get('children', [TransitPortalRequestController::class, 'children']);
+            Route::get('requests', [TransitPortalRequestController::class, 'index']);
+            // Each request emails the operator; a center has no reason to send many a minute.
+            Route::post('requests', [TransitPortalRequestController::class, 'store'])->middleware('throttle:10,1');
+            Route::post('requests/stop', [TransitPortalRequestController::class, 'stop'])->middleware('throttle:10,1');
+            Route::post('requests/{transitRequest}/cancel', [TransitPortalRequestController::class, 'cancel']);
         });
 
         Route::middleware('role:parent')->prefix('parent')->group(function () {

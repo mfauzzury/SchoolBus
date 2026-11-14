@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
-import { House } from 'lucide-react'
+import { ClipboardList, House, PlusCircle, Users } from 'lucide-react'
+import { useMyTransitRequests } from '@/hooks/useTransitPortal'
 import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
 import { SidebarShell, type SidebarGroup } from '@/components/SidebarShell'
@@ -9,11 +10,18 @@ export function TransitLayout() {
   const { t } = useTranslation()
   const { data } = useMe()
   const logout = useLogout()
+  const { data: requests } = useMyTransitRequests()
+  const waiting = requests?.filter((r) => r.status === 'pending').length ?? 0
 
   const groups: SidebarGroup[] = [
     {
       title: t('transit.portal.groupCenter'),
-      items: [{ to: '/transit/home', label: t('transit.portal.home'), icon: House }],
+      items: [
+        { to: '/transit/home', label: t('transit.portal.home'), icon: House },
+        { to: '/transit/children', label: t('transit.children.title'), icon: Users },
+        { to: '/transit/new', label: t('transit.portal.askForBus'), icon: PlusCircle },
+        { to: '/transit/requests', label: t('transit.portal.requests'), icon: ClipboardList, badge: waiting },
+      ],
     },
   ]
 

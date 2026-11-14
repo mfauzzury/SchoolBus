@@ -9,6 +9,7 @@ use App\Models\NotificationSetting;
 use App\Models\ParentProfile;
 use App\Models\Payment;
 use App\Models\StudentApplication;
+use App\Models\TransitRequest;
 use App\Models\User;
 use App\Notifications\ApplicationDecided;
 use App\Notifications\ApplicationReceived;
@@ -18,6 +19,8 @@ use App\Notifications\OperatorSignedUp;
 use App\Notifications\PaymentReceived;
 use App\Notifications\PaymentReminder;
 use App\Notifications\PlatformNotification;
+use App\Notifications\TransitPlanChanged;
+use App\Notifications\TransitRequestReceived;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
@@ -207,6 +210,70 @@ class Notifier
                     "application_received:{$application->id}:{$email}",
                 );
             }
+        });
+    }
+
+    public function transitRequestReceived(TransitRequest $request): void
+    {
+        $this->guard(function () use ($request) {
+            $request->loadMissing(['student', 'transitCenter', 'busOperator']);
+            $operator = $request->busOperator;
+
+            $emails = $operator->users()->operatorOwners()->pluck('email')->filter()->unique();
+            if ($emails->isEmpty() && filled($operator->email)) {
+                $emails = collect([$operator->email]);
+            }
+
+            foreach ($emails as $email) {
+                $this->send(
+                    NotificationType::TRANSIT_REQUEST_RECEIVED,
+                    $email,
+                    $operator->company_name,
+                    new TransitRequestReceived(
+                        $operator->company_name,
+                        $request->transitCenter->name,
+                        $request->student->full_name,
+                        $request->kind === 'stop',
+                    ),
+                    $request->transitCenter->name.': '.$request->student->full_name,
+                    $operator->id,
+                    "transit_request_received:{$request->id}:{$email}",
+                );
+            }
+        });
+    }
+
+    /** After the operator approves a transit request, the parent is told what changes and from when. */
+    public function transitPlanChanged(TransitRequest $request): void
+    {
+        $this->guard(function () use ($request) {
+            $request->loadMissing(['student.parentProfile.user', 'transitCenter', 'busOperator']);
+            $parent = $request->student->parentProfile;
+
+            if (! $parent || $request->status !== 'approved') {
+                return;
+            }
+
+            $stopping = $request->kind === 'stop';
+            $date = ($stopping ? $request->ends_on : $request->starts_on)->format('d/m/Y');
+
+            $this->send(
+                NotificationType::TRANSIT_PLAN_CHANGED,
+                $this->parentEmail($parent),
+                $parent->full_name,
+                new TransitPlanChanged(
+                    $request->busOperator->company_name,
+                    $parent->full_name,
+                    $request->student->full_name,
+                    $request->transitCenter->name,
+                    $stopping,
+                    $date,
+                    $stopping ? null : (string) $request->approved_amount,
+                ),
+                ($stopping ? 'Transit ends: ' : 'Transit starts: ').$request->student->full_name,
+                $request->tenant_id,
+                "transit_plan_changed:{$request->id}",
+            );
         });
     }
 

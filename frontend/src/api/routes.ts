@@ -6,6 +6,8 @@ export interface RouteStop {
   id: number
   name: string
   sequence: number
+  /** Set when this stop is a transit center. */
+  transit_center_id?: number | null
 }
 
 export interface Route {

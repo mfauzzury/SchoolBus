@@ -46,7 +46,7 @@ class NotificationAdminTest extends TestCase
         $response = $this->actingAs($owner)->getJson('/api/admin/notifications')->assertOk();
         $types = collect($response->json('types'))->keyBy('type');
 
-        $this->assertCount(7, $types);
+        $this->assertCount(9, $types);
         $this->assertSame(1, $types['bill_issued']['sent']);
         $this->assertSame(1, $types['bill_issued']['failed']);
         $this->assertSame(1, $types['payment_received']['sent']);

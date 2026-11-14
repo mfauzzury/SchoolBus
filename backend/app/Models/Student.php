@@ -89,6 +89,17 @@ class Student extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    /** Monthly charges on top of the bus fee (e.g. going via a transit center). */
+    public function extras(): HasMany
+    {
+        return $this->hasMany(StudentExtra::class);
+    }
+
+    public function transitRequests(): HasMany
+    {
+        return $this->hasMany(TransitRequest::class);
+    }
+
     /** Legs that differ from this child's normal route (e.g. via a transit center). */
     public function rides(): HasMany
     {

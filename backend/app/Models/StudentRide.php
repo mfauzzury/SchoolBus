@@ -19,6 +19,7 @@ class StudentRide extends Model
     protected $fillable = [
         'tenant_id',
         'student_id',
+        'transit_request_id',
         'direction',
         'route_id',
         'board_stop_id',

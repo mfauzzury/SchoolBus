@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\Operator;
 
 use App\Http\Controllers\Controller;
 use App\Models\Route as RouteModel;
+use App\Models\StudentRide;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class RouteController extends Controller
 {
@@ -123,6 +125,17 @@ class RouteController extends Controller
             }
 
             $plan[] = [$existing, $stop];
+        }
+
+        $inUse = StudentRide::activeOn(today())
+            ->where(fn ($q) => $q->whereIn('board_stop_id', $unmatched->keys())->orWhereIn('alight_stop_id', $unmatched->keys()))
+            ->with('boardStop:id,name', 'alightStop:id,name')
+            ->first();
+        if ($inUse) {
+            $name = $unmatched->get($inUse->board_stop_id)?->name ?? $unmatched->get($inUse->alight_stop_id)?->name;
+            throw ValidationException::withMessages([
+                'stops' => "The stop \"{$name}\" is used by a transit center plan. End that plan before removing the stop.",
+            ]);
         }
 
         $route->stops()->whereIn('id', $unmatched->keys())->delete();

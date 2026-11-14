@@ -12,12 +12,14 @@ import {
   ReceiptText,
   Route,
   School,
+  Shuffle,
   Wallet,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
 import { useStudentApplications } from '@/hooks/useStudentApplications'
 import { useNextBillsSummary } from '@/hooks/useNextBills'
+import { useTransitRequests } from '@/hooks/useTransitRequests'
 import { useStopImpersonation } from '@/hooks/useAdmin'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 import { SidebarShell, type SidebarGroup } from '@/components/SidebarShell'
@@ -30,6 +32,7 @@ export function OperatorLayout() {
   const logout = useLogout()
   const { data: pendingApplications } = useStudentApplications({ status: 'pending' })
   const { data: nextBills } = useNextBillsSummary()
+  const { data: pendingTransit } = useTransitRequests('pending')
   const stopImpersonation = useStopImpersonation()
 
   const tenant = data?.tenant
@@ -61,6 +64,12 @@ export function OperatorLayout() {
           label: t('nav.applications'),
           icon: ClipboardList,
           badge: pendingApplications?.length ?? 0,
+        },
+        {
+          to: '/operator/transit-requests',
+          label: t('nav.transitRequests'),
+          icon: Shuffle,
+          badge: pendingTransit?.length ?? 0,
         },
         { to: '/operator/transit-centers', label: t('nav.transitCenters'), icon: School },
       ],

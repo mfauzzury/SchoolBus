@@ -36,8 +36,14 @@ import { Settings } from '@/pages/operator/Settings'
 import { BillingSettings } from '@/pages/operator/BillingSettings'
 import { TransitCenters } from '@/pages/operator/TransitCenters'
 import { TransitCenterFormPage } from '@/pages/operator/TransitCenterForm'
+import { TransitRequestsPage } from '@/pages/operator/TransitRequests'
+import { TransitRequestReview } from '@/pages/operator/TransitRequestReview'
 import { TransitLayout } from '@/layouts/TransitLayout'
 import { TransitHome } from '@/pages/transit/Home'
+import { TransitNewRequest } from '@/pages/transit/NewRequest'
+import { TransitChildren } from '@/pages/transit/Children'
+import { TransitStopRequest } from '@/pages/transit/StopRequest'
+import { TransitRequests } from '@/pages/transit/Requests'
 import { ParentDashboard } from '@/pages/parent/Dashboard'
 import { ParentTrack } from '@/pages/parent/Track'
 import { ParentInvoices } from '@/pages/parent/Invoices'
@@ -114,6 +120,8 @@ function App() {
             <Route path="/operator/transit-centers" element={<TransitCenters />} />
             <Route path="/operator/transit-centers/new" element={<TransitCenterFormPage />} />
             <Route path="/operator/transit-centers/:id" element={<TransitCenterFormPage />} />
+            <Route path="/operator/transit-requests" element={<TransitRequestsPage />} />
+            <Route path="/operator/transit-requests/:id" element={<TransitRequestReview />} />
             <Route path="/operator/settings/routes" element={<Navigate to="/operator/routes" replace />} />
             <Route path="/operator/settings/buses" element={<Navigate to="/operator/buses" replace />} />
             <Route path="/operator/settings/staff" element={<Navigate to="/operator/staff" replace />} />
@@ -123,6 +131,10 @@ function App() {
         <Route element={<ProtectedRoute role="transit" />}>
           <Route element={<TransitLayout />}>
             <Route path="/transit/home" element={<TransitHome />} />
+            <Route path="/transit/children" element={<TransitChildren />} />
+            <Route path="/transit/children/:studentId/stop" element={<TransitStopRequest />} />
+            <Route path="/transit/new" element={<TransitNewRequest />} />
+            <Route path="/transit/requests" element={<TransitRequests />} />
           </Route>
         </Route>
 
