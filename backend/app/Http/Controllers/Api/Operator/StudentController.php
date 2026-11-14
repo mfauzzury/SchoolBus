@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api\Operator;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Models\TransitRequest;
+use App\Services\Notifier;
+use App\Services\TransitPlanner;
 use App\Services\InvoiceGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -42,7 +45,7 @@ class StudentController extends Controller
      * one family balance and the sibling discount). Bills and payments are
      * fetched separately through the invoice endpoints.
      */
-    public function show(Student $student, InvoiceGenerator $generator)
+    public function show(Student $student, InvoiceGenerator $generator, TransitPlanner $planner)
     {
         $student->load([
             'parentProfile',
@@ -57,8 +60,53 @@ class StudentController extends Controller
             ->get(['id', 'parent_id', 'route_id', 'full_name', 'enrollment_status']));
 
         $student->setAttribute('next_bill', $generator->preview($student));
+        $student->setAttribute('transit_plans', $planner->summaries($student));
 
         return $student;
+    }
+
+    /**
+     * Ends a transit center plan without waiting for the center to ask, e.g.
+     * when the parent calls the operator. Recorded as an approved stop request
+     * so the center sees it in its list, and the parent is emailed as usual.
+     */
+    public function endTransitPlan(Request $request, Student $student, TransitRequest $transitRequest, TransitPlanner $planner)
+    {
+        abort_unless(
+            $transitRequest->student_id === $student->id && $transitRequest->kind === 'start' && $transitRequest->status === 'approved',
+            404,
+        );
+
+        $data = $request->validate(['ends_on' => 'required|date|after_or_equal:today']);
+
+        abort_if(
+            $planner->runningPlans($student, $transitRequest->transitCenter)->isEmpty(),
+            422,
+            'This plan has already ended.',
+        );
+
+        // A stop the center already asked for is answered by this.
+        TransitRequest::where('student_id', $student->id)
+            ->where('transit_center_id', $transitRequest->transit_center_id)
+            ->where('kind', 'stop')
+            ->where('status', 'pending')
+            ->update(['status' => 'cancelled']);
+
+        $stop = TransitRequest::create([
+            'tenant_id' => $student->tenant_id,
+            'transit_center_id' => $transitRequest->transit_center_id,
+            'student_id' => $student->id,
+            'kind' => 'stop',
+            'ends_on' => $data['ends_on'],
+            'note' => 'Ended by the bus operator.',
+            'status' => 'pending',
+        ]);
+
+        $billing = $planner->approveStop($stop, Carbon::parse($data['ends_on']), $request->user());
+
+        app(Notifier::class)->transitPlanChanged($stop->fresh());
+
+        return ['transit_plans' => $planner->summaries($student), 'billing' => $billing];
     }
 
     /**

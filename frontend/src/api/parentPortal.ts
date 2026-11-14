@@ -101,6 +101,8 @@ export interface Student {
   route: ParentRoute | null
   pickup_stop: ParentRouteStop | null
   invoices: Invoice[]
+  /** Going via a transit center, if any. */
+  transit_plans?: TransitPlanSummary[]
 }
 
 export interface MyStudentApplication {

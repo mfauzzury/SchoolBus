@@ -244,6 +244,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::delete('invoices/{invoice}/items/{item}', [InvoiceItemController::class, 'destroy']);
                 Route::post('invoices/{invoice}/void', [InvoiceController::class, 'void']);
                 Route::put('students/{student}', [StudentController::class, 'update']);
+                Route::post('students/{student}/transit-plans/{transitRequest}/end', [StudentController::class, 'endTransitPlan']);
                 Route::put('profile', [ProfileController::class, 'update']);
                 Route::post('profile/logo', [ProfileController::class, 'updateLogo']);
                 Route::post('buses/{bus}/avatar', [BusController::class, 'uploadAvatar']);

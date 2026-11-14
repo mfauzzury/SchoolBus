@@ -67,6 +67,54 @@ class TransitPlanner
     }
 
     /**
+     * The child's running plans in plain terms for the parent and operator
+     * screens: the center, what the bus does, from when, the monthly extra,
+     * and which bus (and driver) does each part — usually two different buses.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function summaries(Student $student): array
+    {
+        return $this->runningPlans($student)
+            ->load([
+                'transitCenter:id,name,phone',
+                'rides.route:id,name,bus_id,driver_id',
+                'rides.route.bus:id,plate_number',
+                'rides.route.driver:id,full_name,phone',
+                'rides.boardStop:id,name,transit_center_id',
+                'rides.alightStop:id,name,transit_center_id',
+            ])
+            ->sortBy('starts_on')
+            ->map(function (TransitRequest $plan) {
+                $extra = $plan->extras->sortByDesc('id')->first();
+
+                return [
+                    'request_id' => $plan->id,
+                    'transit_center' => $plan->transitCenter?->only(['id', 'name', 'phone']),
+                    'legs' => $plan->legs,
+                    'starts_on' => $plan->starts_on?->toDateString(),
+                    'ends_on' => $extra?->ends_on?->toDateString(),
+                    'monthly_amount' => $extra?->monthly_amount ?? $plan->approved_amount,
+                    'leave_center_at' => $plan->leave_center_at,
+                    'rides' => $plan->rides
+                        // Morning before afternoon; within a trip, the part that ends at the center first.
+                        ->sortBy(fn (StudentRide $r) => ($r->direction === 'pickup' ? 0 : 2) + ($r->alightStop?->transit_center_id ? 0 : 1))
+                        ->map(fn (StudentRide $r) => [
+                            'direction' => $r->direction,
+                            // Null means the school end of the route.
+                            'from' => $r->boardStop?->name,
+                            'to' => $r->alightStop?->name,
+                            'route' => $r->route?->name,
+                            'bus_plate' => $r->route?->bus?->plate_number,
+                            'driver' => $r->route?->driver?->only(['full_name', 'phone']),
+                        ])->values()->all(),
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
      * Approves a start request.
      *
      * Bills cover whole months: the charge starts in the month of $startsOn,

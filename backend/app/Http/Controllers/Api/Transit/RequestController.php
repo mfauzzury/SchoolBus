@@ -30,6 +30,7 @@ class RequestController extends Controller
         return TransitRequest::where('transit_center_id', $center->id)
             ->with('student:id,full_name,school_name')
             ->latest()
+            ->orderByDesc('id')
             ->get()
             ->map(fn (TransitRequest $r) => $this->present($r));
     }

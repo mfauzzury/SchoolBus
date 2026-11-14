@@ -36,6 +36,15 @@ const WORDS: Record<
 // Children still to do come first, then those on the bus, then those finished.
 const ORDER: Record<StudentStatus, number> = { waiting: 0, boarded: 1, alighted: 2, absent: 2 }
 
+/** "Drop at Bright Kids TC", or "Pick up at Bright Kids TC · 18:00 → Taman Abu". */
+function transitLine(student: RosterStudent): string {
+  const transit = student.transit!
+  if (transit.action === 'drop') return `Drop at ${transit.center_name}`
+  const time = transit.leave_center_at ? ` · ${transit.leave_center_at}` : ''
+  const to = student.alight_stop?.name ?? 'school'
+  return `Pick up at ${transit.center_name}${time} → ${to}`
+}
+
 function StudentRow({
   student,
   direction,
@@ -61,7 +70,14 @@ function StudentRow({
 
       <View style={styles.studentInfo}>
         <Text style={styles.studentName}>{student.full_name}</Text>
-        <Text style={styles.stopName}>{student.pickup_stop?.name ?? 'No stop assigned'}</Text>
+        {student.transit ? (
+          <View style={styles.transitBox}>
+            <Text style={styles.transitTag}>TRANSIT</Text>
+            <Text style={styles.transitText}>{transitLine(student)}</Text>
+          </View>
+        ) : (
+          <Text style={styles.stopName}>{student.pickup_stop?.name ?? 'No stop assigned'}</Text>
+        )}
         {classLine !== '' && <Text style={styles.stopName}>{classLine}</Text>}
         {!!student.school_phone && (
           <Pressable onPress={() => Linking.openURL(`tel:${student.school_phone}`)}>
@@ -287,6 +303,18 @@ const styles = StyleSheet.create({
   schoolPhone: { fontSize: 13, color: '#f59e0b', fontWeight: '600', marginTop: 2 },
   studentName: { fontSize: 16, fontWeight: '600' },
   stopName: { fontSize: 13, color: '#6b7280' },
+  transitBox: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
+  transitTag: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#92400e',
+    backgroundColor: '#fef3c7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  transitText: { fontSize: 13, fontWeight: '700', color: '#92400e', flexShrink: 1 },
   actions: { alignItems: 'center', gap: 8, minWidth: 104 },
   primaryButton: {
     backgroundColor: '#111827',

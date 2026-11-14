@@ -84,6 +84,16 @@
       "estimate": "anggaran",
       "cancel": "Batal permohonan",
       "cancelConfirm": "Batalkan permohonan untuk {{name}}?"
+    },
+    "plan": {
+      "title": "Pusat transit: {{name}}",
+      "fromUntil": "{{from}} – {{until}}",
+      "leavesAt": "keluar {{time}}",
+      "driver": "Pemandu: {{name}}",
+      "callCenter": "Hubungi pusat · {{phone}}",
+      "end": "Tamatkan pelan",
+      "endHelp": "Selepas hari terakhir kanak-kanak kembali ke perjalanan biasa, dan caj tambahan berhenti mulai bulan berikutnya. Pusat dan ibu bapa akan melihat ini.",
+      "endConfirm": "Tamatkan pelan"
     }
   },
   "common": {

@@ -125,3 +125,23 @@ export async function cancelTransitRequest(id: number): Promise<MyTransitRequest
   const { data } = await apiClient.post<MyTransitRequest>(`/api/transit/requests/${id}/cancel`)
   return data
 }
+
+/** A running transit center plan: what the bus does, on which bus, and the monthly extra. */
+export interface TransitPlanSummary {
+  request_id: number
+  transit_center: { id: number; name: string; phone: string | null } | null
+  legs: TransitLeg[]
+  starts_on: string | null
+  ends_on: string | null
+  monthly_amount: string | null
+  leave_center_at: string | null
+  rides: {
+    direction: 'pickup' | 'dropoff'
+    /** Null means the school. */
+    from: string | null
+    to: string | null
+    route: string | null
+    bus_plate: string | null
+    driver: { full_name: string; phone: string | null } | null
+  }[]
+}

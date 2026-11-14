@@ -123,6 +123,8 @@ class TripController extends Controller
                 'pickup_stop' => $row['stop'],
                 'board_stop' => $row['board_stop'],
                 'alight_stop' => $row['alight_stop'],
+                // Set when the child goes via a transit center on this trip: 'drop' there or 'pick' up there.
+                'transit' => $row['transit'],
                 'boarded' => $events->contains('event_type', 'boarded'),
                 'alighted' => $events->contains('event_type', 'alighted'),
                 'absent' => $events->contains('event_type', 'absent'),

@@ -40,7 +40,12 @@ export interface RosterStudent {
   class_name: string | null
   school_phone: string | null
   parent_profile: { id: number; full_name: string; phone: string; email: string } | null
+  /** The stop where the driver deals with this child on this trip. */
   pickup_stop: { id: number; name: string; sequence: number } | null
+  board_stop: { id: number; name: string } | null
+  alight_stop: { id: number; name: string } | null
+  /** Set when the child goes via a transit center on this trip. */
+  transit: { action: 'drop' | 'pick'; center_name: string; leave_center_at: string | null } | null
   boarded: boolean
   alighted: boolean
   absent: boolean

@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { TransitPlanCard } from '@/components/TransitPlanCard'
+import { EndTransitPlan } from '@/components/EndTransitPlan'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -420,6 +422,11 @@ export function StudentDetail() {
 
       {tab === 'details' && (
         <div className="grid items-start gap-6 lg:grid-cols-2">
+          {student.transit_plans.map((plan) => (
+            <TransitPlanCard key={plan.request_id} plan={plan} school={student.school_name}>
+              {isAdmin && !plan.ends_on && <EndTransitPlan studentId={student.id} requestId={plan.request_id} />}
+            </TransitPlanCard>
+          ))}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">{t('operator.students.childDetails')}</CardTitle>

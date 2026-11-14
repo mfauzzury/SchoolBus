@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { Badge, Card, EmptyState, ScreenTitle, type BadgeTone } from '../../../src/components/ui'
 import { useMyStudents } from '../../../src/hooks/useParent'
-import type { Student } from '../../../src/api/parent'
+import type { Student, TransitPlanSummary } from '../../../src/api/parent'
 import { colors } from '../../../src/theme'
 
 const ENROLLMENT: Record<Student['enrollment_status'], { label: string; tone: BadgeTone }> = {
@@ -23,6 +23,49 @@ function Row({ icon, label, value }: { icon: keyof typeof Ionicons.glyphMap; lab
       <Ionicons name={icon} size={16} color={colors.muted} />
       <Text style={styles.rowLabel}>{label}</Text>
       <Text style={styles.rowValue} numberOfLines={1}>{value}</Text>
+    </View>
+  )
+}
+
+function showDate(value: string | null): string {
+  if (!value) return ''
+  const [y, m, d] = value.slice(0, 10).split('-')
+  return `${d}/${m}/${y}`
+}
+
+/** The child's day via a transit center: each part, on which bus, with which driver. */
+function TransitBlock({ plan, school }: { plan: TransitPlanSummary; school: string }) {
+  const centerName = plan.transit_center?.name ?? 'Transit center'
+  const dates = plan.ends_on ? `${showDate(plan.starts_on)} – ${showDate(plan.ends_on)}` : `From ${showDate(plan.starts_on)}`
+
+  return (
+    <View style={styles.transit}>
+      <View style={styles.transitHeader}>
+        <Ionicons name="business-outline" size={16} color={colors.warning} />
+        <Text style={styles.transitTitle} numberOfLines={1}>{centerName}</Text>
+        {plan.monthly_amount && <Text style={styles.transitAmount}>+RM {Number(plan.monthly_amount).toFixed(2)}/mo</Text>}
+      </View>
+      <Text style={styles.transitDates}>{dates}</Text>
+      {plan.rides.map((ride, index) => (
+        <View key={index} style={styles.transitRide}>
+          <Text style={styles.transitLeg}>
+            {(ride.from ?? school) + ' → ' + (ride.to ?? school)}
+          </Text>
+          <Text style={styles.transitBus}>
+            {[ride.route, ride.bus_plate].filter(Boolean).join(' · ')}
+          </Text>
+          {ride.driver?.phone && (
+            <Pressable onPress={() => Linking.openURL(`tel:${ride.driver!.phone}`)}>
+              <Text style={styles.transitCall}>Call {ride.driver.full_name}</Text>
+            </Pressable>
+          )}
+        </View>
+      ))}
+      {plan.transit_center?.phone && (
+        <Pressable onPress={() => Linking.openURL(`tel:${plan.transit_center!.phone}`)}>
+          <Text style={styles.transitCall}>Call {centerName}</Text>
+        </Pressable>
+      )}
     </View>
   )
 }
@@ -47,6 +90,10 @@ function StudentCard({ student }: { student: Student }) {
         <Row icon="bus-outline" label="Bus" value={route?.bus?.plate_number ?? '—'} />
         <Row icon="swap-horizontal-outline" label="Package" value={PACKAGE[student.package_type]} />
       </View>
+
+      {(student.transit_plans ?? []).map((plan) => (
+        <TransitBlock key={plan.request_id} plan={plan} school={student.school_name || 'School'} />
+      ))}
 
       {route?.driver && (
         <Pressable style={styles.driver} onPress={() => Linking.openURL(`tel:${route.driver!.phone}`)}>
@@ -109,6 +156,15 @@ const styles = StyleSheet.create({
   name: { fontSize: 17, fontWeight: '600', color: colors.text },
   school: { fontSize: 13, color: colors.muted, marginTop: 2 },
   rows: { gap: 8 },
+  transit: { gap: 6, padding: 12, borderRadius: 10, backgroundColor: colors.primarySoft },
+  transitHeader: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  transitTitle: { fontSize: 15, fontWeight: '600', color: colors.text, flex: 1 },
+  transitAmount: { fontSize: 13, fontWeight: '600', color: colors.text },
+  transitDates: { fontSize: 13, color: colors.muted },
+  transitRide: { gap: 1, paddingTop: 6, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border },
+  transitLeg: { fontSize: 14, fontWeight: '500', color: colors.text },
+  transitBus: { fontSize: 13, color: colors.muted },
+  transitCall: { fontSize: 13, fontWeight: '600', color: colors.warning, marginTop: 2 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   rowLabel: { fontSize: 14, color: colors.muted, width: 92 },
   rowValue: { fontSize: 14, color: colors.text, flex: 1 },

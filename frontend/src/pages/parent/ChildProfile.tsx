@@ -17,6 +17,7 @@ import {
 } from '@/hooks/useParentPortal'
 import type { Student } from '@/api/parentPortal'
 import { BackLink } from '@/components/BackLink'
+import { TransitPlanCard } from '@/components/TransitPlanCard'
 
 const childSchema = z.object({
   full_name: z.string().min(1),
@@ -136,6 +137,10 @@ function ChildProfileForm({ student }: { student: Student }) {
       {uploadAvatar.isError && (
         <p className="text-sm text-destructive">{t('parent.child.photoError')}</p>
       )}
+
+      {(student.transit_plans ?? []).map((plan) => (
+        <TransitPlanCard key={plan.request_id} plan={plan} school={student.school_name} />
+      ))}
 
       <Card>
         <CardContent>

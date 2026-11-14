@@ -41,6 +41,11 @@ class StudentRide extends Model
             ->where(fn (Builder $q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>=', $day));
     }
 
+    public function transitRequest(): BelongsTo
+    {
+        return $this->belongsTo(TransitRequest::class);
+    }
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);

@@ -84,6 +84,16 @@
       "estimate": "estimate",
       "cancel": "Cancel request",
       "cancelConfirm": "Cancel the request for {{name}}?"
+    },
+    "plan": {
+      "title": "Transit center: {{name}}",
+      "fromUntil": "{{from}} – {{until}}",
+      "leavesAt": "leaves {{time}}",
+      "driver": "Driver: {{name}}",
+      "callCenter": "Call the center · {{phone}}",
+      "end": "End plan",
+      "endHelp": "After the last day the child goes back to the usual trip, and the extra charge stops from the next month. The center and the parent will see this.",
+      "endConfirm": "End plan"
     }
   },
   "common": {
