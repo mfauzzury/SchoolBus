@@ -18,6 +18,7 @@ class InvoiceItem extends Model
     protected $fillable = [
         'tenant_id',
         'invoice_id',
+        'student_extra_id',
         'type',
         'description',
         'amount',

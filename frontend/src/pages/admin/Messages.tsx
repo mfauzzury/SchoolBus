@@ -36,6 +36,8 @@ const TYPES: NotificationTypeKey[] = [
   'application_decided',
   'application_received',
   'operator_signed_up',
+  'transit_request_received',
+  'transit_plan_changed',
 ]
 
 type Tab = 'types' | 'templates' | 'log'

@@ -1,4 +1,111 @@
 {
+  "transit": {
+    "portal": {
+      "groupCenter": "Pusat saya",
+      "home": "Utama",
+      "welcome": "Selamat datang, {{name}}",
+      "intro": "{{operator}} ialah pengendali bas anda. Di sini anda boleh memohon mereka membawa kanak-kanak anda ke dan dari pusat anda.",
+      "prices": "Yuran bulanan",
+      "pricesHint": "Tambahan bagi setiap kanak-kanak sebulan, dimasukkan ke dalam bil bas ibu bapa, walau bahagian hari mana pun yang bas lakukan. Pengendali mengesahkan harga akhir.",
+      "askOperator": "Tanya pengendali",
+      "month": "bulan",
+      "operator": "Pengendali bas anda",
+      "requests": "Permohonan",
+      "askForBus": "Mohon bas"
+    },
+    "legs": {
+      "school_to_center": "Sekolah → pusat transit",
+      "center_to_home": "Pusat transit → rumah",
+      "home_to_center": "Rumah → pusat transit",
+      "center_to_school": "Pusat transit → sekolah"
+    },
+    "placement": {
+      "hint": "Seret pusat ke tempatnya dalam perjalanan, atau guna anak panah.",
+      "moveUp": "Naik",
+      "moveDown": "Turun"
+    },
+    "status": {
+      "pending": "Menunggu",
+      "approved": "Diluluskan",
+      "rejected": "Tidak diluluskan",
+      "cancelled": "Dibatalkan"
+    },
+    "request": {
+      "title": "Mohon bas",
+      "findTitle": "Cari kanak-kanak",
+      "findHelp": "Taip nama kanak-kanak, atau nombor telefon ibu bapa.",
+      "findPlaceholder": "Nama kanak-kanak atau telefon ibu bapa",
+      "typeMore": "Taip sekurang-kurangnya 3 huruf atau nombor.",
+      "noneFound": "Tiada kanak-kanak dijumpai. Semak ejaan, atau tanya ibu bapa syarikat bas mana yang mereka guna.",
+      "choose": "Pilih",
+      "parentLine": "Ibu bapa: {{name}} · telefon berakhir {{phone}}",
+      "changeChild": "Tukar kanak-kanak",
+      "replacesPlan": "Kanak-kanak ini sudah datang ke pusat anda dengan bas. Permohonan ini akan menggantikan pelan sekarang selepas diluluskan.",
+      "whatTitle": "Apa yang bas perlu buat?",
+      "pickOne": "Pilih sekurang-kurangnya satu.",
+      "whereTitle": "Di mana pusat anda dalam perjalanan?",
+      "whereHelp": "Ini laluan bas kanak-kanak ({{route}}). Letak pusat anda di tempatnya dalam perjalanan.",
+      "alreadyOnRoute": "Pusat anda sudah menjadi hentian di laluan ini ({{route}}).",
+      "noRoute": "Kanak-kanak ini belum ada laluan bas. Pengendali akan meletakkan pusat anda.",
+      "whenTitle": "Bila?",
+      "startsOn": "Hari pertama",
+      "leaveAt": "Masa kanak-kanak keluar dari pusat",
+      "note": "Nota untuk pengendali (pilihan)",
+      "estimate": "Anggaran tambahan sebulan",
+      "estimateHint": "Pengendali bas akan menyemak dengan ibu bapa dan mengesahkan harga akhir. Ia dimasukkan ke dalam bil bas ibu bapa.",
+      "error": "Tidak dapat dihantar. Sila cuba lagi.",
+      "send": "Hantar kepada pengendali bas",
+      "afterSchool": "Selepas sekolah",
+      "beforeSchool": "Sebelum sekolah"
+    },
+    "children": {
+      "title": "Kanak-kanak saya",
+      "empty": "Belum ada kanak-kanak. Mohon bas untuk bermula.",
+      "child": "Kanak-kanak",
+      "bus": "Bas",
+      "dates": "Tarikh",
+      "price": "Sebulan",
+      "from": "Mulai {{date}}",
+      "until": "Hingga {{date}}",
+      "stopAsked": "Henti dimohon",
+      "stop": "Henti"
+    },
+    "stop": {
+      "title": "Henti bas melalui pusat untuk {{name}}",
+      "help": "Selepas hari terakhir, bas membawa kanak-kanak dalam perjalanan biasa semula. Pengendali akan mengesahkan.",
+      "notFound": "Kanak-kanak ini tiada pelan berjalan dengan pusat anda.",
+      "lastDay": "Hari terakhir",
+      "send": "Hantar kepada pengendali bas"
+    },
+    "requests": {
+      "empty": "Belum ada permohonan.",
+      "what": "Apa",
+      "status": "Status",
+      "sent": "Dihantar {{date}}",
+      "stopAfter": "Henti selepas {{date}}",
+      "estimate": "anggaran",
+      "cancel": "Batal permohonan",
+      "cancelConfirm": "Batalkan permohonan untuk {{name}}?"
+    },
+    "plan": {
+      "title": "Pusat transit: {{name}}",
+      "fromUntil": "{{from}} – {{until}}",
+      "leavesAt": "keluar {{time}}",
+      "driver": "Pemandu: {{name}}",
+      "callCenter": "Hubungi pusat · {{phone}}",
+      "end": "Tamatkan pelan",
+      "endHelp": "Selepas hari terakhir kanak-kanak kembali ke perjalanan biasa, dan caj tambahan berhenti mulai bulan berikutnya. Pusat dan ibu bapa akan melihat ini.",
+      "endConfirm": "Tamatkan pelan"
+    },
+    "location": {
+      "title": "Lokasi",
+      "help": "Klik pada peta untuk letak pin di lokasi pusat. Seret pin untuk melaraskan. Pemandu dan pengendali kemudian boleh membukanya dalam aplikasi peta mereka.",
+      "none": "Belum ada pin",
+      "coords": "Pin di {{lat}}, {{lng}}",
+      "remove": "Buang pin",
+      "openInMaps": "Buka dalam Peta"
+    }
+  },
   "common": {
     "save": "Simpan",
     "saving": "Menyimpan…",
@@ -77,7 +184,8 @@
     "invoices": "Bil",
     "profile": "Profil",
     "track": "Jejak",
-    "live": "Langsung"
+    "live": "Langsung",
+    "transitCenters": "Pusat transit & Tambang"
   },
   "marketingNav": {
     "parents": "Untuk Ibu Bapa",
@@ -693,7 +801,8 @@
       "announcements": "Pengumuman",
       "system": "Sistem",
       "messages": "Mesej",
-      "parents": "Ibu bapa"
+      "parents": "Ibu bapa",
+      "transitCenters": "Pusat transit"
     },
     "dashboard": {
       "welcome": "Selamat datang, {{name}}",
@@ -874,7 +983,10 @@
         "email_template_updated": "Mengubah templat e-mel",
         "email_template_reset": "Menetapkan semula templat e-mel ke ayat asal",
         "brand_updated": "Mengubah jenama platform",
-        "brand_reset": "Menetapkan semula sebahagian jenama platform"
+        "brand_reset": "Menetapkan semula sebahagian jenama platform",
+          "transit_center_created": "Menambah pusat transit",
+          "transit_center_updated": "Mengubah pusat transit",
+          "transit_center_login_sent": "Menghantar log masuk pusat transit"
         }
       },
       "notes": {
@@ -1235,6 +1347,14 @@
           "operator_signed_up": {
             "title": "Pengendali baharu mendaftar",
             "help": "Pemilik platform dimaklumkan apabila syarikat bas baharu membuat akaun."
+          },
+          "transit_plan_changed": {
+            "help": "Ibu bapa dimaklumkan apabila bas anak mula atau berhenti melalui pusat transit, serta yuran bulanan tambahan.",
+            "title": "Pelan pusat transit berubah"
+          },
+          "transit_request_received": {
+            "help": "Pemilik pengendali dimaklumkan apabila pusat transit memohon untuk mula atau berhenti menghantar kanak-kanak melalui pusat.",
+            "title": "Permohonan pusat transit baharu"
           }
         },
         "searchPlaceholder": "Nama atau e-mel",
@@ -1370,9 +1490,56 @@
           "error": "Ujian tidak dapat dijalankan. Simpan kelayakan dahulu dan cuba lagi."
         }
       }
+    },
+    "transitCenters": {
+      "title": "Pusat transit",
+      "intro": "Pusat tuisyen dan jagaan yang boleh memohon bas daripada pengendali untuk kanak-kanak mereka. Hanya pasukan platform boleh menambahnya.",
+      "searchPlaceholder": "Cari ikut pusat, pengendali, telefon atau e-mel",
+      "operator": "Pengendali bas",
+      "allOperators": "Semua pengendali",
+      "chooseOperator": "Pilih pengendali bas",
+      "operatorHint": "Pusat hanya boleh memohon bas daripada pengendali ini. Ini tidak boleh diubah kemudian.",
+      "operatorFixed": "Pusat kekal dengan pengendali yang dipilih semasa ditambah.",
+      "addHelp": "Selepas simpan, hantar log masuk kepada pusat supaya ia boleh memohon bas."
     }
   },
   "operator": {
+    "transitCenters": {
+      "title": "Pusat transit & Tambang",
+      "intro": "Pusat tuisyen dan jagaan di mana kanak-kanak tinggal antara sekolah dan rumah. Tetapkan bayaran bulanan setiap pusat. Pusat boleh memohon bas untuk kanak-kanaknya; anda luluskan setiap permohonan.",
+      "add": "Tambah pusat transit",
+      "addButton": "Simpan",
+      "back": "Pusat transit",
+      "searchPlaceholder": "Cari ikut nama, telefon atau alamat",
+      "empty": "Belum ada pusat transit.",
+      "name": "Nama pusat",
+      "contact": "Hubungi",
+      "contactPerson": "Orang untuk dihubungi",
+      "phone": "Telefon",
+      "email": "E-mel",
+      "emailHint": "Pusat log masuk dengan e-mel ini.",
+      "emailTaken": "E-mel ini sudah digunakan. Sila guna e-mel lain.",
+      "address": "Alamat",
+      "status": "Status",
+      "inactiveHint": "Pusat tidak boleh log masuk lagi. Kanak-kanak yang sedang menaiki bas tidak berubah.",
+      "login": "Log masuk",
+      "loginSent": "Log masuk dihantar",
+      "noLogin": "Belum ada log masuk",
+      "noLoginHelp": "Pusat belum boleh log masuk. Hantar log masuk dan kami akan e-mel pautan kepada {{email}} untuk menetapkan kata laluan.",
+      "loginSentHelp": "Log masuk telah dihantar kepada {{email}}. Jika e-mel hilang, hantar sekali lagi.",
+      "sendLogin": "Hantar log masuk",
+      "resendLogin": "Hantar log masuk sekali lagi",
+      "loginEmailed": "Selesai. Minta pusat menyemak e-melnya.",
+      "loginError": "Tidak dapat menghantar log masuk. Sila cuba lagi.",
+      "addedByPlatform": "Untuk menambah pusat atau mengubah butirannya, hubungi pasukan platform.",
+      "setPrices": "Tetapkan harga",
+      "pricesNotSet": "Belum ditetapkan",
+      "priceTitle": "Harga bulanan",
+      "priceLabel": "Harga bagi setiap kanak-kanak sebulan",
+      "priceDescription": "Caj bagi pusat ini untuk setiap kanak-kanak yang dibawa bas ke atau dari pusat, setiap bulan. Satu harga sahaja, walau bahagian hari mana pun yang bas lakukan.",
+      "priceHint": "Pusat melihat ini sebagai anggaran. Anda boleh ubah harga semasa meluluskan setiap permohonan.",
+      "priceError": "Harga tidak boleh kurang daripada sifar."
+    },
     "dashboard": {
       "welcome": "Selamat datang, {{name}} — {{company}}",
       "operatorId": "ID Pengendali Anda",
@@ -1572,7 +1739,7 @@
       "monthNotSet": "Tidak ditetapkan"
     },
     "applications": {
-      "title": "Permohonan Pelajar",
+      "title": "Permohonan",
       "status": "Status",
       "statusPending": "Menunggu",
       "statusApproved": "Diluluskan",
@@ -1606,7 +1773,9 @@
       "firstBillNextMonth": "Mula bil bulan depan",
       "firstBillHint": "Bil meliputi sebulan kalendar penuh dan dikeluarkan pada 1 hb.",
       "firstMonthAmount": "Jumlah untuk bulan ini (RM)",
-      "monthlyFee": "Yuran bulanan"
+      "monthlyFee": "Yuran bulanan",
+      "tabChildren": "Anak baharu",
+      "tabTransit": "Transit"
     },
     "finances": {
       "title": "Kewangan",
@@ -1733,7 +1902,8 @@
       "adminOnly": "Hanya admin boleh mencipta bil.",
       "lastRunAuto": "Terakhir dibuat secara automatik pada {{date}}: {{generated}} bil dibuat, {{skipped}} dilangkau.",
       "lastRunManual": "Terakhir dicipta oleh anda pada {{date}}: {{generated}} bil dibuat, {{skipped}} tidak dapat dibuat.",
-      "noLastRun": "Belum ada bil dibuat."
+      "noLastRun": "Belum ada bil dibuat.",
+      "includesExtra": "termasuk {{label}} RM {{amount}}"
     },
     "settings": {
       "title": "Tetapan",
@@ -1813,6 +1983,48 @@
       "billModeAutoHint": "Sistem membuat setiap bil pada 1hb setiap bulan. Anda masih boleh melihat halaman Bil seterusnya dahulu.",
       "billModeManual": "Saya cipta sendiri",
       "billModeManualHint": "Tiada bil dibuat sendiri. Anda semak halaman Bil seterusnya dan tekan Cipta."
+    },
+    "transitRequests": {
+      "adminOnly": "Hanya pemilik boleh meluluskan atau menolak.",
+      "decidedBy": "Diputuskan oleh {{name}} pada {{date}}",
+      "rejectedBecause": "Sebab: {{reason}}",
+      "approvedAt": "Diluluskan pada RM {{amount}} sebulan.",
+      "callParent": "Hubungi ibu bapa untuk mengesahkan sebelum meluluskan.",
+      "parent": "Ibu bapa",
+      "currentPlans": "Pelan sekarang",
+      "leavesAt": "Keluar dari pusat pada {{time}}",
+      "rejectReason": "Sebab (pusat akan melihat ini)",
+      "reject": "Tolak",
+      "approveStop": "Lulus henti",
+      "stopHelp": "Selepas hari terakhir bas kembali ke perjalanan biasa dan caj tambahan berhenti.",
+      "stopTitle": "Henti pelan",
+      "approve": "Lulus",
+      "error": "Tidak dapat disimpan. Sila semak dan cuba lagi.",
+      "noEstimate": "Pusat tidak melihat harga (belum ditetapkan untuk pusat ini).",
+      "centerSaw": "Pusat melihat RM {{amount}} sebagai anggaran.",
+      "monthlyAmount": "Tambahan sebulan",
+      "priceAndDate": "Harga dan tarikh mula",
+      "pickHomeStop": "Pilih hentian",
+      "homeStop": "Hentian rumah kanak-kanak di laluan ini",
+      "samePlaceAbove": "Tempat sama seperti di atas.",
+      "alreadyAStop": "Pusat sudah menjadi hentian di laluan ini.",
+      "centerStop": "Di mana pusat di laluan ini",
+      "childsOwnRoute": "Ini laluan kanak-kanak sendiri.",
+      "whichBus": "Bas mana?",
+      "view": "Lihat",
+      "startSummary_other": "{{count}} perjalanan mulai {{date}}",
+      "startSummary_one": "{{count}} perjalanan mulai {{date}}",
+      "center": "Pusat transit",
+      "empty": "Tiada permohonan di sini.",
+      "intro": "Pusat transit memohon bas untuk membawa kanak-kanak ke dan dari pusat mereka. Hubungi ibu bapa sebelum meluluskan.",
+      "firstBill": "Bil pertama dengan caj ini",
+      "billStartMonth": "Mulai {{month}}",
+      "billNextMonth": "Mulai bulan berikutnya ({{month}})",
+      "billedNow": "Ditambah ke bil yang sudah dibuat untuk {{months}}.",
+      "paidBills": "Bil untuk {{months}} sudah dibayar, jadi caj tidak diubah di situ. Laraskan sendiri jika perlu.",
+      "approvedDone": "Diluluskan.",
+      "sameBusTwice": "Laluan ini sudah membuat bahagian pertama perjalanan ini. Pilih perjalanan bas lain, seperti laluan petang.",
+      "pickLaterRun": "Pilih perjalanan bas yang mengambil dari pusat (keluar pada {{time}}). Ia mesti perjalanan berbeza daripada yang di atas."
     }
   },
   "parent": {
@@ -2087,7 +2299,8 @@
   "billing": {
     "item": {
       "fee": "Yuran bas",
-      "discount": "Diskaun"
+      "discount": "Diskaun",
+      "transitCenter": "Pusat transit: {{name}}"
     },
     "paidSoFar": "Sudah dibayar",
     "balance": "Baki perlu dibayar"

@@ -5,15 +5,16 @@ namespace App\Http\Controllers\Api\ParentPortal;
 use App\Enums\InvoiceStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Services\TransitPlanner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, TransitPlanner $planner)
     {
-        return $request->user()->parentProfile
+        $students = $request->user()->parentProfile
             ->students()
             ->with([
                 'route.bus:id,plate_number,capacity,avatar_path',
@@ -26,6 +27,11 @@ class StudentController extends Controller
             ])
             ->orderBy('created_at')
             ->get();
+
+        // Going via a transit center: what the bus does and which bus, so the parent knows who brings the child home.
+        $plans = $planner->summariesFor($students);
+
+        return $students->each(fn (Student $student) => $student->setAttribute('transit_plans', $plans[$student->id]));
     }
 
     /**

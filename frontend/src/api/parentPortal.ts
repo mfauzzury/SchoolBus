@@ -1,5 +1,6 @@
 import { apiBaseUrl, apiClient } from './client'
 import type { ParentProfile } from './auth'
+import type { TransitPlanSummary } from './transitPortal'
 
 export interface ParentRouteStop {
   id: number
@@ -48,7 +49,7 @@ export interface QuoteInput {
 
 export interface InvoiceItem {
   id: number
-  type: 'fee' | 'discount' | 'adjustment'
+  type: 'fee' | 'discount' | 'adjustment' | 'extra'
   description: string
   // Signed: discounts and reductions are negative.
   amount: string
@@ -101,6 +102,8 @@ export interface Student {
   route: ParentRoute | null
   pickup_stop: ParentRouteStop | null
   invoices: Invoice[]
+  /** Going via a transit center, if any. */
+  transit_plans?: TransitPlanSummary[]
 }
 
 export interface MyStudentApplication {

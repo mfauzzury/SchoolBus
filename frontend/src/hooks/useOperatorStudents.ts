@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  endTransitPlan,
   getOperatorStudent,
   listOperatorStudents,
   updateOperatorStudent,
@@ -30,6 +31,19 @@ export function useUpdateOperatorStudent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['operator-students'] })
       queryClient.invalidateQueries({ queryKey: ['operator-student'] })
+    },
+  })
+}
+
+export function useEndTransitPlan(studentId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ requestId, endsOn }: { requestId: number; endsOn: string }) =>
+      endTransitPlan(studentId, requestId, endsOn),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['operator-student', studentId] })
+      queryClient.invalidateQueries({ queryKey: ['transit-requests'] })
+      queryClient.invalidateQueries({ queryKey: ['invoices'] })
     },
   })
 }

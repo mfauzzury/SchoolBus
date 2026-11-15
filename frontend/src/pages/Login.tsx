@@ -82,6 +82,8 @@ export function Login() {
           navigate('/admin/dashboard')
         } else if (data.roles.includes('parent')) {
           navigate('/parent/dashboard')
+        } else if (data.roles.includes('transit_center')) {
+          navigate('/transit/home')
         } else {
           navigate('/operator/dashboard')
         }

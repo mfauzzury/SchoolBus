@@ -9,6 +9,7 @@ import {
   Mail,
   Megaphone,
   Receipt,
+  School,
   Users,
   UsersRound,
 } from 'lucide-react'
@@ -37,6 +38,7 @@ export function SaasAdminLayout() {
       title: t('admin.nav.groupOperators'),
       items: [
         { to: '/admin/operators', label: t('admin.nav.operators'), icon: Bus },
+        { to: '/admin/transit-centers', label: t('admin.nav.transitCenters'), icon: School },
         ...(canSeeReports ? [{ to: '/admin/parents', label: t('admin.nav.parents'), icon: UsersRound }] : []),
       ],
     },

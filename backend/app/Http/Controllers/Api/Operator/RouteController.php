@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\Operator;
 
 use App\Http\Controllers\Controller;
 use App\Models\Route as RouteModel;
+use App\Models\StudentRide;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class RouteController extends Controller
 {
@@ -80,6 +82,7 @@ class RouteController extends Controller
             'base_monthly_fee' => 'nullable|numeric|min:0',
             'one_way_monthly_fee' => 'nullable|numeric|min:0',
             'stops' => 'sometimes|array',
+            'stops.*.id' => 'nullable|integer',
             'stops.*.name' => 'required_with:stops|string|max:255',
             'stops.*.sequence' => 'required_with:stops|integer|min:0',
         ]);
@@ -92,20 +95,63 @@ class RouteController extends Controller
         ]));
     }
 
+    /**
+     * Saves the route's stop list without throwing away stops that are kept.
+     * Children point at their stop by id, so deleting and re-creating every
+     * stop would quietly clear every child's stop on the route. A stop is
+     * matched by its id when the form sends one, otherwise by its name;
+     * only stops that are no longer in the list are removed.
+     */
     private function syncStops(RouteModel $route, ?array $stops): void
     {
         if ($stops === null) {
             return;
         }
 
-        $route->stops()->delete();
+        $unmatched = $route->stops()->get()->keyBy('id');
+        $plan = [];
 
         foreach ($stops as $stop) {
-            $route->stops()->create([
-                'tenant_id' => $route->tenant_id,
-                'name' => $stop['name'],
-                'sequence' => $stop['sequence'],
+            $existing = ! empty($stop['id']) && $unmatched->has($stop['id'])
+                ? $unmatched->get($stop['id'])
+                : $unmatched->first(fn ($s) => trim($s->name) === trim($stop['name']));
+
+            if ($existing) {
+                $unmatched->forget($existing->id);
+            }
+
+            $plan[] = [$existing, $stop];
+        }
+
+        // A stop a transit center plan uses (running now, or starting later) can't be removed from under it.
+        $inUse = $unmatched->isEmpty() ? null : StudentRide::notEndedBy(today())
+            ->where(fn ($q) => $q->whereIn('board_stop_id', $unmatched->keys())->orWhereIn('alight_stop_id', $unmatched->keys()))
+            ->first();
+        if ($inUse) {
+            $name = $unmatched->get($inUse->board_stop_id)?->name ?? $unmatched->get($inUse->alight_stop_id)?->name;
+            throw ValidationException::withMessages([
+                'stops' => "The stop \"{$name}\" is used by a transit center plan. End that plan before removing the stop.",
             ]);
+        }
+
+        $route->stops()->whereIn('id', $unmatched->keys())->delete();
+
+        // Park kept stops on temporary negative numbers first, so moving
+        // stop 2 to 1 and stop 1 to 2 doesn't trip the (route, sequence) unique index.
+        foreach ($plan as [$existing]) {
+            $existing?->update(['sequence' => -$existing->id]);
+        }
+
+        foreach ($plan as [$existing, $stop]) {
+            if ($existing) {
+                $existing->update(['name' => $stop['name'], 'sequence' => $stop['sequence']]);
+            } else {
+                $route->stops()->create([
+                    'tenant_id' => $route->tenant_id,
+                    'name' => $stop['name'],
+                    'sequence' => $stop['sequence'],
+                ]);
+            }
         }
     }
 }

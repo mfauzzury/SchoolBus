@@ -23,6 +23,10 @@ final class NotificationType
 
     public const OPERATOR_SIGNED_UP = 'operator_signed_up';
 
+    public const TRANSIT_REQUEST_RECEIVED = 'transit_request_received';
+
+    public const TRANSIT_PLAN_CHANGED = 'transit_plan_changed';
+
     /** @return array<string, array{audience: string, daytime_only: bool}> */
     public static function all(): array
     {
@@ -34,6 +38,8 @@ final class NotificationType
             self::APPLICATION_DECIDED => ['audience' => 'parent', 'daytime_only' => true],
             self::APPLICATION_RECEIVED => ['audience' => 'operator', 'daytime_only' => false],
             self::OPERATOR_SIGNED_UP => ['audience' => 'platform', 'daytime_only' => false],
+            self::TRANSIT_REQUEST_RECEIVED => ['audience' => 'operator', 'daytime_only' => false],
+            self::TRANSIT_PLAN_CHANGED => ['audience' => 'parent', 'daytime_only' => true],
         ];
     }
 

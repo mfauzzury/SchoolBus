@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { TransitPlanCard } from '@/components/TransitPlanCard'
+import { EndTransitPlan } from '@/components/EndTransitPlan'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,7 +34,7 @@ import { usePagination } from '@/hooks/usePagination'
 import type { OperatorStudentDetail } from '@/api/operatorStudents'
 import { receiptUrl, type LedgerInvoice } from '@/api/finances'
 import { calculateGrade, cn, formatMoney, formatPeriod, isInvoiceOverdue } from '@/lib/utils'
-import { routeFeeFor } from '@/lib/billing'
+import { routeFeeFor, extraLabel } from '@/lib/billing'
 import { BackLink } from '@/components/BackLink'
 
 type EnrollmentStatus = OperatorStudentDetail['enrollment_status']
@@ -146,6 +148,11 @@ function RecurringBill({ student }: { student: OperatorStudentDetail }) {
                 {next.sibling_discount_rate > 0 &&
                   ` · ${t('operator.students.afterSiblingDiscount', { rate: next.sibling_discount_rate })}`}
               </p>
+              {next.extras.map((extra) => (
+                <p key={extra.label} className="text-sm text-muted-foreground">
+                  {t('operator.nextBills.includesExtra', { label: extraLabel(extra.label, t), amount: formatMoney(extra.amount) })}
+                </p>
+              ))}
             </>
           ) : (
             <p className="text-sm">
@@ -415,6 +422,11 @@ export function StudentDetail() {
 
       {tab === 'details' && (
         <div className="grid items-start gap-6 lg:grid-cols-2">
+          {student.transit_plans.map((plan) => (
+            <TransitPlanCard key={plan.request_id} plan={plan} school={student.school_name}>
+              {isAdmin && !plan.ends_on && <EndTransitPlan studentId={student.id} requestId={plan.request_id} />}
+            </TransitPlanCard>
+          ))}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">{t('operator.students.childDetails')}</CardTitle>

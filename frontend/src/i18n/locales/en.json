@@ -1,4 +1,111 @@
 {
+  "transit": {
+    "portal": {
+      "groupCenter": "My center",
+      "home": "Home",
+      "welcome": "Welcome, {{name}}",
+      "intro": "{{operator}} is your bus operator. Here you can ask them to carry your children to and from your center.",
+      "prices": "Monthly fee",
+      "pricesHint": "Extra per child per month, added to the parent's bus bill, whichever parts of the day the bus covers. The operator confirms the final price.",
+      "askOperator": "Ask the operator",
+      "month": "month",
+      "operator": "Your bus operator",
+      "requests": "Requests",
+      "askForBus": "Ask for a bus"
+    },
+    "legs": {
+      "school_to_center": "School → transit center",
+      "center_to_home": "Transit center → home",
+      "home_to_center": "Home → transit center",
+      "center_to_school": "Transit center → school"
+    },
+    "placement": {
+      "hint": "Drag the center to where it is on the way, or use the arrows.",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
+    },
+    "status": {
+      "pending": "Waiting",
+      "approved": "Approved",
+      "rejected": "Not approved",
+      "cancelled": "Cancelled"
+    },
+    "request": {
+      "title": "Ask for a bus",
+      "findTitle": "Find the child",
+      "findHelp": "Type the child's name, or the parent's phone number.",
+      "findPlaceholder": "Child name or parent phone",
+      "typeMore": "Type at least 3 letters or numbers.",
+      "noneFound": "No child found. Check the spelling, or ask the parent which bus company they use.",
+      "choose": "Choose",
+      "parentLine": "Parent: {{name}} · phone ends {{phone}}",
+      "changeChild": "Change child",
+      "replacesPlan": "This child already comes to your center by bus. Sending this will replace the current plan once approved.",
+      "whatTitle": "What should the bus do?",
+      "pickOne": "Choose at least one.",
+      "whereTitle": "Where is your center on the way?",
+      "whereHelp": "This is the bus route of the child ({{route}}). Put your center where it is on the way.",
+      "alreadyOnRoute": "Your center is already a stop on this route ({{route}}).",
+      "noRoute": "This child has no bus route yet. The operator will place your center.",
+      "whenTitle": "When?",
+      "startsOn": "First day",
+      "leaveAt": "Time the child leaves your center",
+      "note": "Note for the operator (optional)",
+      "estimate": "Estimated extra per month",
+      "estimateHint": "The bus operator will check with the parent and confirm the final price. It is added to the parent's bus bill.",
+      "error": "Could not send. Please try again.",
+      "send": "Send to bus operator",
+      "afterSchool": "After school",
+      "beforeSchool": "Before school"
+    },
+    "children": {
+      "title": "My children",
+      "empty": "No children yet. Ask for a bus to get started.",
+      "child": "Child",
+      "bus": "Bus",
+      "dates": "Dates",
+      "price": "Per month",
+      "from": "From {{date}}",
+      "until": "Until {{date}}",
+      "stopAsked": "Stop asked",
+      "stop": "Stop"
+    },
+    "stop": {
+      "title": "Stop bus via center for {{name}}",
+      "help": "After the last day, the bus takes the child on their usual trip again. The operator will confirm.",
+      "notFound": "This child has no running plan with your center.",
+      "lastDay": "Last day",
+      "send": "Send to bus operator"
+    },
+    "requests": {
+      "empty": "No requests yet.",
+      "what": "What",
+      "status": "Status",
+      "sent": "Sent {{date}}",
+      "stopAfter": "Stop after {{date}}",
+      "estimate": "estimate",
+      "cancel": "Cancel request",
+      "cancelConfirm": "Cancel the request for {{name}}?"
+    },
+    "plan": {
+      "title": "Transit center: {{name}}",
+      "fromUntil": "{{from}} – {{until}}",
+      "leavesAt": "leaves {{time}}",
+      "driver": "Driver: {{name}}",
+      "callCenter": "Call the center · {{phone}}",
+      "end": "End plan",
+      "endHelp": "After the last day the child goes back to the usual trip, and the extra charge stops from the next month. The center and the parent will see this.",
+      "endConfirm": "End plan"
+    },
+    "location": {
+      "title": "Location",
+      "help": "Click the map to drop a pin where the center is. Drag the pin to adjust it. Drivers and the operator can then open it in their own maps app.",
+      "none": "No pin yet",
+      "coords": "Pin at {{lat}}, {{lng}}",
+      "remove": "Remove pin",
+      "openInMaps": "Open in Maps"
+    }
+  },
   "common": {
     "save": "Save",
     "saving": "Saving…",
@@ -77,7 +184,8 @@
     "invoices": "Invoices",
     "profile": "Profile",
     "track": "Track",
-    "live": "Live"
+    "live": "Live",
+    "transitCenters": "Transit centers & fares"
   },
   "marketingNav": {
     "parents": "For Parents",
@@ -693,7 +801,8 @@
       "announcements": "Announcements",
       "system": "System",
       "messages": "Messages",
-      "parents": "Parents"
+      "parents": "Parents",
+      "transitCenters": "Transit centers"
     },
     "dashboard": {
       "welcome": "Welcome, {{name}}",
@@ -875,7 +984,10 @@
         "email_template_updated": "Edited an email template",
         "email_template_reset": "Reset an email template to its original wording",
         "brand_updated": "Changed the platform brand",
-        "brand_reset": "Reset part of the platform brand"
+        "brand_reset": "Reset part of the platform brand",
+          "transit_center_created": "Added a transit center",
+          "transit_center_updated": "Edited a transit center",
+          "transit_center_login_sent": "Sent a transit center its login"
         }
       },
       "notes": {
@@ -1237,6 +1349,14 @@
           "operator_signed_up": {
             "title": "New operator signed up",
             "help": "Platform owners are told when a new bus company creates an account."
+          },
+          "transit_plan_changed": {
+            "help": "The parent is told when their child's bus starts or stops going via a transit center, and the extra monthly fee.",
+            "title": "Transit center plan changed"
+          },
+          "transit_request_received": {
+            "help": "The operator's owner is told when a transit center asks to start or stop a child's bus via the center.",
+            "title": "New transit center request"
           }
         },
         "searchPlaceholder": "Name or email",
@@ -1372,9 +1492,56 @@
           "error": "The test couldn't run. Save the credentials first and try again."
         }
       }
+    },
+    "transitCenters": {
+      "title": "Transit centers",
+      "intro": "Tuition and daycare centers that can ask an operator for a bus for their children. Only the platform team adds them.",
+      "searchPlaceholder": "Search by center, operator, phone or email",
+      "operator": "Bus operator",
+      "allOperators": "All operators",
+      "chooseOperator": "Choose the bus operator",
+      "operatorHint": "The center can only ask this operator for buses. This cannot be changed later.",
+      "operatorFixed": "A center stays with the operator it was added for.",
+      "addHelp": "After saving, send the center a login so it can ask for buses."
     }
   },
   "operator": {
+    "transitCenters": {
+      "title": "Transit centers & fares",
+      "intro": "Tuition and daycare centers where children stay between school and home. Set what each center pays per month. A center can ask for a bus for its children; you approve each request.",
+      "add": "Add transit center",
+      "addButton": "Save",
+      "back": "Transit centers",
+      "searchPlaceholder": "Search by name, phone or address",
+      "empty": "No transit centers yet.",
+      "name": "Center name",
+      "contact": "Contact",
+      "contactPerson": "Contact person",
+      "phone": "Phone",
+      "email": "Email",
+      "emailHint": "The center logs in with this email.",
+      "emailTaken": "This email is already used. Please use another one.",
+      "address": "Address",
+      "status": "Status",
+      "inactiveHint": "The center can no longer log in. Children already riding are not changed.",
+      "login": "Login",
+      "loginSent": "Login sent",
+      "noLogin": "No login yet",
+      "noLoginHelp": "The center can't log in yet. Send a login and we'll email {{email}} a link to set a password.",
+      "loginSentHelp": "A login was sent to {{email}}. If they lost the email, send it again.",
+      "sendLogin": "Send login",
+      "resendLogin": "Send login again",
+      "loginEmailed": "Done. Ask the center to check its email.",
+      "loginError": "Could not send the login. Please try again.",
+      "addedByPlatform": "To add a center or change its details, contact the platform team.",
+      "setPrices": "Set price",
+      "pricesNotSet": "Not set",
+      "priceTitle": "Monthly price",
+      "priceLabel": "Price per child per month",
+      "priceDescription": "What this center is charged for each child the bus brings to or from it, each month. It is one price, whichever parts of the day the bus covers.",
+      "priceHint": "The center sees this as an estimate. You can change the price when you approve each request.",
+      "priceError": "The price cannot be less than zero."
+    },
     "dashboard": {
       "welcome": "Welcome, {{name}} — {{company}}",
       "operatorId": "Your Operator ID",
@@ -1574,7 +1741,7 @@
       "monthNotSet": "Not set"
     },
     "applications": {
-      "title": "Student Applications",
+      "title": "Applications",
       "status": "Status",
       "statusPending": "Pending",
       "statusApproved": "Approved",
@@ -1608,7 +1775,9 @@
       "firstBillNextMonth": "Start billing next month",
       "firstBillHint": "Bills cover a whole calendar month and go out on the 1st.",
       "firstMonthAmount": "Amount for this month (RM)",
-      "monthlyFee": "Monthly fee"
+      "monthlyFee": "Monthly fee",
+      "tabChildren": "New children",
+      "tabTransit": "Transit"
     },
     "finances": {
       "title": "Finances",
@@ -1736,7 +1905,8 @@
       "adminOnly": "Only an admin can create bills.",
       "lastRunAuto": "Last made automatically on {{date}}: {{generated}} bills made, {{skipped}} skipped.",
       "lastRunManual": "Last created by you on {{date}}: {{generated}} bills made, {{skipped}} could not be made.",
-      "noLastRun": "No bills have been made yet."
+      "noLastRun": "No bills have been made yet.",
+      "includesExtra": "incl. {{label}} RM {{amount}}"
     },
     "settings": {
       "title": "Settings",
@@ -1817,6 +1987,48 @@
       "billModeAutoHint": "The system makes every bill on the 1st of the month. You can still look at the Next bills page first.",
       "billModeManual": "I create them myself",
       "billModeManualHint": "Nothing is made by itself. You check the Next bills page and press Create."
+    },
+    "transitRequests": {
+      "adminOnly": "Only the owner can approve or reject.",
+      "decidedBy": "Decided by {{name}} on {{date}}",
+      "rejectedBecause": "Reason: {{reason}}",
+      "approvedAt": "Approved at RM {{amount}} per month.",
+      "callParent": "Call the parent to confirm before you approve.",
+      "parent": "Parent",
+      "currentPlans": "Plans now",
+      "leavesAt": "Leaves the center at {{time}}",
+      "rejectReason": "Reason (the center will see this)",
+      "reject": "Reject",
+      "approveStop": "Approve stop",
+      "stopHelp": "After the last day the bus goes back to the usual trip and the extra charge stops.",
+      "stopTitle": "Stop the plan",
+      "approve": "Approve",
+      "error": "Could not save. Please check and try again.",
+      "noEstimate": "The center did not see a price (none set for this center yet).",
+      "centerSaw": "The center saw RM {{amount}} as the estimate.",
+      "monthlyAmount": "Extra per month",
+      "priceAndDate": "Price and start",
+      "pickHomeStop": "Choose a stop",
+      "homeStop": "Child's home stop on this route",
+      "samePlaceAbove": "Same place as above.",
+      "alreadyAStop": "The center is already a stop on this route.",
+      "centerStop": "Where the center is on this route",
+      "childsOwnRoute": "This is the child's own route.",
+      "whichBus": "Which bus?",
+      "view": "View",
+      "startSummary_other": "{{count}} trips from {{date}}",
+      "startSummary_one": "{{count}} trip from {{date}}",
+      "center": "Transit center",
+      "empty": "No requests here.",
+      "intro": "Transit centers ask for a bus to bring children to and from their center. Call the parent before you approve.",
+      "firstBill": "First bill with this charge",
+      "billStartMonth": "From {{month}}",
+      "billNextMonth": "From the month after ({{month}})",
+      "billedNow": "Added to the bill already made for {{months}}.",
+      "paidBills": "Bills for {{months}} were already paid, so the charge was not changed there. Adjust them by hand if needed.",
+      "approvedDone": "Approved.",
+      "sameBusTwice": "This route already does the first part of this trip. Choose another bus run, such as an evening route.",
+      "pickLaterRun": "Choose the bus run that picks up from the center (leaves at {{time}}). It must be a different run from the one above."
     }
   },
   "parent": {
@@ -2091,7 +2303,8 @@
   "billing": {
     "item": {
       "fee": "Bus fee",
-      "discount": "Discount"
+      "discount": "Discount",
+      "transitCenter": "Transit center: {{name}}"
     },
     "paidSoFar": "Paid so far",
     "balance": "Balance due"

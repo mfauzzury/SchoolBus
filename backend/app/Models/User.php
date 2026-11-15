@@ -64,4 +64,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Staff::class, 'user_id');
     }
+
+    /** Set when this login belongs to a transit center. */
+    public function transitCenter(): HasOne
+    {
+        return $this->hasOne(TransitCenter::class, 'user_id');
+    }
 }

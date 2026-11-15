@@ -1,0 +1,21 @@
+/** Brand + neutral palette shared by the parent app screens (matches the web portal). */
+export const colors = {
+  primary: '#ffce1b',
+  primarySoft: '#fdf3dc',
+  text: '#111827',
+  muted: '#6b7280',
+  border: '#e5e7eb',
+  background: '#ffffff',
+  surface: '#f9fafb',
+  success: '#059669',
+  successSoft: '#ecfdf5',
+  info: '#1d4ed8',
+  infoSoft: '#eff6ff',
+  warning: '#d97706',
+  danger: '#dc2626',
+  dangerSoft: '#fef2f2',
+  signalLive: '#22c55e',
+  signalStale: '#f59e0b',
+  signalLost: '#ef4444',
+  signalNone: '#9ca3af',
+}

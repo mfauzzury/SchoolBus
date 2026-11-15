@@ -6,6 +6,7 @@ use App\Enums\InvoiceStatus;
 use App\Models\BusOperator;
 use App\Models\Invoice;
 use App\Models\Student;
+use App\Models\StudentExtra;
 use Illuminate\Support\Carbon;
 
 /**
@@ -78,6 +79,13 @@ class PendingBills
             ->pluck('student_id')
             ->flip();
 
+        $extras = StudentExtra::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->billedInMonth($month)
+            ->orderBy('id')
+            ->get()
+            ->groupBy('student_id');
+
         $rows = [];
         $problems = [];
 
@@ -111,6 +119,9 @@ class PendingBills
                 isCustomFee: $student->fee_override !== null,
             );
 
+            $studentExtras = $extras->get($student->id, collect());
+            $extrasAmount = round($studentExtras->sum(fn (StudentExtra $e) => (float) $e->monthly_amount), 2);
+
             $rows[] = [
                 'student_id' => $student->id,
                 'student_name' => $student->full_name,
@@ -118,7 +129,8 @@ class PendingBills
                 'route_id' => $student->route_id,
                 'route_name' => $student->route?->name,
                 'package_type' => $student->package_type,
-                'amount' => $fee['final_amount'],
+                'amount' => round($fee['final_amount'] + $extrasAmount, 2),
+                'extras' => $studentExtras->map(fn (StudentExtra $e) => $e->asLine())->values()->all(),
                 'amount_before_discount' => $fee['amount_before_discount'],
                 'sibling_discount_rate' => $fee['sibling_discount_rate'],
                 'is_custom_fee' => $student->fee_override !== null,

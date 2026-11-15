@@ -34,6 +34,15 @@ import { NextBills } from '@/pages/operator/NextBills'
 import { BillDetail } from '@/pages/operator/BillDetail'
 import { Settings } from '@/pages/operator/Settings'
 import { BillingSettings } from '@/pages/operator/BillingSettings'
+import { TransitCenters } from '@/pages/operator/TransitCenters'
+import { TransitCenterPrice } from '@/pages/operator/TransitCenterPrice'
+import { TransitRequestReview } from '@/pages/operator/TransitRequestReview'
+import { TransitLayout } from '@/layouts/TransitLayout'
+import { TransitHome } from '@/pages/transit/Home'
+import { TransitNewRequest } from '@/pages/transit/NewRequest'
+import { TransitChildren } from '@/pages/transit/Children'
+import { TransitStopRequest } from '@/pages/transit/StopRequest'
+import { TransitRequests } from '@/pages/transit/Requests'
 import { ParentDashboard } from '@/pages/parent/Dashboard'
 import { ParentTrack } from '@/pages/parent/Track'
 import { ParentInvoices } from '@/pages/parent/Invoices'
@@ -59,6 +68,8 @@ import { AdminPlans } from '@/pages/admin/Plans'
 import { AdminPlanEdit } from '@/pages/admin/PlanEdit'
 import { AdminTeam } from '@/pages/admin/Team'
 import { AdminTeamAdd } from '@/pages/admin/TeamAdd'
+import { AdminTransitCenters } from '@/pages/admin/TransitCenters'
+import { AdminTransitCenterForm } from '@/pages/admin/TransitCenterForm'
 import { AdminActivityLog } from '@/pages/admin/ActivityLog'
 
 function App() {
@@ -107,9 +118,24 @@ function App() {
             <Route path="/operator/routes/:id/edit" element={<RouteFormPage />} />
             <Route path="/operator/buses" element={<Buses />} />
             <Route path="/operator/staff" element={<Staff />} />
+            <Route path="/operator/transit-centers" element={<TransitCenters />} />
+            <Route path="/operator/transit-centers/:id" element={<TransitCenterPrice />} />
+            {/* The list moved into a tab of Applications; this keeps old emails and bookmarks working. */}
+            <Route path="/operator/transit-requests" element={<Navigate to="/operator/applications?tab=transit" replace />} />
+            <Route path="/operator/transit-requests/:id" element={<TransitRequestReview />} />
             <Route path="/operator/settings/routes" element={<Navigate to="/operator/routes" replace />} />
             <Route path="/operator/settings/buses" element={<Navigate to="/operator/buses" replace />} />
             <Route path="/operator/settings/staff" element={<Navigate to="/operator/staff" replace />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute role="transit" />}>
+          <Route element={<TransitLayout />}>
+            <Route path="/transit/home" element={<TransitHome />} />
+            <Route path="/transit/children" element={<TransitChildren />} />
+            <Route path="/transit/children/:studentId/stop" element={<TransitStopRequest />} />
+            <Route path="/transit/new" element={<TransitNewRequest />} />
+            <Route path="/transit/requests" element={<TransitRequests />} />
           </Route>
         </Route>
 
@@ -150,6 +176,9 @@ function App() {
             <Route path="/admin/parents" element={<AdminParentsReport />} />
             <Route path="/admin/team" element={<AdminTeam />} />
             <Route path="/admin/team/new" element={<AdminTeamAdd />} />
+            <Route path="/admin/transit-centers" element={<AdminTransitCenters />} />
+            <Route path="/admin/transit-centers/new" element={<AdminTransitCenterForm />} />
+            <Route path="/admin/transit-centers/:id" element={<AdminTransitCenterForm />} />
             <Route path="/admin/activity" element={<AdminActivityLog />} />
           </Route>
         </Route>

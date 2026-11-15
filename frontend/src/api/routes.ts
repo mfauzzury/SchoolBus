@@ -6,6 +6,8 @@ export interface RouteStop {
   id: number
   name: string
   sequence: number
+  /** Set when this stop is a transit center. */
+  transit_center_id?: number | null
 }
 
 export interface Route {
@@ -37,7 +39,8 @@ export interface RouteInput {
   conductor_id?: number | null
   base_monthly_fee?: number | null
   one_way_monthly_fee?: number | null
-  stops?: { name: string; sequence: number }[]
+  /** `id` keeps an existing stop (and the children who use it) when it is renamed or moved. */
+  stops?: { id?: number; name: string; sequence: number }[]
 }
 
 export async function listRoutes(): Promise<Route[]> {

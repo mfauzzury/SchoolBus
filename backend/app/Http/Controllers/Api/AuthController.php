@@ -74,6 +74,8 @@ class AuthController extends Controller
             'tenant' => $user->busOperator,
             // Their own profile only (operators have none), so the private About-you answers are safe to include.
             'parentProfile' => $user->parentProfile?->forOwner(),
+            // Set when this login belongs to a transit center.
+            'transitCenter' => $roles->contains('transit_center') ? $user->transitCenter?->only(['id', 'name', 'status']) : null,
             'roles' => $roles,
             // Set while a platform-team member is "logged in as" this operator.
             'impersonating' => $this->impersonation($request),

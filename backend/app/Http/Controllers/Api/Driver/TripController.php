@@ -8,10 +8,16 @@ use App\Models\Route;
 use App\Models\Student;
 use App\Models\Trip;
 use App\Models\TripLocation;
+use App\Services\TripRoster;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TripController extends Controller
 {
+    public function __construct(private readonly TripRoster $roster)
+    {
+    }
+
     /**
      * Trips aren't pre-scheduled by any generator today — the driver's
      * assigned routes are materialized into (find-or-create) today's pickup
@@ -70,6 +76,10 @@ class TripController extends Controller
     {
         $this->authorizeTrip($request, $trip);
 
+        // A trip that isn't running has no bus to follow. The app stops sharing
+        // location when it sees this, so a forgotten tracker can't run all day.
+        abort_unless($trip->status === 'active', 409, 'This trip is not in progress.');
+
         $data = $request->validate([
             'lat' => 'required|numeric|between:-90,90',
             'lng' => 'required|numeric|between:-180,180',
@@ -89,15 +99,12 @@ class TripController extends Controller
     {
         $this->authorizeTrip($request, $trip);
 
-        $students = $trip->route->students()
-            ->with(['parentProfile:id,full_name,phone,email', 'pickupStop:id,name,sequence'])
-            ->get()
-            ->sortBy('pickupStop.sequence')
-            ->values();
+        $rows = $this->roster->for($trip);
 
         $eventsByStudent = BoardingEvent::where('trip_id', $trip->id)->get()->groupBy('student_id');
 
-        return $students->map(function (Student $student) use ($eventsByStudent) {
+        return $rows->map(function (array $row) use ($eventsByStudent) {
+            $student = $row['student'];
             $events = $eventsByStudent->get($student->id, collect());
 
             // Only what the driver needs on the bus — never fees, billing or the
@@ -111,9 +118,17 @@ class TripController extends Controller
                 'class_name' => $student->class_name,
                 'school_phone' => $student->school_phone,
                 'parent_profile' => $student->parentProfile,
-                'pickup_stop' => $student->pickupStop,
+                // The stop where the driver picks up or drops off this child on this trip.
+                // Usually their own pickup stop; a transit center when their day goes through one.
+                'pickup_stop' => $row['stop'],
+                'board_stop' => $row['board_stop'],
+                'alight_stop' => $row['alight_stop'],
+                // Set when the child goes via a transit center on this trip: 'drop' there or 'pick' up there.
+                'transit' => $row['transit'],
                 'boarded' => $events->contains('event_type', 'boarded'),
                 'alighted' => $events->contains('event_type', 'alighted'),
+                'absent' => $events->contains('event_type', 'absent'),
+                'status' => $this->statusOf($events),
             ];
         })->values();
     }
@@ -128,11 +143,61 @@ class TripController extends Controller
         return $this->recordBoardingEvent($request, $trip, $student, 'alighted');
     }
 
+    /**
+     * Sets where a child is on this trip: waiting, boarded, alighted or absent
+     * ("not coming"). It says what the state should be rather than what just
+     * happened, so a tap that is sent twice, or a few seconds late after the
+     * signal came back, always ends up in the right place. Undo is
+     * simply setting the earlier state.
+     */
+    public function setStudentStatus(Request $request, Trip $trip, Student $student)
+    {
+        $this->authorizeTrip($request, $trip);
+
+        $data = $request->validate(['status' => 'required|in:waiting,boarded,alighted,absent']);
+
+        if (! $this->roster->includes($trip, $student)) {
+            abort(422, 'This student is not on this trip\'s route.');
+        }
+
+        // A child who got off must have got on first.
+        $wanted = match ($data['status']) {
+            'waiting' => [],
+            'boarded' => ['boarded'],
+            'alighted' => ['boarded', 'alighted'],
+            'absent' => ['absent'],
+        };
+
+        DB::transaction(function () use ($request, $trip, $student, $wanted) {
+            BoardingEvent::where('trip_id', $trip->id)->where('student_id', $student->id)
+                ->whereNotIn('event_type', $wanted)->delete();
+
+            foreach ($wanted as $type) {
+                BoardingEvent::firstOrCreate(
+                    ['trip_id' => $trip->id, 'student_id' => $student->id, 'event_type' => $type],
+                    ['recorded_at' => now(), 'recorded_by_staff_id' => $request->user()->staff->id],
+                );
+            }
+        });
+
+        return ['student_id' => $student->id, 'status' => $data['status']];
+    }
+
+    private function statusOf($events): string
+    {
+        return match (true) {
+            $events->contains('event_type', 'absent') => 'absent',
+            $events->contains('event_type', 'alighted') => 'alighted',
+            $events->contains('event_type', 'boarded') => 'boarded',
+            default => 'waiting',
+        };
+    }
+
     private function recordBoardingEvent(Request $request, Trip $trip, Student $student, string $eventType)
     {
         $this->authorizeTrip($request, $trip);
 
-        if ($student->route_id !== $trip->route_id) {
+        if (! $this->roster->includes($trip, $student)) {
             abort(422, 'This student is not on this trip\'s route.');
         }
 

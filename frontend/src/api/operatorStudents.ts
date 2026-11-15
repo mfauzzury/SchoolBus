@@ -1,4 +1,6 @@
 import { apiClient } from './client'
+import type { TransitPlanSummary } from './transitPortal'
+import type { TransitBillingResult } from './transitRequests'
 
 export interface OperatorStudentInvoice {
   id: number
@@ -48,6 +50,7 @@ export type NextBill =
   | {
       month: string
       amount: number
+      extras: { label: string; amount: number }[]
       amount_before_discount: number
       sibling_discount_rate: number
       due_date: string
@@ -76,6 +79,8 @@ export interface OperatorStudentDetail {
   billing_ends_on: string | null
   // What the daily billing will do next, worked out by the server.
   next_bill: NextBill
+  /** Running transit center plans. */
+  transit_plans: TransitPlanSummary[]
   created_at: string
   route: {
     id: number
@@ -124,6 +129,18 @@ export async function getOperatorStudent(id: number): Promise<OperatorStudentDet
 export async function listOperatorStudents(filters: StudentFilters): Promise<OperatorStudent[]> {
   const { data } = await apiClient.get<OperatorStudent[]>('/api/operator/students', {
     params: filters,
+  })
+  return data
+}
+
+/** Ends a transit plan after a last day, without waiting for the center to ask. */
+export async function endTransitPlan(
+  studentId: number,
+  requestId: number,
+  endsOn: string,
+): Promise<{ transit_plans: TransitPlanSummary[]; billing: TransitBillingResult }> {
+  const { data } = await apiClient.post(`/api/operator/students/${studentId}/transit-plans/${requestId}/end`, {
+    ends_on: endsOn,
   })
   return data
 }

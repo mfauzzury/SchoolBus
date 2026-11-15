@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api\Operator;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Models\TransitRequest;
+use App\Services\Notifier;
+use App\Services\TransitPlanner;
 use App\Services\InvoiceGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -42,7 +45,7 @@ class StudentController extends Controller
      * one family balance and the sibling discount). Bills and payments are
      * fetched separately through the invoice endpoints.
      */
-    public function show(Student $student, InvoiceGenerator $generator)
+    public function show(Student $student, InvoiceGenerator $generator, TransitPlanner $planner)
     {
         $student->load([
             'parentProfile',
@@ -57,8 +60,36 @@ class StudentController extends Controller
             ->get(['id', 'parent_id', 'route_id', 'full_name', 'enrollment_status']));
 
         $student->setAttribute('next_bill', $generator->preview($student));
+        $student->setAttribute('transit_plans', $planner->summaries($student));
 
         return $student;
+    }
+
+    /**
+     * Ends a transit center plan without waiting for the center to ask, e.g.
+     * when the parent calls the operator. The center sees it as an approved
+     * stop, and the parent is emailed as usual.
+     */
+    public function endTransitPlan(Request $request, Student $student, TransitRequest $transitRequest, TransitPlanner $planner)
+    {
+        abort_unless(
+            $transitRequest->student_id === $student->id && $transitRequest->kind === 'start' && $transitRequest->status === 'approved',
+            404,
+        );
+
+        $data = $request->validate(['ends_on' => 'required|date|after_or_equal:today']);
+
+        abort_if(
+            $planner->runningPlans($student, $transitRequest->transitCenter)->isEmpty(),
+            422,
+            'This plan has already ended.',
+        );
+
+        ['stop' => $stop, 'billing' => $billing] = $planner->endByOperator($transitRequest, Carbon::parse($data['ends_on']), $request->user());
+
+        app(Notifier::class)->transitPlanChanged($stop);
+
+        return ['transit_plans' => $planner->summaries($student), 'billing' => $billing];
     }
 
     /**
