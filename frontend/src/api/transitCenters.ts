@@ -7,6 +7,9 @@ export interface OperatorTransitCenter {
   contact_person: string | null
   phone: string
   address: string | null
+  /** The pin on the map; both set, or neither. */
+  latitude: number | null
+  longitude: number | null
   status: 'active' | 'inactive'
   /** What this center is charged per child each month; null = not set yet. */
   monthly_price: number | null
@@ -27,6 +30,8 @@ export interface TransitCenterInput {
   phone: string
   email: string
   address: string | null
+  latitude: number | null
+  longitude: number | null
   status?: 'active' | 'inactive'
   /** Only when adding: the operator the center belongs to (never changed after). */
   operator_id?: number

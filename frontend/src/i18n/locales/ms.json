@@ -96,6 +96,14 @@
       "end": "Tamatkan pelan",
       "endHelp": "Selepas hari terakhir kanak-kanak kembali ke perjalanan biasa, dan caj tambahan berhenti mulai bulan berikutnya. Pusat dan ibu bapa akan melihat ini.",
       "endConfirm": "Tamatkan pelan"
+    },
+    "location": {
+      "title": "Lokasi",
+      "help": "Klik pada peta untuk letak pin di lokasi pusat. Seret pin untuk melaraskan. Pemandu dan pengendali kemudian boleh membukanya dalam aplikasi peta mereka.",
+      "none": "Belum ada pin",
+      "coords": "Pin di {{lat}}, {{lng}}",
+      "remove": "Buang pin",
+      "openInMaps": "Buka dalam Peta"
     }
   },
   "common": {

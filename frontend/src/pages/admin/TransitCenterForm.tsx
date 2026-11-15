@@ -8,8 +8,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { BackLink } from '@/components/BackLink'
+import { LocationMap } from '@/components/LocationMap'
+import { OpenInMaps } from '@/components/OpenInMaps'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { apiErrorMessage } from '@/lib/apiError'
+import type { LatLng } from '@/lib/map'
 import { useCan } from '@/hooks/useAuth'
 import { useOperatorOptions } from '@/hooks/useAdmin'
 import {
@@ -89,6 +92,8 @@ export function AdminTransitCenterForm() {
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
+  // The pin dropped on the map, so drivers and the operator can open the center in their maps app.
+  const [pin, setPin] = useState<LatLng | null>(null)
   const [status, setStatus] = useState<'active' | 'inactive'>('active')
 
   useEffect(() => {
@@ -98,6 +103,7 @@ export function AdminTransitCenterForm() {
       setPhone(center.phone)
       setEmail(center.email)
       setAddress(center.address ?? '')
+      setPin(center.latitude !== null && center.longitude !== null ? { lat: center.latitude, lng: center.longitude } : null)
       setStatus(center.status)
     }
   }, [center])
@@ -113,6 +119,8 @@ export function AdminTransitCenterForm() {
       phone: phone.trim(),
       email: email.trim(),
       address: address.trim() || null,
+      latitude: pin?.lat ?? null,
+      longitude: pin?.lng ?? null,
     }
     if (centerId) {
       update.mutate({ id: centerId, input: { ...input, status } })
@@ -195,6 +203,28 @@ export function AdminTransitCenterForm() {
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="tc_address">{t('operator.transitCenters.address')}</Label>
                 <Input id="tc_address" value={address} onChange={(e) => setAddress(e.target.value)} />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label>{t('transit.location.title')}</Label>
+                <LocationMap value={pin} onChange={canEdit ? setPin : undefined} className="h-72 rounded-md border" />
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                  <span>
+                    {pin
+                      ? t('transit.location.coords', { lat: pin.lat.toFixed(6), lng: pin.lng.toFixed(6) })
+                      : t('transit.location.none')}
+                  </span>
+                  {pin && (
+                    <span className="flex items-center gap-2">
+                      <OpenInMaps lat={pin.lat} lng={pin.lng} />
+                      {canEdit && (
+                        <Button type="button" variant="outline" size="sm" onClick={() => setPin(null)}>
+                          {t('transit.location.remove')}
+                        </Button>
+                      )}
+                    </span>
+                  )}
+                </div>
+                {canEdit && <p className="text-xs text-muted-foreground">{t('transit.location.help')}</p>}
               </div>
 
               {centerId && (

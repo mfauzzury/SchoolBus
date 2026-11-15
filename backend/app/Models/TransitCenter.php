@@ -18,12 +18,17 @@ class TransitCenter extends Model
         'phone',
         'email',
         'address',
+        'latitude',
+        'longitude',
         'monthly_price',
         'status',
     ];
 
     protected $casts = [
         'monthly_price' => 'decimal:2',
+        // The pin on the map (both set, or neither): a plain number in the API, not a string.
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     public function user(): BelongsTo

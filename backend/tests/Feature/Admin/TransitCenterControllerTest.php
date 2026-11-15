@@ -147,4 +147,35 @@ class TransitCenterControllerTest extends TestCase
     }
 
 
+
+    public function test_the_platform_drops_a_pin_for_a_center_and_can_move_or_remove_it(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createPlatformUser('owner');
+
+        $id = $this->actingAs($admin)->postJson('/api/admin/transit-centers', $this->details(['operator_id' => $tenant->id, 'latitude' => 3.2071, 'longitude' => 101.7287]))
+            ->assertCreated()
+            ->assertJsonPath('latitude', 3.2071)
+            ->assertJsonPath('longitude', 101.7287)
+            ->json('id');
+
+        $this->actingAs($admin)->putJson("/api/admin/transit-centers/{$id}", $this->details(['latitude' => 3.1, 'longitude' => 101.6]))
+            ->assertOk()->assertJsonPath('latitude', 3.1);
+
+        // No pin is fine too: both go.
+        $this->actingAs($admin)->putJson("/api/admin/transit-centers/{$id}", $this->details(['latitude' => null, 'longitude' => null]))
+            ->assertOk()->assertJsonPath('latitude', null)->assertJsonPath('longitude', null);
+    }
+
+    public function test_a_pin_needs_both_numbers_on_the_map(): void
+    {
+        $tenant = $this->createTenant();
+        $admin = $this->createPlatformUser('owner');
+        $url = '/api/admin/transit-centers';
+
+        $this->actingAs($admin)->postJson($url, $this->details(['operator_id' => $tenant->id, 'latitude' => 3.2]))->assertUnprocessable()->assertJsonValidationErrors('longitude');
+        $this->actingAs($admin)->postJson($url, $this->details(['operator_id' => $tenant->id, 'longitude' => 101.7]))->assertUnprocessable()->assertJsonValidationErrors('latitude');
+        $this->actingAs($admin)->postJson($url, $this->details(['operator_id' => $tenant->id, 'latitude' => 95, 'longitude' => 101.7]))->assertUnprocessable()->assertJsonValidationErrors('latitude');
+        $this->actingAs($admin)->postJson($url, $this->details(['operator_id' => $tenant->id, 'latitude' => 3.2, 'longitude' => 200]))->assertUnprocessable()->assertJsonValidationErrors('longitude');
+    }
 }

@@ -1,4 +1,6 @@
 import { View, Text, Pressable, ActivityIndicator, StyleSheet, FlatList, Image, Linking, Alert } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { openDirections } from '../../../../src/lib/maps'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useBoardingRoster, useEndTrip, useTodayTrips } from '../../../../src/hooks/useTrips'
 import { useTripTracking, type SharingState } from '../../../../src/hooks/useTripTracking'
@@ -74,6 +76,18 @@ function StudentRow({
           <View style={styles.transitBox}>
             <Text style={styles.transitTag}>TRANSIT</Text>
             <Text style={styles.transitText}>{transitLine(student)}</Text>
+            {student.transit.latitude != null && student.transit.longitude != null && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Directions to ${student.transit.center_name}`}
+                hitSlop={8}
+                style={styles.directions}
+                onPress={() => openDirections(student.transit!.latitude!, student.transit!.longitude!, student.transit!.center_name)}
+              >
+                <Ionicons name="navigate" size={14} color="white" />
+                <Text style={styles.directionsText}>Directions</Text>
+              </Pressable>
+            )}
           </View>
         ) : (
           <Text style={styles.stopName}>{student.pickup_stop?.name ?? 'No stop assigned'}</Text>
@@ -315,6 +329,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   transitText: { fontSize: 13, fontWeight: '700', color: '#92400e', flexShrink: 1 },
+  directions: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#111827', borderRadius: 6, paddingVertical: 4, paddingHorizontal: 8 },
+  directionsText: { color: 'white', fontSize: 12, fontWeight: '700' },
   actions: { alignItems: 'center', gap: 8, minWidth: 104 },
   primaryButton: {
     backgroundColor: '#111827',

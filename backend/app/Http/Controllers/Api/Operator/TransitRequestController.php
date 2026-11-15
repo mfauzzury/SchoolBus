@@ -33,7 +33,7 @@ class TransitRequestController extends Controller
     public function show(TransitRequest $transitRequest)
     {
         $transitRequest->load([
-            'transitCenter:id,name,phone,contact_person,address',
+            'transitCenter:id,name,phone,contact_person,address,latitude,longitude',
             'student.parentProfile:id,full_name,phone,email',
             'student.pickupStop:id,name,sequence',
             'centerAfterStop:id,name,sequence',

@@ -45,7 +45,14 @@ export interface RosterStudent {
   board_stop: { id: number; name: string } | null
   alight_stop: { id: number; name: string } | null
   /** Set when the child goes via a transit center on this trip. */
-  transit: { action: 'drop' | 'pick'; center_name: string; leave_center_at: string | null } | null
+  transit: {
+    action: 'drop' | 'pick'
+    center_name: string
+    leave_center_at: string | null
+    /** Where the center is, for the Directions button; null until the platform has dropped a pin. */
+    latitude: number | null
+    longitude: number | null
+  } | null
   boarded: boolean
   alighted: boolean
   absent: boolean

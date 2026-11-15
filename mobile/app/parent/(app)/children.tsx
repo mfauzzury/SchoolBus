@@ -6,6 +6,7 @@ import { useMyStudents } from '../../../src/hooks/useParent'
 import type { Student, TransitPlanSummary } from '../../../src/api/parent'
 import { colors } from '../../../src/theme'
 import { formatDate, formatMoney } from '../../../src/lib/format'
+import { openDirections } from '../../../src/lib/maps'
 
 const ENROLLMENT: Record<Student['enrollment_status'], { label: string; tone: BadgeTone }> = {
   active: { label: 'Active', tone: 'success' },
@@ -60,6 +61,11 @@ function TransitBlock({ plan, school }: { plan: TransitPlanSummary; school: stri
       {plan.transit_center?.phone && (
         <Pressable onPress={() => Linking.openURL(`tel:${plan.transit_center!.phone}`)}>
           <Text style={styles.transitCall}>Call {centerName}</Text>
+        </Pressable>
+      )}
+      {plan.transit_center?.latitude != null && plan.transit_center?.longitude != null && (
+        <Pressable onPress={() => openDirections(plan.transit_center!.latitude!, plan.transit_center!.longitude!, centerName)}>
+          <Text style={styles.transitCall}>Directions to {centerName}</Text>
         </Pressable>
       )}
     </View>

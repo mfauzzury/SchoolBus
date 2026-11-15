@@ -6,16 +6,9 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { BusFront, LocateFixed } from 'lucide-react'
 import type { SignalState } from '@/api/tracking'
+import { DEFAULT_CENTER, TILE_ATTRIBUTION, TILE_URL } from '@/lib/map'
 import { cn } from '@/lib/utils'
 
-/**
- * OpenStreetMap's public tile servers forbid production-scale traffic —
- * set VITE_MAP_TILE_URL to a hosted provider (MapTiler, Stadia, …) before launch.
- */
-const TILE_URL = import.meta.env.VITE_MAP_TILE_URL ?? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-
-const DEFAULT_CENTER: L.LatLngTuple = [3.0733, 101.5185] // Shah Alam
 const FOLLOW_ZOOM = 15
 
 const busSvg = renderToStaticMarkup(<BusFront size={18} strokeWidth={2.25} />)

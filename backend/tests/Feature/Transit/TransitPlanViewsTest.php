@@ -72,6 +72,7 @@ class TransitPlanViewsTest extends TestCase
         TransitCenter::create([
             'tenant_id' => $this->tenant->id, 'user_id' => $this->centerUser->id, 'name' => 'Bright Kids TC',
             'phone' => '03-555 0000', 'email' => $this->centerUser->email, 'status' => 'active',
+            'latitude' => 3.2071, 'longitude' => 101.7287,
         ]);
 
         [$this->parentUser, $parent] = $this->createParent($this->tenant);
@@ -108,11 +109,15 @@ class TransitPlanViewsTest extends TestCase
     {
         $this->roster($this->driverA, $this->staffA, $this->routeA, 'dropoff')
             ->assertJsonPath('0.transit.action', 'drop')
-            ->assertJsonPath('0.transit.center_name', 'Bright Kids TC');
+            ->assertJsonPath('0.transit.center_name', 'Bright Kids TC')
+            // Where to go, for the driver's maps button.
+            ->assertJsonPath('0.transit.latitude', 3.2071)
+            ->assertJsonPath('0.transit.longitude', 101.7287);
 
         $this->roster($this->driverB, $this->staffB, $this->routeB, 'dropoff')
             ->assertJsonPath('0.transit.action', 'pick')
             ->assertJsonPath('0.transit.leave_center_at', '18:00')
+            ->assertJsonPath('0.transit.latitude', 3.2071)
             ->assertJsonPath('0.alight_stop.name', 'Taman Abu')
             // Listed where the driver collects him: at the center.
             ->assertJsonPath('0.pickup_stop.name', 'Bright Kids TC');
@@ -128,6 +133,7 @@ class TransitPlanViewsTest extends TestCase
         $this->actingAs($this->parentUser)->getJson('/api/parent/students')
             ->assertOk()
             ->assertJsonPath('0.transit_plans.0.transit_center.name', 'Bright Kids TC')
+            ->assertJsonPath('0.transit_plans.0.transit_center.latitude', 3.2071)
             ->assertJsonPath('0.transit_plans.0.monthly_amount', '90.00')
             ->assertJsonPath('0.transit_plans.0.rides.0.from', null)
             ->assertJsonPath('0.transit_plans.0.rides.0.to', 'Bright Kids TC')

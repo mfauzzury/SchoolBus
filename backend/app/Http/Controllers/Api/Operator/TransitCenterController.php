@@ -50,6 +50,8 @@ class TransitCenterController extends Controller
             'contact_person' => $center->contact_person,
             'phone' => $center->phone,
             'address' => $center->address,
+            'latitude' => $center->latitude,
+            'longitude' => $center->longitude,
             'status' => $center->status,
             'monthly_price' => $center->monthly_price === null ? null : (float) $center->monthly_price,
         ];

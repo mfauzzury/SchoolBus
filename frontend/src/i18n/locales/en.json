@@ -96,6 +96,14 @@
       "end": "End plan",
       "endHelp": "After the last day the child goes back to the usual trip, and the extra charge stops from the next month. The center and the parent will see this.",
       "endConfirm": "End plan"
+    },
+    "location": {
+      "title": "Location",
+      "help": "Click the map to drop a pin where the center is. Drag the pin to adjust it. Drivers and the operator can then open it in their own maps app.",
+      "none": "No pin yet",
+      "coords": "Pin at {{lat}}, {{lng}}",
+      "remove": "Remove pin",
+      "openInMaps": "Open in Maps"
     }
   },
   "common": {

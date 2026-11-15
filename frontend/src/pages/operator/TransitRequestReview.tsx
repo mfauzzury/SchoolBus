@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { BackLink } from '@/components/BackLink'
 import { CenterPlacement } from '@/components/CenterPlacement'
+import { OpenInMaps } from '@/components/OpenInMaps'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useRoutes } from '@/hooks/useRoutes'
 import { useApproveTransitRequest, useRejectTransitRequest, useTransitRequest } from '@/hooks/useTransitRequests'
@@ -419,6 +420,9 @@ export function TransitRequestReview() {
               <span className="text-muted-foreground">{t('operator.transitRequests.center')}: </span>
               <span className="font-medium">{request.transit_center.name}</span>
               {request.transit_center.phone && <span className="text-muted-foreground"> · {request.transit_center.phone}</span>}
+              {request.transit_center.latitude != null && request.transit_center.longitude != null && (
+                <OpenInMaps lat={request.transit_center.latitude} lng={request.transit_center.longitude} icon />
+              )}
             </p>
             {request.kind === 'stop' ? (
               <p>{t('transit.requests.stopAfter', { date: showDate(request.ends_on) })}</p>

@@ -84,7 +84,7 @@ class TransitPlanner
         $plans = TransitRequest::runningPlan(Carbon::today())
             ->whereIn('student_id', $students->pluck('id'))
             ->with([
-                'transitCenter:id,name,phone',
+                'transitCenter:id,name,phone,latitude,longitude',
                 'extras',
                 'rides.route:id,name,bus_id,driver_id',
                 'rides.route.bus:id,plate_number',
@@ -106,7 +106,7 @@ class TransitPlanner
     {
         return [
             ...$this->planLine($plan),
-            'transit_center' => $plan->transitCenter?->only(['id', 'name', 'phone']),
+            'transit_center' => $plan->transitCenter?->only(['id', 'name', 'phone', 'latitude', 'longitude']),
             'leave_center_at' => $plan->leave_center_at,
             'rides' => $plan->rides
                 // Morning before afternoon; within a trip, the part that ends at the center first.

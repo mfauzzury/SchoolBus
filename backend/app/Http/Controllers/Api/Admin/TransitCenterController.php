@@ -128,6 +128,9 @@ class TransitCenterController extends Controller
                 Rule::unique('users', 'email')->ignore($center?->user_id),
             ],
             'address' => 'nullable|string|max:500',
+            // The pin dropped on the map: both or neither.
+            'latitude' => 'nullable|numeric|between:-90,90|required_with:longitude',
+            'longitude' => 'nullable|numeric|between:-180,180|required_with:latitude',
             'status' => $center ? ['sometimes', Rule::in(['active', 'inactive'])] : 'prohibited',
         ]);
     }
@@ -142,6 +145,8 @@ class TransitCenterController extends Controller
             'phone' => $center->phone,
             'email' => $center->email,
             'address' => $center->address,
+            'latitude' => $center->latitude,
+            'longitude' => $center->longitude,
             'status' => $center->status,
             'has_login' => $center->user_id !== null,
             'last_login_at' => $center->user?->last_login_at,

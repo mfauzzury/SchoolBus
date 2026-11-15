@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { BackLink } from '@/components/BackLink'
+import { LocationMap } from '@/components/LocationMap'
+import { OpenInMaps } from '@/components/OpenInMaps'
 import { apiErrorMessage } from '@/lib/apiError'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useOperatorTransitCenter, useUpdateTransitCenterPrice } from '@/hooks/useTransitCenters'
@@ -60,6 +62,18 @@ export function TransitCenterPrice() {
           <p className="text-xs text-muted-foreground">{t('operator.transitCenters.addedByPlatform')}</p>
         </CardContent>
       </Card>
+
+      {center.latitude !== null && center.longitude !== null && (
+        <Card className="max-w-2xl">
+          <CardHeader className="flex flex-row items-center justify-between gap-3">
+            <CardTitle className="text-base">{t('transit.location.title')}</CardTitle>
+            <OpenInMaps lat={center.latitude} lng={center.longitude} />
+          </CardHeader>
+          <CardContent>
+            <LocationMap value={{ lat: center.latitude, lng: center.longitude }} className="h-56 rounded-md border" />
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="max-w-2xl">
         <CardHeader>

@@ -17,7 +17,7 @@ class TransitCenterControllerTest extends TestCase
         $tenant = $this->createTenant();
         $other = $this->createTenant();
         $admin = $this->createOperatorAdmin($tenant);
-        $mine = TransitCenter::create(['tenant_id' => $tenant->id, 'name' => 'Bright Kids TC', 'phone' => '03-1', 'email' => 'a@tc.my', 'status' => 'active']);
+        $mine = TransitCenter::create(['tenant_id' => $tenant->id, 'name' => 'Bright Kids TC', 'phone' => '03-1', 'email' => 'a@tc.my', 'status' => 'active', 'latitude' => 3.2071, 'longitude' => 101.7287]);
         TransitCenter::create(['tenant_id' => $other->id, 'name' => 'Not mine', 'phone' => '03-2', 'email' => 'b@tc.my', 'status' => 'active']);
 
         $this->actingAs($admin)->getJson('/api/operator/transit-centers')
@@ -25,6 +25,9 @@ class TransitCenterControllerTest extends TestCase
             ->assertJsonCount(1)
             ->assertJsonPath('0.name', 'Bright Kids TC')
             ->assertJsonMissingPath('0.has_login')
+            // The pin, so the operator can open the center in a maps app.
+            ->assertJsonPath('0.latitude', 3.2071)
+            ->assertJsonPath('0.longitude', 101.7287)
             ->assertJsonMissingPath('0.email');
 
         $this->actingAs($admin)->postJson('/api/operator/transit-centers', ['name' => 'X'])->assertMethodNotAllowed();

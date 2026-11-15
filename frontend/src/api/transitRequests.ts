@@ -18,7 +18,15 @@ export interface OperatorTransitRequest {
   rejection_reason: string | null
   created_at: string
   reviewed_at: string | null
-  transit_center: { id: number; name: string; phone?: string; contact_person?: string | null; address?: string | null }
+  transit_center: {
+    id: number
+    name: string
+    phone?: string
+    contact_person?: string | null
+    address?: string | null
+    latitude?: number | null
+    longitude?: number | null
+  }
   student: {
     id: number
     full_name: string

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Building2, Phone } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { OpenInMaps } from '@/components/OpenInMaps'
 import type { TransitPlanSummary } from '@/api/transitPortal'
 import { showDate } from '@/lib/transit'
 import { formatMoney } from '@/lib/utils'
@@ -71,10 +72,17 @@ export function TransitPlanCard({
             </li>
           ))}
         </ul>
-        {center?.phone && (
-          <a href={`tel:${center.phone}`} className="flex w-fit items-center gap-1.5 text-sm text-primary hover:underline">
-            <Phone className="size-3.5" aria-hidden /> {t('transit.plan.callCenter', { phone: center.phone })}
-          </a>
+        {(center?.phone || (center?.latitude != null && center?.longitude != null)) && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {center?.phone && (
+              <a href={`tel:${center.phone}`} className="flex w-fit items-center gap-1.5 text-sm text-primary hover:underline">
+                <Phone className="size-3.5" aria-hidden /> {t('transit.plan.callCenter', { phone: center.phone })}
+              </a>
+            )}
+            {center?.latitude != null && center?.longitude != null && (
+              <OpenInMaps lat={center.latitude} lng={center.longitude} />
+            )}
+          </div>
         )}
         {children}
       </CardContent>

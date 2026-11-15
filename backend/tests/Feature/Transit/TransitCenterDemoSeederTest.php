@@ -25,6 +25,11 @@ class TransitCenterDemoSeederTest extends TestCase
         $this->assertSame('75.00', $centers[1]->monthly_price);
         $this->assertNull($centers[2]->monthly_price);
 
+        // Each has a pin on the map, which a later run fills in for older centers but never moves.
+        $this->assertEqualsWithDelta(3.2071, $centers[0]->latitude, 0.00001);
+        $this->assertEqualsWithDelta(101.7287, $centers[0]->longitude, 0.00001);
+        $this->assertNotNull($centers[2]->latitude);
+
         // Two have a login that works as a transit center; the third is left for the platform to send one.
         $this->assertSame(2, $centers->whereNotNull('user_id')->count());
         $user = User::where('email', 'brightkids@transit.test')->firstOrFail();
@@ -34,11 +39,14 @@ class TransitCenterDemoSeederTest extends TestCase
         $this->assertNull($centers[2]->user_id);
 
         // Running it again adds nothing and keeps prices the operator has since changed.
-        $centers[0]->update(['monthly_price' => 99]);
+        $centers[0]->update(['monthly_price' => 99, 'latitude' => 1.5, 'longitude' => 103.7]);
+        $centers[1]->update(['latitude' => null, 'longitude' => null]);
         $this->seed(TransitCenterDemoSeeder::class);
 
         $this->assertSame(3, TransitCenter::withoutGlobalScopes()->count());
         $this->assertSame(2, User::role('transit_center')->count());
         $this->assertSame('99.00', $centers[0]->fresh()->monthly_price);
+        $this->assertSame(1.5, $centers[0]->fresh()->latitude);
+        $this->assertEqualsWithDelta(3.2058, $centers[1]->fresh()->latitude, 0.00001);
     }
 }

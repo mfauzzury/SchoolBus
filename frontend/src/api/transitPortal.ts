@@ -131,7 +131,7 @@ export async function cancelTransitRequest(id: number): Promise<MyTransitRequest
 /** A running transit center plan: what the bus does, on which bus, and the monthly extra. */
 export interface TransitPlanSummary {
   request_id: number
-  transit_center: { id: number; name: string; phone: string | null } | null
+  transit_center: { id: number; name: string; phone: string | null; latitude: number | null; longitude: number | null } | null
   legs: TransitLeg[]
   starts_on: string | null
   ends_on: string | null

@@ -51,7 +51,9 @@ class TripRoster
             ->with([
                 'student' => fn ($q) => $q->with($relations),
                 'boardStop:id,name,sequence,transit_center_id',
+                'boardStop.transitCenter:id,latitude,longitude',
                 'alightStop:id,name,sequence,transit_center_id',
+                'alightStop.transitCenter:id,latitude,longitude',
                 'transitRequest:id,leave_center_at',
             ])
             ->get()
@@ -83,19 +85,25 @@ class TripRoster
      * What the driver needs to know when a child goes via a transit center on
      * this trip: drop them at the center, or pick them up there (and when).
      *
-     * @return array{action: string, center_name: string, leave_center_at: ?string}|null
+     * @return array{action: string, center_name: string, leave_center_at: ?string, latitude: ?float, longitude: ?float}|null
      */
     private function transitNote(StudentRide $ride): ?array
     {
         if ($ride->alightStop?->transit_center_id) {
-            return ['action' => 'drop', 'center_name' => $ride->alightStop->name, 'leave_center_at' => null];
+            return ['action' => 'drop', 'center_name' => $ride->alightStop->name, 'leave_center_at' => null, ...$this->pin($ride->alightStop)];
         }
 
         if ($ride->boardStop?->transit_center_id) {
-            return ['action' => 'pick', 'center_name' => $ride->boardStop->name, 'leave_center_at' => $ride->transitRequest?->leave_center_at];
+            return ['action' => 'pick', 'center_name' => $ride->boardStop->name, 'leave_center_at' => $ride->transitRequest?->leave_center_at, ...$this->pin($ride->boardStop)];
         }
 
         return null;
+    }
+
+    /** @return array{latitude: ?float, longitude: ?float} where the driver goes, for the maps button; null until the platform has dropped a pin */
+    private function pin(RouteStop $stop): array
+    {
+        return ['latitude' => $stop->transitCenter?->latitude, 'longitude' => $stop->transitCenter?->longitude];
     }
 
     public function includes(Trip $trip, Student $student): bool

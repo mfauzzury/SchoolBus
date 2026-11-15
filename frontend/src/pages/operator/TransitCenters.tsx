@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Pagination } from '@/components/ui/pagination'
 import { FilterSelect, ListToolbar, SortableHead } from '@/components/ListControls'
+import { OpenInMaps } from '@/components/OpenInMaps'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useOperatorTransitCenters } from '@/hooks/useTransitCenters'
 import { usePagination } from '@/hooks/usePagination'
@@ -90,7 +91,14 @@ export function TransitCenters() {
                       </a>
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">{center.address || '—'}</TableCell>
+                  <TableCell className="text-sm">
+                    <span className="flex items-center gap-1">
+                      <span>{center.address || '—'}</span>
+                      {center.latitude !== null && center.longitude !== null && (
+                        <OpenInMaps lat={center.latitude} lng={center.longitude} icon />
+                      )}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     {center.monthly_price === null ? (
                       <span className="text-sm text-muted-foreground">{t('operator.transitCenters.pricesNotSet')}</span>

@@ -19,7 +19,7 @@ export interface ParentRoute {
 /** A transit center plan, with which bus (and driver) does each part of the day. */
 export interface TransitPlanSummary {
   request_id: number
-  transit_center: { id: number; name: string; phone: string | null } | null
+  transit_center: { id: number; name: string; phone: string | null; latitude: number | null; longitude: number | null } | null
   legs: string[]
   starts_on: string | null
   ends_on: string | null
