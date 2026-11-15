@@ -94,6 +94,12 @@
       "end": "Tamatkan pelan",
       "endHelp": "Selepas hari terakhir kanak-kanak kembali ke perjalanan biasa, dan caj tambahan berhenti mulai bulan berikutnya. Pusat dan ibu bapa akan melihat ini.",
       "endConfirm": "Tamatkan pelan"
+    },
+    "legsShort": {
+      "school_to_center": "Sekolah → pusat",
+      "center_to_home": "Pusat → rumah",
+      "home_to_center": "Rumah → pusat",
+      "center_to_school": "Pusat → sekolah"
     }
   },
   "common": {
@@ -175,7 +181,7 @@
     "profile": "Profil",
     "track": "Jejak",
     "live": "Langsung",
-    "transitCenters": "Pusat transit",
+    "transitCenters": "Pusat transit & Tambang",
     "transitRequests": "Permohonan transit"
   },
   "marketingNav": {
@@ -1496,8 +1502,8 @@
   },
   "operator": {
     "transitCenters": {
-      "title": "Pusat transit",
-      "intro": "Pusat tuisyen dan jagaan di mana kanak-kanak tinggal antara sekolah dan rumah. Pusat boleh memohon bas untuk kanak-kanaknya; anda luluskan setiap permohonan.",
+      "title": "Pusat transit & Tambang",
+      "intro": "Pusat tuisyen dan jagaan di mana kanak-kanak tinggal antara sekolah dan rumah. Tetapkan bayaran bulanan setiap pusat. Pusat boleh memohon bas untuk kanak-kanaknya; anda luluskan setiap permohonan.",
       "add": "Tambah pusat transit",
       "addHelp": "Selepas simpan, hantar log masuk kepada pusat supaya ia boleh memohon bas.",
       "addButton": "Simpan",
@@ -1523,7 +1529,10 @@
       "resendLogin": "Hantar log masuk sekali lagi",
       "loginEmailed": "Selesai. Minta pusat menyemak e-melnya.",
       "loginError": "Tidak dapat menghantar log masuk. Sila cuba lagi.",
-      "addedByPlatform": "Untuk menambah pusat atau mengubah butirannya, hubungi pasukan platform."
+      "addedByPlatform": "Untuk menambah pusat atau mengubah butirannya, hubungi pasukan platform.",
+      "setPrices": "Tetapkan harga",
+      "pricesTitle": "Harga bulanan",
+      "pricesNotSet": "Belum ditetapkan"
     },
     "dashboard": {
       "welcome": "Selamat datang, {{name}} — {{company}}",
@@ -1948,7 +1957,6 @@
       "accountHolder": "Pemegang akaun",
       "saveChanges": "Simpan perubahan",
       "saveError": "Tidak dapat menyimpan perubahan. Cuba lagi.",
-      "transitPrices": "Harga pusat transit",
       "transitPricesDescription": "Yuran bulanan tambahan bagi setiap bahagian hari yang dimohon oleh pusat transit.",
       "transitAfterSchool": "Selepas sekolah",
       "transitBeforeSchool": "Sebelum sekolah",

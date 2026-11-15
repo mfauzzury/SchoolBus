@@ -14,9 +14,7 @@ class CenterControllerTest extends TestCase
 
     private function centerLogin(array $centerOverrides = []): array
     {
-        $tenant = $this->createTenant([
-            'billing_config' => ['transit_prices' => ['school_to_center' => 40, 'center_to_home' => 60]],
-        ]);
+        $tenant = $this->createTenant();
         $this->ensureRole('transit_center');
         $user = User::factory()->create(['tenant_id' => $tenant->id]);
         $user->assignRole('transit_center');
@@ -27,6 +25,7 @@ class CenterControllerTest extends TestCase
             'phone' => '012-345 6789',
             'email' => $user->email,
             'status' => 'active',
+            'leg_prices' => ['school_to_center' => 40, 'center_to_home' => 60],
             ...$centerOverrides,
         ]);
 

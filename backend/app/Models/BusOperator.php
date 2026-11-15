@@ -182,13 +182,6 @@ class BusOperator extends Model
         // 'auto': the daily job makes every bill. 'manual': the operator
         // reviews the Next bills list and creates them.
         'mode' => 'auto',
-        // Monthly add-on per transit leg (see App\Enums\TransitLeg). Null = not set yet.
-        'transit_prices' => [
-            'school_to_center' => null,
-            'center_to_home' => null,
-            'home_to_center' => null,
-            'center_to_school' => null,
-        ],
     ];
 
     /**
@@ -206,27 +199,9 @@ class BusOperator extends Model
             'due_day' => (int) ($config['due_day'] ?? self::DEFAULT_BILLING_CONFIG['due_day']),
             'billed_months' => array_values(array_unique($months)),
             'mode' => ($config['mode'] ?? null) === 'manual' ? 'manual' : 'auto',
-            'transit_prices' => $this->resolvedTransitPrices(),
         ];
     }
 
-    /**
-     * What a transit center sees as the indicative monthly price for each leg.
-     *
-     * @return array<string, ?float>
-     */
-    public function resolvedTransitPrices(): array
-    {
-        $saved = $this->billing_config['transit_prices'] ?? [];
-        $prices = [];
-
-        foreach (self::DEFAULT_BILLING_CONFIG['transit_prices'] as $leg => $default) {
-            $value = $saved[$leg] ?? $default;
-            $prices[$leg] = $value === null ? null : (float) $value;
-        }
-
-        return $prices;
-    }
 
     /** True when this operator creates bills themselves instead of the daily job. */
     public function billsAreManual(): bool

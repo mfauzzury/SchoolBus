@@ -7,12 +7,11 @@ export interface BillingConfig {
   billed_months: number[]
   // 'auto': bills are made by themselves each morning. 'manual': the operator creates them from Next bills.
   mode: 'auto' | 'manual'
-  // Monthly add-on for each part of a transit-center day; null = not set yet.
-  transit_prices: TransitPrices
 }
 
 export type TransitLeg = 'school_to_center' | 'center_to_home' | 'home_to_center' | 'center_to_school'
 
+/** A transit center's monthly add-on for each part of the day; null = not set yet. */
 export type TransitPrices = Record<TransitLeg, number | null>
 
 export const TRANSIT_LEGS: TransitLeg[] = ['school_to_center', 'center_to_home', 'home_to_center', 'center_to_school']

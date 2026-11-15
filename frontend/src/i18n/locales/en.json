@@ -94,6 +94,12 @@
       "end": "End plan",
       "endHelp": "After the last day the child goes back to the usual trip, and the extra charge stops from the next month. The center and the parent will see this.",
       "endConfirm": "End plan"
+    },
+    "legsShort": {
+      "school_to_center": "School → center",
+      "center_to_home": "Center → home",
+      "home_to_center": "Home → center",
+      "center_to_school": "Center → school"
     }
   },
   "common": {
@@ -175,7 +181,7 @@
     "profile": "Profile",
     "track": "Track",
     "live": "Live",
-    "transitCenters": "Transit centers",
+    "transitCenters": "Transit centers & fares",
     "transitRequests": "Transit requests"
   },
   "marketingNav": {
@@ -1498,8 +1504,8 @@
   },
   "operator": {
     "transitCenters": {
-      "title": "Transit centers",
-      "intro": "Tuition and daycare centers where children stay between school and home. A center can ask for a bus for its children; you approve each request.",
+      "title": "Transit centers & fares",
+      "intro": "Tuition and daycare centers where children stay between school and home. Set what each center pays per month. A center can ask for a bus for its children; you approve each request.",
       "add": "Add transit center",
       "addHelp": "After saving, send the center a login so it can ask for buses.",
       "addButton": "Save",
@@ -1525,7 +1531,10 @@
       "resendLogin": "Send login again",
       "loginEmailed": "Done. Ask the center to check its email.",
       "loginError": "Could not send the login. Please try again.",
-      "addedByPlatform": "To add a center or change its details, contact the platform team."
+      "addedByPlatform": "To add a center or change its details, contact the platform team.",
+      "setPrices": "Set prices",
+      "pricesTitle": "Monthly prices",
+      "pricesNotSet": "Not set"
     },
     "dashboard": {
       "welcome": "Welcome, {{name}} — {{company}}",
@@ -1952,7 +1961,6 @@
       "accountHolder": "Account holder",
       "saveChanges": "Save changes",
       "saveError": "Could not save changes. Try again.",
-      "transitPrices": "Transit center prices",
       "transitPricesDescription": "Extra monthly fee for each part of the day a transit center asks the bus to cover.",
       "transitAfterSchool": "After school",
       "transitBeforeSchool": "Before school",

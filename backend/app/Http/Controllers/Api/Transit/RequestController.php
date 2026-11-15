@@ -95,7 +95,7 @@ class RequestController extends Controller
             'leave_center_at' => $data['leave_center_at'] ?? null,
             'note' => $data['note'] ?? null,
             'starts_on' => $data['starts_on'],
-            'indicative_amount' => $this->planner->indicativeAmount($center->busOperator, $data['legs']),
+            'indicative_amount' => $this->planner->indicativeAmount($center, $data['legs']),
             'status' => 'pending',
         ]);
 

@@ -24,7 +24,7 @@ class CenterController extends Controller
             'email' => $center->email,
             'address' => $center->address,
             'operator' => $center->busOperator->only(['company_name', 'contact_phone', 'email']),
-            'transit_prices' => $center->busOperator->resolvedTransitPrices(),
+            'transit_prices' => $center->resolvedLegPrices(),
         ];
     }
 }

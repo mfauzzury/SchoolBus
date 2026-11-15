@@ -41,9 +41,7 @@ class TransitBillingTest extends TestCase
         Notification::fake();
         $this->travelTo('2026-11-12 10:00:00');
 
-        $this->tenant = $this->createTenant([
-            'billing_config' => ['transit_prices' => ['school_to_center' => 90]],
-        ]);
+        $this->tenant = $this->createTenant();
         $this->admin = $this->createOperatorAdmin($this->tenant);
 
         $this->ensureRole('transit_center');
@@ -52,6 +50,7 @@ class TransitBillingTest extends TestCase
         TransitCenter::create([
             'tenant_id' => $this->tenant->id, 'user_id' => $this->centerUser->id, 'name' => 'Bright Kids TC',
             'phone' => '03-555 0000', 'email' => $this->centerUser->email, 'status' => 'active',
+            'leg_prices' => ['school_to_center' => 90],
         ]);
 
         $elder = $this->createBillableStudent($this->tenant);

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Enums\TransitLeg;
-use App\Models\BusOperator;
 use App\Models\Route;
 use App\Models\RouteStop;
 use App\Models\Student;
@@ -27,14 +26,14 @@ class TransitPlanner
     public function __construct(private readonly InvoiceGenerator $invoices) {}
 
     /**
-     * The price the center sees before sending a request: the operator's
-     * price for each leg added up. Null when any chosen leg has no price yet.
+     * The price the center sees before sending a request: its own price for
+     * each leg added up. Null when any chosen leg has no price yet.
      *
      * @param  list<string>  $legs
      */
-    public function indicativeAmount(BusOperator $operator, array $legs): ?float
+    public function indicativeAmount(TransitCenter $center, array $legs): ?float
     {
-        $prices = $operator->resolvedTransitPrices();
+        $prices = $center->resolvedLegPrices();
         $total = 0.0;
 
         foreach ($legs as $leg) {

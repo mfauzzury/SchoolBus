@@ -1,20 +1,27 @@
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Pagination } from '@/components/ui/pagination'
 import { FilterSelect, ListToolbar, SortableHead } from '@/components/ListControls'
+import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useOperatorTransitCenters } from '@/hooks/useTransitCenters'
 import { usePagination } from '@/hooks/usePagination'
 import { useListView } from '@/hooks/useListView'
+import { TRANSIT_LEGS } from '@/api/billingConfig'
+import { cn, formatMoney } from '@/lib/utils'
 
 /**
- * Tuition and daycare centers that can ask this operator for a bus. To look
- * at only: the platform team adds and changes them.
+ * Tuition and daycare centers that can ask this operator for a bus, with what
+ * each is charged. The platform team adds the centers and changes their
+ * details; the operator sets their prices, much like fares on Routes & fares.
  */
 export function TransitCenters() {
   const { t } = useTranslation()
+  const isAdmin = useIsOperatorAdmin()
   const { data: centers, isLoading } = useOperatorTransitCenters()
   const view = useListView(centers ?? [], {
     searchText: (c) => [c.name, c.phone, c.contact_person ?? '', c.address ?? ''],
@@ -65,10 +72,12 @@ export function TransitCenters() {
                 </SortableHead>
                 <TableHead>{t('operator.transitCenters.contact')}</TableHead>
                 <TableHead>{t('operator.transitCenters.address')}</TableHead>
+                <TableHead>{t('operator.routes.fare')}</TableHead>
                 <TableHead>{t('operator.transitCenters.login')}</TableHead>
                 <SortableHead sortKey="status" sort={view.sort} onSort={view.toggleSort}>
                   {t('operator.transitCenters.status')}
                 </SortableHead>
+                {isAdmin && <TableHead className="text-right">{t('operator.routes.actions')}</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -85,6 +94,19 @@ export function TransitCenters() {
                   </TableCell>
                   <TableCell className="text-sm">{center.address || '—'}</TableCell>
                   <TableCell>
+                    <div className="flex flex-col gap-0.5 text-sm">
+                      {TRANSIT_LEGS.filter((leg) => center.leg_prices[leg] !== null).map((leg) => (
+                        <span key={leg} className="flex justify-between gap-3 whitespace-nowrap">
+                          <span className="text-muted-foreground">{t(`transit.legsShort.${leg}`)}</span>
+                          <span>RM {formatMoney(center.leg_prices[leg] as number)}</span>
+                        </span>
+                      ))}
+                      {TRANSIT_LEGS.every((leg) => center.leg_prices[leg] === null) && (
+                        <span className="text-muted-foreground">{t('operator.transitCenters.pricesNotSet')}</span>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
                     {center.has_login ? (
                       <Badge variant="success">{t('operator.transitCenters.loginSent')}</Badge>
                     ) : (
@@ -96,6 +118,16 @@ export function TransitCenters() {
                       {t(`common.status.${center.status}`)}
                     </Badge>
                   </TableCell>
+                  {isAdmin && (
+                    <TableCell className="text-right">
+                      <Link
+                        to={`/operator/transit-centers/${center.id}`}
+                        className={cn(buttonVariants({ variant: 'outline', size: 'xs' }))}
+                      >
+                        {t('operator.transitCenters.setPrices')}
+                      </Link>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

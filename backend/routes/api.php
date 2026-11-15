@@ -234,6 +234,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('student-applications', [StudentApplicationController::class, 'index']);
             Route::get('student-applications/{studentApplication}', [StudentApplicationController::class, 'show']);
             Route::get('transit-centers', [TransitCenterController::class, 'index']);
+            Route::get('transit-centers/{transitCenter}', [TransitCenterController::class, 'show']);
             Route::get('transit-requests', [TransitRequestController::class, 'index']);
             Route::get('transit-requests/{transitRequest}', [TransitRequestController::class, 'show']);
 
@@ -258,6 +259,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::post('staff/{staff}/login', [StaffController::class, 'provisionLogin']);
                 Route::post('student-applications/{studentApplication}/approve', [StudentApplicationController::class, 'approve']);
                 Route::post('student-applications/{studentApplication}/reject', [StudentApplicationController::class, 'reject']);
+                Route::put('transit-centers/{transitCenter}/prices', [TransitCenterController::class, 'updatePrices']);
                 Route::post('transit-requests/{transitRequest}/approve', [TransitRequestController::class, 'approve']);
                 Route::post('transit-requests/{transitRequest}/reject', [TransitRequestController::class, 'reject']);
             });

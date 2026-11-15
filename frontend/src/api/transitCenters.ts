@@ -1,4 +1,5 @@
 import { apiClient } from './client'
+import type { TransitPrices } from './billingConfig'
 
 /** A transit center as its operator sees it: to look at only. */
 export interface OperatorTransitCenter {
@@ -9,10 +10,12 @@ export interface OperatorTransitCenter {
   address: string | null
   status: 'active' | 'inactive'
   has_login: boolean
+  /** Monthly add-on for each part of the day; null = not set yet. */
+  leg_prices: TransitPrices
 }
 
 /** A transit center as the platform team manages it. */
-export interface TransitCenter extends OperatorTransitCenter {
+export interface TransitCenter extends Omit<OperatorTransitCenter, 'leg_prices'> {
   operator: { id: number; company_name: string } | null
   email: string
   /** True once a login has been sent; the center sets its own password from the email. */
@@ -32,6 +35,22 @@ export interface TransitCenterInput {
 
 export async function listOperatorTransitCenters(): Promise<OperatorTransitCenter[]> {
   const { data } = await apiClient.get<OperatorTransitCenter[]>('/api/operator/transit-centers')
+  return data
+}
+
+export async function getOperatorTransitCenter(id: number): Promise<OperatorTransitCenter> {
+  const { data } = await apiClient.get<OperatorTransitCenter>(`/api/operator/transit-centers/${id}`)
+  return data
+}
+
+/** Sets this center's prices. A price left out keeps its value; null clears it. */
+export async function updateTransitCenterPrices(
+  id: number,
+  legPrices: Partial<TransitPrices>,
+): Promise<OperatorTransitCenter> {
+  const { data } = await apiClient.put<OperatorTransitCenter>(`/api/operator/transit-centers/${id}/prices`, {
+    leg_prices: legPrices,
+  })
   return data
 }
 

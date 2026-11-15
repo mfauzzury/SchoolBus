@@ -65,7 +65,6 @@ export function OperatorLayout() {
           // New children and transit center requests both wait here.
           badge: (pendingApplications?.length ?? 0) + (pendingTransit?.length ?? 0),
         },
-        { to: '/operator/transit-centers', label: t('nav.transitCenters'), icon: School },
       ],
     },
     {
@@ -74,6 +73,7 @@ export function OperatorLayout() {
         { to: '/operator/staff', label: t('nav.staff'), icon: IdCard },
         { to: '/operator/buses', label: t('nav.buses'), icon: Bus },
         { to: '/operator/routes', label: t('nav.routesAndFares'), icon: Route },
+        { to: '/operator/transit-centers', label: t('nav.transitCenters'), icon: School },
       ],
     },
     {

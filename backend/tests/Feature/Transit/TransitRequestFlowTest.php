@@ -53,9 +53,7 @@ class TransitRequestFlowTest extends TestCase
         parent::setUp();
         Notification::fake();
 
-        $this->tenant = $this->createTenant([
-            'billing_config' => ['transit_prices' => ['school_to_center' => 40, 'center_to_home' => 60]],
-        ]);
+        $this->tenant = $this->createTenant();
         $this->admin = $this->createOperatorAdmin($this->tenant, ['email' => 'boss@bas.my']);
         [$this->centerUser, $this->center] = $this->centerFor($this->tenant, 'Bright Kids TC');
 
@@ -76,14 +74,14 @@ class TransitRequestFlowTest extends TestCase
         ]);
     }
 
-    private function centerFor(BusOperator $tenant, string $name): array
+    private function centerFor(BusOperator $tenant, string $name, array $legPrices = ['school_to_center' => 40, 'center_to_home' => 60]): array
     {
         $this->ensureRole('transit_center');
         $user = User::factory()->create(['tenant_id' => $tenant->id]);
         $user->assignRole('transit_center');
         $center = TransitCenter::create([
             'tenant_id' => $tenant->id, 'user_id' => $user->id, 'name' => $name,
-            'phone' => '03-555 0000', 'email' => $user->email, 'status' => 'active',
+            'phone' => '03-555 0000', 'email' => $user->email, 'status' => 'active', 'leg_prices' => $legPrices,
         ]);
 
         return [$user, $center];
@@ -173,6 +171,16 @@ class TransitRequestFlowTest extends TestCase
 
         // Nothing changes for the child until the operator approves.
         $this->assertSame(0, StudentRide::count());
+    }
+
+    public function test_each_center_has_its_own_prices_so_two_centers_of_one_operator_can_differ(): void
+    {
+        [$otherUser] = $this->centerFor($this->tenant, 'Smart Tuition', ['school_to_center' => 25, 'center_to_home' => 35]);
+
+        $this->ask()->assertCreated()->assertJsonPath('indicative_amount', '100.00');
+
+        $sibling = Student::factory()->create(['tenant_id' => $this->tenant->id, 'parent_id' => $this->abu->parent_id, 'route_id' => $this->routeA->id, 'full_name' => 'Aminah']);
+        $this->ask(['student_id' => $sibling->id], $otherUser)->assertCreated()->assertJsonPath('indicative_amount', '60.00');
     }
 
     public function test_the_price_is_left_to_the_operator_when_a_leg_has_no_price(): void
