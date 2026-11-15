@@ -202,7 +202,6 @@ class BusOperator extends Model
         ];
     }
 
-
     /** True when this operator creates bills themselves instead of the daily job. */
     public function billsAreManual(): bool
     {

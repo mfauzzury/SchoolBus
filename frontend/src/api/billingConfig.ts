@@ -9,16 +9,12 @@ export interface BillingConfig {
   mode: 'auto' | 'manual'
 }
 
-export type TransitLeg = 'school_to_center' | 'center_to_home' | 'home_to_center' | 'center_to_school'
-
-export const TRANSIT_LEGS: TransitLeg[] = ['school_to_center', 'center_to_home', 'home_to_center', 'center_to_school']
-
 export async function getBillingConfig(): Promise<BillingConfig> {
   const { data } = await apiClient.get<BillingConfig>('/api/operator/billing-config')
   return data
 }
 
-export async function updateBillingConfig(input: Partial<BillingConfig>): Promise<BillingConfig> {
+export async function updateBillingConfig(input: BillingConfig): Promise<BillingConfig> {
   const { data } = await apiClient.put<BillingConfig>('/api/operator/billing-config', input)
   return data
 }

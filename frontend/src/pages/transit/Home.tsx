@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useMyCenter } from '@/hooks/useTransitPortal'
 import { cn, formatMoney } from '@/lib/utils'
 
-/** Start page for a transit center: who its bus operator is and what each leg costs. */
+/** Start page for a transit center: who its bus operator is and what it costs per child each month. */
 export function TransitHome() {
   const { t } = useTranslation()
   const { data: center, isLoading } = useMyCenter()

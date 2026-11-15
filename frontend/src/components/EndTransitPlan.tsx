@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { isAxiosError } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { apiErrorMessage } from '@/lib/apiError'
 import { useEndTransitPlan } from '@/hooks/useOperatorStudents'
 import { dateInput } from '@/lib/transit'
 import { formatPeriod } from '@/lib/utils'
@@ -16,7 +16,7 @@ export function EndTransitPlan({ studentId, requestId }: { studentId: number; re
   const [lastDay, setLastDay] = useState(dateInput(0))
 
   const paidMonths = end.data?.billing.not_changed ?? []
-  const message = isAxiosError(end.error) ? end.error.response?.data?.message : undefined
+  const message = apiErrorMessage(end.error)
 
   if (paidMonths.length > 0) {
     return (

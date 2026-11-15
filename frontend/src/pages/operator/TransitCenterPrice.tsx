@@ -1,13 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { isAxiosError } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { BackLink } from '@/components/BackLink'
+import { apiErrorMessage } from '@/lib/apiError'
 import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useOperatorTransitCenter, useUpdateTransitCenterPrice } from '@/hooks/useTransitCenters'
 
@@ -34,7 +34,7 @@ export function TransitCenterPrice() {
   }
 
   const valid = price === '' || Number(price) >= 0
-  const message = isAxiosError(save.error) ? save.error.response?.data?.message : undefined
+  const message = apiErrorMessage(save.error)
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()

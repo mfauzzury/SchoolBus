@@ -29,7 +29,9 @@ class StudentController extends Controller
             ->get();
 
         // Going via a transit center: what the bus does and which bus, so the parent knows who brings the child home.
-        return $students->each(fn (Student $student) => $student->setAttribute('transit_plans', $planner->summaries($student)));
+        $plans = $planner->summariesFor($students);
+
+        return $students->each(fn (Student $student) => $student->setAttribute('transit_plans', $plans[$student->id]));
     }
 
     /**

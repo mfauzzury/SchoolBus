@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { isAxiosError } from 'axios'
 import { Search } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,14 +10,15 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { CenterPlacement } from '@/components/CenterPlacement'
+import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import {
   useCreateTransitRequest,
   useMyCenter,
   useTransitStudent,
   useTransitStudentSearch,
 } from '@/hooks/useTransitPortal'
-import type { TransitLeg } from '@/api/billingConfig'
-import type { TransitStudentSummary } from '@/api/transitPortal'
+import type { TransitLeg, TransitStudentSummary } from '@/api/transitPortal'
+import { apiErrorMessage } from '@/lib/apiError'
 import { AFTER_SCHOOL_LEGS, BEFORE_SCHOOL_LEGS, LEAVES_CENTER_LEGS, dateInput } from '@/lib/transit'
 import { cn, formatMoney } from '@/lib/utils'
 
@@ -41,7 +41,7 @@ function ChildLine({ child }: { child: TransitStudentSummary }) {
 function FindChild({ onPick }: { onPick: (id: number) => void }) {
   const { t } = useTranslation()
   const [q, setQ] = useState('')
-  const { data: results, isFetching } = useTransitStudentSearch(q)
+  const { data: results, isFetching } = useTransitStudentSearch(useDebouncedValue(q))
 
   return (
     <Card className="max-w-2xl">
@@ -123,7 +123,7 @@ function RequestForm({ studentId, onBack }: { studentId: number; onBack: () => v
   // One price per center, whichever parts of the day the bus covers.
   const price = center.monthly_price
   const needsLeaveTime = legs.some((leg) => LEAVES_CENTER_LEGS.includes(leg))
-  const apiMessage = isAxiosError(create.error) ? create.error.response?.data?.message : undefined
+  const apiMessage = apiErrorMessage(create.error)
 
   const toggle = (leg: TransitLeg, on: boolean) =>
     setLegs((current) => (on ? [...current, leg] : current.filter((l) => l !== leg)))
@@ -178,8 +178,8 @@ function RequestForm({ studentId, onBack }: { studentId: number; onBack: () => v
           <CardTitle className="text-base">{t('transit.request.whatTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          {legGroup(t('operator.settings.transitAfterSchool'), AFTER_SCHOOL_LEGS)}
-          {legGroup(t('operator.settings.transitBeforeSchool'), BEFORE_SCHOOL_LEGS)}
+          {legGroup(t('transit.request.afterSchool'), AFTER_SCHOOL_LEGS)}
+          {legGroup(t('transit.request.beforeSchool'), BEFORE_SCHOOL_LEGS)}
           {legs.length === 0 && <p className="text-sm text-destructive">{t('transit.request.pickOne')}</p>}
         </CardContent>
       </Card>

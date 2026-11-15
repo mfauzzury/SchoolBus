@@ -67,8 +67,8 @@ class StudentController extends Controller
 
     /**
      * Ends a transit center plan without waiting for the center to ask, e.g.
-     * when the parent calls the operator. Recorded as an approved stop request
-     * so the center sees it in its list, and the parent is emailed as usual.
+     * when the parent calls the operator. The center sees it as an approved
+     * stop, and the parent is emailed as usual.
      */
     public function endTransitPlan(Request $request, Student $student, TransitRequest $transitRequest, TransitPlanner $planner)
     {
@@ -85,26 +85,9 @@ class StudentController extends Controller
             'This plan has already ended.',
         );
 
-        // A stop the center already asked for is answered by this.
-        TransitRequest::where('student_id', $student->id)
-            ->where('transit_center_id', $transitRequest->transit_center_id)
-            ->where('kind', 'stop')
-            ->where('status', 'pending')
-            ->update(['status' => 'cancelled']);
+        ['stop' => $stop, 'billing' => $billing] = $planner->endByOperator($transitRequest, Carbon::parse($data['ends_on']), $request->user());
 
-        $stop = TransitRequest::create([
-            'tenant_id' => $student->tenant_id,
-            'transit_center_id' => $transitRequest->transit_center_id,
-            'student_id' => $student->id,
-            'kind' => 'stop',
-            'ends_on' => $data['ends_on'],
-            'note' => 'Ended by the bus operator.',
-            'status' => 'pending',
-        ]);
-
-        $billing = $planner->approveStop($stop, Carbon::parse($data['ends_on']), $request->user());
-
-        app(Notifier::class)->transitPlanChanged($stop->fresh());
+        app(Notifier::class)->transitPlanChanged($stop);
 
         return ['transit_plans' => $planner->summaries($student), 'billing' => $billing];
     }

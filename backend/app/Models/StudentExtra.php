@@ -51,6 +51,12 @@ class StudentExtra extends Model
             ->where(fn (Builder $q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>=', $start));
     }
 
+    /** How this charge is listed before it is billed (Next bills, next-bill preview). */
+    public function asLine(): array
+    {
+        return ['label' => $this->label, 'amount' => (float) $this->monthly_amount];
+    }
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);

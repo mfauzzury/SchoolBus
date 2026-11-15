@@ -54,7 +54,9 @@
       "estimate": "Anggaran tambahan sebulan",
       "estimateHint": "Pengendali bas akan menyemak dengan ibu bapa dan mengesahkan harga akhir. Ia dimasukkan ke dalam bil bas ibu bapa.",
       "error": "Tidak dapat dihantar. Sila cuba lagi.",
-      "send": "Hantar kepada pengendali bas"
+      "send": "Hantar kepada pengendali bas",
+      "afterSchool": "Selepas sekolah",
+      "beforeSchool": "Sebelum sekolah"
     },
     "children": {
       "title": "Kanak-kanak saya",
@@ -175,8 +177,7 @@
     "profile": "Profil",
     "track": "Jejak",
     "live": "Langsung",
-    "transitCenters": "Pusat transit & Tambang",
-    "transitRequests": "Permohonan transit"
+    "transitCenters": "Pusat transit & Tambang"
   },
   "marketingNav": {
     "parents": "Untuk Ibu Bapa",
@@ -1499,7 +1500,6 @@
       "title": "Pusat transit & Tambang",
       "intro": "Pusat tuisyen dan jagaan di mana kanak-kanak tinggal antara sekolah dan rumah. Tetapkan bayaran bulanan setiap pusat. Pusat boleh memohon bas untuk kanak-kanaknya; anda luluskan setiap permohonan.",
       "add": "Tambah pusat transit",
-      "addHelp": "Selepas simpan, hantar log masuk kepada pusat supaya ia boleh memohon bas.",
       "addButton": "Simpan",
       "back": "Pusat transit",
       "searchPlaceholder": "Cari ikut nama, telefon atau alamat",
@@ -1955,8 +1955,6 @@
       "accountHolder": "Pemegang akaun",
       "saveChanges": "Simpan perubahan",
       "saveError": "Tidak dapat menyimpan perubahan. Cuba lagi.",
-      "transitAfterSchool": "Selepas sekolah",
-      "transitBeforeSchool": "Sebelum sekolah",
       "discountRates": "Kadar diskaun",
       "discountRatesDescription": "Peratusan potongan yuran bulanan untuk anak kedua dan seterusnya. Tidak digunakan untuk anak dengan yuran khas.",
       "siblingDiscount": "Diskaun adik-beradik",
@@ -1994,7 +1992,7 @@
       "stopTitle": "Henti pelan",
       "approve": "Lulus",
       "error": "Tidak dapat disimpan. Sila semak dan cuba lagi.",
-      "noEstimate": "Pusat tidak melihat harga (belum ditetapkan dalam tetapan).",
+      "noEstimate": "Pusat tidak melihat harga (belum ditetapkan untuk pusat ini).",
       "centerSaw": "Pusat melihat RM {{amount}} sebagai anggaran.",
       "monthlyAmount": "Tambahan sebulan",
       "priceAndDate": "Harga dan tarikh mula",
@@ -2011,7 +2009,6 @@
       "center": "Pusat transit",
       "empty": "Tiada permohonan di sini.",
       "intro": "Pusat transit memohon bas untuk membawa kanak-kanak ke dan dari pusat mereka. Hubungi ibu bapa sebelum meluluskan.",
-      "title": "Permohonan transit",
       "firstBill": "Bil pertama dengan caj ini",
       "billStartMonth": "Mulai {{month}}",
       "billNextMonth": "Mulai bulan berikutnya ({{month}})",

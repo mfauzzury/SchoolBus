@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { isAxiosError } from 'axios'
 import { Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -17,8 +16,9 @@ import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useRoutes } from '@/hooks/useRoutes'
 import { useApproveTransitRequest, useRejectTransitRequest, useTransitRequest } from '@/hooks/useTransitRequests'
 import type { Route } from '@/api/routes'
-import type { TransitLeg } from '@/api/billingConfig'
+import type { TransitLeg } from '@/api/transitPortal'
 import type { OperatorTransitRequestDetail, TransitBillingResult } from '@/api/transitRequests'
+import { apiErrorMessage } from '@/lib/apiError'
 import { dateInput, showDate, transitStatusVariant } from '@/lib/transit'
 import { formatMoney, formatPeriod } from '@/lib/utils'
 
@@ -46,12 +46,6 @@ function guessHomeStop(route: Route | undefined, request: OperatorTransitRequest
   if (own && route.stops.some((s) => s.id === own.id)) return String(own.id)
   const sameName = own && route.stops.find((s) => s.name.trim().toLowerCase() === own.name.trim().toLowerCase())
   return sameName ? String(sameName.id) : ''
-}
-
-function apiMessage(error: unknown): string | undefined {
-  if (!isAxiosError(error)) return undefined
-  const errors = error.response?.data?.errors as Record<string, string[]> | undefined
-  return errors ? Object.values(errors)[0]?.[0] : error.response?.data?.message
 }
 
 /** After approving: which bills already made got the change, and which were paid and left alone. */
@@ -302,7 +296,7 @@ function StartDecision({
           )}
           {approve.isError && (
             <p role="alert" className="text-sm text-destructive">
-              {apiMessage(approve.error) ?? t('operator.transitRequests.error')}
+              {apiErrorMessage(approve.error) ?? t('operator.transitRequests.error')}
             </p>
           )}
           <Button className="w-fit" disabled={!ready || approve.isPending} onClick={onApprove}>
@@ -345,7 +339,7 @@ function StopDecision({
         </div>
         {approve.isError && (
           <p role="alert" className="text-sm text-destructive">
-            {apiMessage(approve.error) ?? t('operator.transitRequests.error')}
+            {apiErrorMessage(approve.error) ?? t('operator.transitRequests.error')}
           </p>
         )}
         <Button className="w-fit" disabled={!endsOn || approve.isPending} onClick={() => approve.mutate({ ends_on: endsOn }, { onSuccess: (result) => onDone(result.billing) })}>

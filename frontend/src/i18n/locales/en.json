@@ -54,7 +54,9 @@
       "estimate": "Estimated extra per month",
       "estimateHint": "The bus operator will check with the parent and confirm the final price. It is added to the parent's bus bill.",
       "error": "Could not send. Please try again.",
-      "send": "Send to bus operator"
+      "send": "Send to bus operator",
+      "afterSchool": "After school",
+      "beforeSchool": "Before school"
     },
     "children": {
       "title": "My children",
@@ -175,8 +177,7 @@
     "profile": "Profile",
     "track": "Track",
     "live": "Live",
-    "transitCenters": "Transit centers & fares",
-    "transitRequests": "Transit requests"
+    "transitCenters": "Transit centers & fares"
   },
   "marketingNav": {
     "parents": "For Parents",
@@ -1501,7 +1502,6 @@
       "title": "Transit centers & fares",
       "intro": "Tuition and daycare centers where children stay between school and home. Set what each center pays per month. A center can ask for a bus for its children; you approve each request.",
       "add": "Add transit center",
-      "addHelp": "After saving, send the center a login so it can ask for buses.",
       "addButton": "Save",
       "back": "Transit centers",
       "searchPlaceholder": "Search by name, phone or address",
@@ -1959,8 +1959,6 @@
       "accountHolder": "Account holder",
       "saveChanges": "Save changes",
       "saveError": "Could not save changes. Try again.",
-      "transitAfterSchool": "After school",
-      "transitBeforeSchool": "Before school",
       "discountRates": "Discount rates",
       "discountRatesDescription": "Percentage off the monthly fee for a parent's second and later children. Not applied to a child with a custom fee.",
       "siblingDiscount": "Sibling discount",
@@ -1998,7 +1996,7 @@
       "stopTitle": "Stop the plan",
       "approve": "Approve",
       "error": "Could not save. Please check and try again.",
-      "noEstimate": "The center did not see a price (not set in settings).",
+      "noEstimate": "The center did not see a price (none set for this center yet).",
       "centerSaw": "The center saw RM {{amount}} as the estimate.",
       "monthlyAmount": "Extra per month",
       "priceAndDate": "Price and start",
@@ -2015,7 +2013,6 @@
       "center": "Transit center",
       "empty": "No requests here.",
       "intro": "Transit centers ask for a bus to bring children to and from their center. Call the parent before you approve.",
-      "title": "Transit requests",
       "firstBill": "First bill with this charge",
       "billStartMonth": "From {{month}}",
       "billNextMonth": "From the month after ({{month}})",

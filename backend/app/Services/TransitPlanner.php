@@ -26,70 +26,101 @@ class TransitPlanner
     public function __construct(private readonly InvoiceGenerator $invoices) {}
 
     /**
-     * Approved start requests from this center whose plan is still running
-     * (or starts later) for the child.
+     * Approved start requests whose plan is still running (or starts later)
+     * for the child, optionally only those from one center.
      *
      * @return Collection<int, TransitRequest>
      */
     public function runningPlans(Student $student, ?TransitCenter $center = null, ?CarbonInterface $from = null): Collection
     {
-        $from ??= Carbon::today();
-
-        return TransitRequest::where('student_id', $student->id)
-            ->where('kind', 'start')
-            ->where('status', 'approved')
+        return TransitRequest::runningPlan($from ?? Carbon::today())
+            ->where('student_id', $student->id)
             ->when($center, fn ($q) => $q->where('transit_center_id', $center->id))
-            ->whereHas('extras', fn ($q) => $q->notEndedBy($from))
             ->with(['transitCenter:id,name', 'extras'])
             ->get();
     }
 
     /**
-     * The child's running plans in plain terms for the parent and operator
-     * screens: the center, what the bus does, from when, the monthly extra,
-     * and which bus (and driver) does each part — usually two different buses.
+     * The plan in a line: what the bus does, from when until when, and the
+     * monthly extra. Needs the plan's `extras` loaded.
+     *
+     * @return array{request_id: int, legs: ?array, starts_on: ?string, ends_on: ?string, monthly_amount: mixed}
+     */
+    public function planLine(TransitRequest $plan): array
+    {
+        $extra = $plan->extras->sortByDesc('id')->first();
+
+        return [
+            'request_id' => $plan->id,
+            'legs' => $plan->legs,
+            'starts_on' => $plan->starts_on?->toDateString(),
+            'ends_on' => $extra?->ends_on?->toDateString(),
+            'monthly_amount' => $extra?->monthly_amount ?? $plan->approved_amount,
+        ];
+    }
+
+    /**
+     * The running plans of one child in plain terms for the parent and
+     * operator screens.
      *
      * @return list<array<string, mixed>>
      */
     public function summaries(Student $student): array
     {
-        return $this->runningPlans($student)
-            ->load([
+        return $this->summariesFor(collect([$student]))[$student->id];
+    }
+
+    /**
+     * The running plans of several children in plain terms: the center, what
+     * the bus does, from when, the monthly extra, and which bus (and driver)
+     * does each part — usually two different buses. One batch of queries
+     * however many children.
+     *
+     * @param  Collection<int, Student>  $students
+     * @return array<int, list<array<string, mixed>>> by student id
+     */
+    public function summariesFor(Collection $students): array
+    {
+        $plans = TransitRequest::runningPlan(Carbon::today())
+            ->whereIn('student_id', $students->pluck('id'))
+            ->with([
                 'transitCenter:id,name,phone',
+                'extras',
                 'rides.route:id,name,bus_id,driver_id',
                 'rides.route.bus:id,plate_number',
                 'rides.route.driver:id,full_name,phone',
                 'rides.boardStop:id,name,transit_center_id',
                 'rides.alightStop:id,name,transit_center_id',
             ])
+            ->get()
             ->sortBy('starts_on')
-            ->map(function (TransitRequest $plan) {
-                $extra = $plan->extras->sortByDesc('id')->first();
+            ->groupBy('student_id');
 
-                return [
-                    'request_id' => $plan->id,
-                    'transit_center' => $plan->transitCenter?->only(['id', 'name', 'phone']),
-                    'legs' => $plan->legs,
-                    'starts_on' => $plan->starts_on?->toDateString(),
-                    'ends_on' => $extra?->ends_on?->toDateString(),
-                    'monthly_amount' => $extra?->monthly_amount ?? $plan->approved_amount,
-                    'leave_center_at' => $plan->leave_center_at,
-                    'rides' => $plan->rides
-                        // Morning before afternoon; within a trip, the part that ends at the center first.
-                        ->sortBy(fn (StudentRide $r) => ($r->direction === 'pickup' ? 0 : 2) + ($r->alightStop?->transit_center_id ? 0 : 1))
-                        ->map(fn (StudentRide $r) => [
-                            'direction' => $r->direction,
-                            // Null means the school end of the route.
-                            'from' => $r->boardStop?->name,
-                            'to' => $r->alightStop?->name,
-                            'route' => $r->route?->name,
-                            'bus_plate' => $r->route?->bus?->plate_number,
-                            'driver' => $r->route?->driver?->only(['full_name', 'phone']),
-                        ])->values()->all(),
-                ];
-            })
-            ->values()
-            ->all();
+        return $students->mapWithKeys(fn (Student $student) => [
+            $student->id => ($plans->get($student->id) ?? collect())->map(fn (TransitRequest $plan) => $this->summarize($plan))->values()->all(),
+        ])->all();
+    }
+
+    /** @return array<string, mixed> */
+    private function summarize(TransitRequest $plan): array
+    {
+        return [
+            ...$this->planLine($plan),
+            'transit_center' => $plan->transitCenter?->only(['id', 'name', 'phone']),
+            'leave_center_at' => $plan->leave_center_at,
+            'rides' => $plan->rides
+                // Morning before afternoon; within a trip, the part that ends at the center first.
+                ->sortBy(fn (StudentRide $r) => ($r->direction === 'pickup' ? 0 : 2) + ($r->alightStop?->transit_center_id ? 0 : 1))
+                ->map(fn (StudentRide $r) => [
+                    'direction' => $r->direction,
+                    // Null means the school end of the route.
+                    'from' => $r->boardStop?->name,
+                    'to' => $r->alightStop?->name,
+                    'route' => $r->route?->name,
+                    'bus_plate' => $r->route?->bus?->plate_number,
+                    'driver' => $r->route?->driver?->only(['full_name', 'phone']),
+                ])->values()->all(),
+        ];
     }
 
     /**
@@ -188,6 +219,38 @@ class TransitPlanner
     }
 
     /**
+     * The operator ends a plan without waiting for the center to ask (e.g.
+     * the parent phoned). It is recorded as an approved stop the center can
+     * see, and answers any stop the center had already asked for. All or nothing.
+     *
+     * @return array{stop: TransitRequest, billing: array{added: list<string>, not_changed: list<string>}}
+     */
+    public function endByOperator(TransitRequest $plan, CarbonInterface $lastDay, User $operator): array
+    {
+        return DB::transaction(function () use ($plan, $lastDay, $operator) {
+            TransitRequest::pending()
+                ->where('student_id', $plan->student_id)
+                ->where('transit_center_id', $plan->transit_center_id)
+                ->where('kind', 'stop')
+                ->update(['status' => 'cancelled']);
+
+            $stop = TransitRequest::create([
+                'tenant_id' => $plan->tenant_id,
+                'transit_center_id' => $plan->transit_center_id,
+                'student_id' => $plan->student_id,
+                'kind' => 'stop',
+                'ends_on' => $lastDay->toDateString(),
+                'note' => 'Ended by the bus operator.',
+                'status' => 'pending',
+            ]);
+
+            $billing = $this->approveStop($stop, $lastDay, $operator);
+
+            return ['stop' => $stop->fresh(), 'billing' => $billing];
+        });
+    }
+
+    /**
      * @param  list<string>  $directions
      * @return list<string> months of paid bills that still carry an ended charge
      */
@@ -214,7 +277,7 @@ class TransitPlanner
         $day = $lastDay->toDateString();
         $notChanged = [];
 
-        foreach (StudentExtra::where('transit_request_id', $plan->id)->get() as $extra) {
+        foreach ($plan->extras as $extra) {
             $removedEntirely = $extra->starts_on->toDateString() > $day;
             $notChanged = [...$notChanged, ...$this->invoices->removeExtraFromBills($extra, $removedEntirely ? null : Carbon::parse($lastDay))];
         }

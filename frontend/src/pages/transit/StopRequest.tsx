@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { isAxiosError } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { BackLink } from '@/components/BackLink'
 import { useCreateTransitStopRequest, useTransitChildren } from '@/hooks/useTransitPortal'
+import { apiErrorMessage } from '@/lib/apiError'
 import { dateInput } from '@/lib/transit'
 
 /** Ask the operator to stop bringing a child via the center after a last day. */
@@ -22,7 +22,7 @@ export function TransitStopRequest() {
   const [note, setNote] = useState('')
 
   const child = children?.find((c) => c.student.id === Number(studentId))
-  const apiMessage = isAxiosError(send.error) ? send.error.response?.data?.message : undefined
+  const apiMessage = apiErrorMessage(send.error)
 
   if (isLoading) return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
 

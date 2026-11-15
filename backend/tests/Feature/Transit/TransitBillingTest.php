@@ -162,7 +162,6 @@ class TransitBillingTest extends TestCase
         $row = collect($this->actingAs($this->admin)->getJson('/api/operator/next-bills?month=2026-11')->assertOk()->json('rows'))
             ->firstWhere('student_id', $this->abu->id);
         $this->assertEquals(225, $row['amount']);
-        $this->assertEquals(90, $row['extras_amount']);
         $this->assertSame('Transit center: Bright Kids TC', $row['extras'][0]['label']);
 
         $this->actingAs($this->admin)->getJson("/api/operator/students/{$this->abu->id}")

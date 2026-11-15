@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { BackLink } from '@/components/BackLink'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { apiErrorMessage } from '@/lib/apiError'
 import { useCan } from '@/hooks/useAuth'
 import { useOperatorOptions } from '@/hooks/useAdmin'
 import {
@@ -29,7 +30,7 @@ function fieldError(error: unknown, field: string): string | undefined {
 function LoginCard({ center }: { center: TransitCenter }) {
   const { t } = useTranslation()
   const send = useSendTransitCenterLogin()
-  const message = isAxiosError(send.error) ? send.error.response?.data?.message : undefined
+  const message = apiErrorMessage(send.error)
 
   return (
     <Card className="max-w-xl">

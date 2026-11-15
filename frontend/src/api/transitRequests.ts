@@ -1,7 +1,6 @@
 import { apiClient } from './client'
-import type { TransitLeg } from './billingConfig'
+import type { TransitLeg, TransitRequestStatus } from './transitPortal'
 import type { RouteStop } from './routes'
-import type { TransitRequestStatus } from './transitPortal'
 
 /** A transit center's request, as the operator sees it. */
 export interface OperatorTransitRequest {
@@ -27,7 +26,6 @@ export interface OperatorTransitRequest {
     route_id?: number | null
     pickup_stop_id?: number | null
     parent_profile: { id: number; full_name: string; phone: string | null; email?: string | null } | null
-    route?: { id: number; name: string; stops: RouteStop[] } | null
     pickup_stop?: RouteStop | null
   }
 }

@@ -9,6 +9,7 @@ use App\Models\TransitCenter;
 use App\Models\TransitRequest;
 use App\Services\TransitPlanner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 /**
  * Lets a center find a child of its bus operator, by the child's name or the
@@ -44,11 +45,13 @@ class StudentController extends Controller
             $query->whereRaw('LOWER(full_name) LIKE ?', ['%'.mb_strtolower($q).'%']);
         }
 
-        return $query->orderBy('full_name')->limit(10)->get()
-            ->map(fn (Student $student) => [
-                ...$this->summary($student),
-                'status_here' => $this->statusHere($student, $center),
-            ]);
+        $students = $query->orderBy('full_name')->limit(10)->get();
+        $status = $this->statusesHere($students->pluck('id'), $center);
+
+        return $students->map(fn (Student $student) => [
+            ...$this->summary($student),
+            'status_here' => $status->get($student->id),
+        ]);
     }
 
     public function show(Request $request, Student $student)
@@ -61,7 +64,7 @@ class StudentController extends Controller
 
         return [
             ...$this->summary($student),
-            'status_here' => $this->statusHere($student, $center),
+            'status_here' => $this->statusesHere(collect([$student->id]), $center)->get($student->id),
             'pickup_stop_id' => $student->pickup_stop_id,
             'route' => $student->route ? [
                 'id' => $student->route->id,
@@ -75,13 +78,7 @@ class StudentController extends Controller
                     'is_this_center' => $stop->transit_center_id === $center->id,
                 ])->values(),
             ] : null,
-            'plan' => $plan ? [
-                'request_id' => $plan->id,
-                'legs' => $plan->legs,
-                'starts_on' => $plan->starts_on?->toDateString(),
-                'ends_on' => $plan->extras->first()?->ends_on?->toDateString(),
-                'monthly_amount' => $plan->approved_amount,
-            ] : null,
+            'plan' => $plan ? $this->planner->planLine($plan) : null,
         ];
     }
 
@@ -101,18 +98,28 @@ class StudentController extends Controller
         ];
     }
 
-    /** 'pending', 'active' or null: where this child stands with this center. */
-    private function statusHere(Student $student, TransitCenter $center): ?string
+    /**
+     * Where each child stands with this center: 'pending' (a request is
+     * waiting), 'active' (a plan is running) or absent. Two queries however
+     * many children.
+     *
+     * @param  Collection<int, int>  $studentIds
+     * @return Collection<int, string> status by student id
+     */
+    private function statusesHere(Collection $studentIds, TransitCenter $center): Collection
     {
-        $pending = TransitRequest::where('student_id', $student->id)
+        $pending = TransitRequest::pending()
             ->where('transit_center_id', $center->id)
-            ->where('status', 'pending')
-            ->exists();
+            ->whereIn('student_id', $studentIds)
+            ->pluck('student_id');
 
-        if ($pending) {
-            return 'pending';
-        }
+        $active = TransitRequest::runningPlan(today())
+            ->where('transit_center_id', $center->id)
+            ->whereIn('student_id', $studentIds)
+            ->pluck('student_id');
 
-        return $this->planner->runningPlans($student, $center)->isNotEmpty() ? 'active' : null;
+        // A waiting request wins over a running plan. (replace, not merge: merge would renumber the ids.)
+        return $active->mapWithKeys(fn ($id) => [$id => 'active'])
+            ->replace($pending->mapWithKeys(fn ($id) => [$id => 'pending']));
     }
 }

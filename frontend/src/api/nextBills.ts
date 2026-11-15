@@ -10,7 +10,6 @@ export interface NextBillRow {
   // What the bill will be after the sibling discount.
   amount: number
   /** Monthly extras on top of the bus fee (e.g. a transit center), already in amount. */
-  extras_amount: number
   extras: { label: string; amount: number }[]
   amount_before_discount: number
   sibling_discount_rate: number

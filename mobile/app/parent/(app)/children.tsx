@@ -5,6 +5,7 @@ import { Badge, Card, EmptyState, ScreenTitle, type BadgeTone } from '../../../s
 import { useMyStudents } from '../../../src/hooks/useParent'
 import type { Student, TransitPlanSummary } from '../../../src/api/parent'
 import { colors } from '../../../src/theme'
+import { formatDate, formatMoney } from '../../../src/lib/format'
 
 const ENROLLMENT: Record<Student['enrollment_status'], { label: string; tone: BadgeTone }> = {
   active: { label: 'Active', tone: 'success' },
@@ -27,23 +28,18 @@ function Row({ icon, label, value }: { icon: keyof typeof Ionicons.glyphMap; lab
   )
 }
 
-function showDate(value: string | null): string {
-  if (!value) return ''
-  const [y, m, d] = value.slice(0, 10).split('-')
-  return `${d}/${m}/${y}`
-}
-
 /** The child's day via a transit center: each part, on which bus, with which driver. */
 function TransitBlock({ plan, school }: { plan: TransitPlanSummary; school: string }) {
   const centerName = plan.transit_center?.name ?? 'Transit center'
-  const dates = plan.ends_on ? `${showDate(plan.starts_on)} – ${showDate(plan.ends_on)}` : `From ${showDate(plan.starts_on)}`
+  const from = plan.starts_on ? formatDate(plan.starts_on) : ''
+  const dates = plan.ends_on ? `${from} – ${formatDate(plan.ends_on)}` : `From ${from}`
 
   return (
     <View style={styles.transit}>
       <View style={styles.transitHeader}>
         <Ionicons name="business-outline" size={16} color={colors.warning} />
         <Text style={styles.transitTitle} numberOfLines={1}>{centerName}</Text>
-        {plan.monthly_amount && <Text style={styles.transitAmount}>+RM {Number(plan.monthly_amount).toFixed(2)}/mo</Text>}
+        {plan.monthly_amount && <Text style={styles.transitAmount}>+{formatMoney(plan.monthly_amount)}/mo</Text>}
       </View>
       <Text style={styles.transitDates}>{dates}</Text>
       {plan.rides.map((ride, index) => (

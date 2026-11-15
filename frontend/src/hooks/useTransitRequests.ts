@@ -15,21 +15,21 @@ export function useTransitRequest(id: number) {
   return useQuery({ queryKey: ['transit-requests', 'detail', id], queryFn: () => getTransitRequest(id) })
 }
 
-function useInvalidate() {
+function useInvalidate({ routes }: { routes: boolean }) {
   const queryClient = useQueryClient()
   return () => {
     queryClient.invalidateQueries({ queryKey: ['transit-requests'] })
     // Approving can add the center as a stop on routes.
-    queryClient.invalidateQueries({ queryKey: ['routes'] })
+    if (routes) queryClient.invalidateQueries({ queryKey: ['routes'] })
   }
 }
 
 export function useApproveTransitRequest(id: number) {
-  const invalidate = useInvalidate()
+  const invalidate = useInvalidate({ routes: true })
   return useMutation({ mutationFn: (input: ApproveTransitInput) => approveTransitRequest(id, input), onSuccess: invalidate })
 }
 
 export function useRejectTransitRequest(id: number) {
-  const invalidate = useInvalidate()
+  const invalidate = useInvalidate({ routes: false })
   return useMutation({ mutationFn: (reason: string) => rejectTransitRequest(id, reason), onSuccess: invalidate })
 }

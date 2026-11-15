@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\TransitLeg;
 use App\Models\Concerns\BelongsToTenant;
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,6 +41,20 @@ class TransitRequest extends Model
         'approved_amount' => 'decimal:2',
         'reviewed_at' => 'datetime',
     ];
+
+    /** Still waiting for the operator (or the center to cancel it). */
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->where('status', 'pending');
+    }
+
+    /** Approved start requests whose charge hasn't ended before $from: plans running now or starting later. */
+    public function scopeRunningPlan(Builder $query, CarbonInterface $from): Builder
+    {
+        return $query->where('kind', 'start')
+            ->where('status', 'approved')
+            ->whereHas('extras', fn (Builder $q) => $q->notEndedBy($from));
+    }
 
     /** @return list<string> trips.direction values this request touches */
     public function directions(): array

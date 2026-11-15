@@ -25,10 +25,8 @@ class TripRoster
     {
         $day = $trip->created_at ?? now();
 
-        $replaced = StudentRide::where('direction', $trip->direction)
-            ->activeOn($day)
-            ->pluck('student_id')
-            ->unique();
+        // Children whose own route is replaced by rides on this trip's direction today (a subquery, not a list of ids).
+        $replaced = StudentRide::where('direction', $trip->direction)->activeOn($day)->select('student_id');
 
         $relations = ['parentProfile:id,full_name,phone,email', 'pickupStop:id,name,sequence'];
 

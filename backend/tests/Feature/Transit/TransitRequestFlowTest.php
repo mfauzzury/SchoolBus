@@ -359,4 +359,16 @@ class TransitRequestFlowTest extends TestCase
             'stops' => [['name' => 'Taman Abu', 'sequence' => 1], ['name' => 'Pasar', 'sequence' => 2]],
         ])->assertUnprocessable()->assertJsonValidationErrors('stops');
     }
+
+    public function test_a_stop_used_by_a_plan_that_starts_later_cannot_be_removed_either(): void
+    {
+        // approvePayload() starts the plan in three days.
+        $id = $this->ask()->json('id');
+        $this->actingAs($this->admin)->postJson("/api/operator/transit-requests/{$id}/approve", $this->approvePayload())->assertOk();
+
+        $this->actingAs($this->admin)->putJson("/api/operator/routes/{$this->routeA->id}", [
+            'name' => 'Route A',
+            'stops' => [['name' => 'Taman Abu', 'sequence' => 1], ['name' => 'Pasar', 'sequence' => 2]],
+        ])->assertUnprocessable()->assertJsonValidationErrors('stops');
+    }
 }

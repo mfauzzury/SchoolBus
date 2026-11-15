@@ -13,7 +13,7 @@ class TransitPlanChanged extends PlatformNotification
         private readonly string $student,
         private readonly string $center,
         private readonly bool $stopping,
-        private readonly string $date,
+        private readonly string $date, // ISO day (2026-11-15), shown as 15/11/2026
         private readonly ?string $amount,
     ) {}
 
@@ -26,7 +26,7 @@ class TransitPlanChanged extends PlatformNotification
     {
         $student = self::plain($this->student);
         $center = self::plain($this->center);
-        $date = $this->date;
+        $date = self::date($this->date);
 
         $mail = (new MailMessage)
             ->subject($this->subjectLine())

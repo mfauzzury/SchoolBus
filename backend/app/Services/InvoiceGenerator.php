@@ -120,7 +120,7 @@ class InvoiceGenerator
             return [
                 'month' => $month->toDateString(),
                 'amount' => round($fee['final_amount'] + $extras->sum(fn (StudentExtra $e) => (float) $e->monthly_amount), 2),
-                'extras' => $extras->map(fn (StudentExtra $e) => ['label' => $e->label, 'amount' => (float) $e->monthly_amount])->values()->all(),
+                'extras' => $extras->map(fn (StudentExtra $e) => $e->asLine())->values()->all(),
                 'amount_before_discount' => $fee['amount_before_discount'],
                 'sibling_discount_rate' => $fee['sibling_discount_rate'],
                 'due_date' => $this->dueDate($student, $month)->toDateString(),
@@ -243,7 +243,7 @@ class InvoiceGenerator
      *
      * @return Collection<int, StudentExtra>
      */
-    public function extrasFor(Student $student, Carbon $month): Collection
+    private function extrasFor(Student $student, Carbon $month): Collection
     {
         return StudentExtra::withoutGlobalScopes()
             ->where('student_id', $student->id)
@@ -272,15 +272,13 @@ class InvoiceGenerator
             ->where('status', '!=', InvoiceStatus::Void)
             ->whereDate('period_start', '>=', $extra->billing_starts_on->toDateString())
             ->when($extra->ends_on, fn ($q) => $q->whereDate('period_start', '<=', $extra->ends_on->copy()->startOfMonth()->toDateString()))
+            // Bills that already carry this line (e.g. made after the plan was approved) are skipped.
+            ->whereDoesntHave('items', fn ($q) => $q->where('student_extra_id', $extra->id))
             ->orderBy('period_start')
             ->get();
 
         foreach ($invoices as $invoice) {
             $month = $invoice->period_start->copy()->startOfMonth()->toDateString();
-
-            if ($invoice->items()->where('student_extra_id', $extra->id)->exists()) {
-                continue;
-            }
 
             if (! $this->canChange($invoice)) {
                 $result['not_changed'][] = $month;

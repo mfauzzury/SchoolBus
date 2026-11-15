@@ -9,6 +9,7 @@ use App\Models\TransitRequest;
 use App\Services\Notifier;
 use App\Services\TransitPlanner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -34,7 +35,6 @@ class TransitRequestController extends Controller
         $transitRequest->load([
             'transitCenter:id,name,phone,contact_person,address',
             'student.parentProfile:id,full_name,phone,email',
-            'student.route.stops',
             'student.pickupStop:id,name,sequence',
             'centerAfterStop:id,name,sequence',
             'reviewer:id,name',
@@ -47,10 +47,7 @@ class TransitRequestController extends Controller
                 ->map(fn (TransitRequest $plan) => [
                     'id' => $plan->id,
                     'transit_center' => $plan->transitCenter?->name,
-                    'legs' => $plan->legs,
-                    'starts_on' => $plan->starts_on?->toDateString(),
-                    'ends_on' => $plan->extras->first()?->ends_on?->toDateString(),
-                    'monthly_amount' => $plan->approved_amount,
+                    ...Arr::only($this->planner->planLine($plan), ['legs', 'starts_on', 'ends_on', 'monthly_amount']),
                 ])->values(),
         ];
     }
@@ -140,7 +137,7 @@ class TransitRequestController extends Controller
                 throw ValidationException::withMessages(["legs.$i.center_after_stop_id" => 'This stop is not on the chosen route.']);
             }
 
-            $needsHome = in_array($plan['leg'], [TransitLeg::CenterToHome->value, TransitLeg::HomeToCenter->value], true);
+            $needsHome = TransitLeg::from($plan['leg'])->needsHomeStop();
             if ($needsHome && empty($plan['home_stop_id'])) {
                 throw ValidationException::withMessages(["legs.$i.home_stop_id" => 'Choose the child\'s home stop on this route.']);
             }

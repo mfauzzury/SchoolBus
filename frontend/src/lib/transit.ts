@@ -1,5 +1,4 @@
-import type { TransitLeg } from '@/api/billingConfig'
-import type { TransitRequestStatus } from '@/api/transitPortal'
+import type { TransitLeg, TransitRequestStatus } from '@/api/transitPortal'
 
 export const AFTER_SCHOOL_LEGS: TransitLeg[] = ['school_to_center', 'center_to_home']
 export const BEFORE_SCHOOL_LEGS: TransitLeg[] = ['home_to_center', 'center_to_school']

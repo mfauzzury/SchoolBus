@@ -22,6 +22,7 @@ use App\Notifications\PlatformNotification;
 use App\Notifications\TransitPlanChanged;
 use App\Notifications\TransitRequestReceived;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Throwable;
@@ -190,12 +191,7 @@ class Notifier
             $application->loadMissing(['parentProfile', 'busOperator']);
             $operator = $application->busOperator;
 
-            $emails = $operator->users()->operatorOwners()->pluck('email')->filter()->unique();
-            if ($emails->isEmpty() && filled($operator->email)) {
-                $emails = collect([$operator->email]);
-            }
-
-            foreach ($emails as $email) {
+            foreach ($this->operatorRecipients($operator) as $email) {
                 $this->send(
                     NotificationType::APPLICATION_RECEIVED,
                     $email,
@@ -219,12 +215,7 @@ class Notifier
             $request->loadMissing(['student', 'transitCenter', 'busOperator']);
             $operator = $request->busOperator;
 
-            $emails = $operator->users()->operatorOwners()->pluck('email')->filter()->unique();
-            if ($emails->isEmpty() && filled($operator->email)) {
-                $emails = collect([$operator->email]);
-            }
-
-            foreach ($emails as $email) {
+            foreach ($this->operatorRecipients($operator) as $email) {
                 $this->send(
                     NotificationType::TRANSIT_REQUEST_RECEIVED,
                     $email,
@@ -255,7 +246,7 @@ class Notifier
             }
 
             $stopping = $request->kind === 'stop';
-            $date = ($stopping ? $request->ends_on : $request->starts_on)->format('d/m/Y');
+            $date = ($stopping ? $request->ends_on : $request->starts_on)->toDateString();
 
             $this->send(
                 NotificationType::TRANSIT_PLAN_CHANGED,
@@ -275,6 +266,19 @@ class Notifier
                 "transit_plan_changed:{$request->id}",
             );
         });
+    }
+
+    /**
+     * Who in the operator's team is told about something waiting for them: its
+     * owners, or the company email when it has no owner login yet.
+     *
+     * @return Collection<int, string>
+     */
+    private function operatorRecipients(BusOperator $operator): Collection
+    {
+        $emails = $operator->users()->operatorOwners()->pluck('email')->filter()->unique();
+
+        return $emails->isEmpty() && filled($operator->email) ? collect([$operator->email]) : $emails;
     }
 
     /** Tells every active platform Owner. */

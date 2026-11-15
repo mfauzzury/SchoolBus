@@ -112,13 +112,9 @@ class RouteController extends Controller
         $plan = [];
 
         foreach ($stops as $stop) {
-            $existing = null;
-
-            if (! empty($stop['id']) && $unmatched->has($stop['id'])) {
-                $existing = $unmatched->get($stop['id']);
-            } else {
-                $existing = $unmatched->first(fn ($s) => trim($s->name) === trim($stop['name']));
-            }
+            $existing = ! empty($stop['id']) && $unmatched->has($stop['id'])
+                ? $unmatched->get($stop['id'])
+                : $unmatched->first(fn ($s) => trim($s->name) === trim($stop['name']));
 
             if ($existing) {
                 $unmatched->forget($existing->id);
@@ -127,9 +123,9 @@ class RouteController extends Controller
             $plan[] = [$existing, $stop];
         }
 
-        $inUse = StudentRide::activeOn(today())
+        // A stop a transit center plan uses (running now, or starting later) can't be removed from under it.
+        $inUse = $unmatched->isEmpty() ? null : StudentRide::notEndedBy(today())
             ->where(fn ($q) => $q->whereIn('board_stop_id', $unmatched->keys())->orWhereIn('alight_stop_id', $unmatched->keys()))
-            ->with('boardStop:id,name', 'alightStop:id,name')
             ->first();
         if ($inUse) {
             $name = $unmatched->get($inUse->board_stop_id)?->name ?? $unmatched->get($inUse->alight_stop_id)?->name;

@@ -31,11 +31,6 @@ class TransitCenter extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function busOperator(): BelongsTo
-    {
-        return $this->belongsTo(BusOperator::class, 'tenant_id');
-    }
-
     public function isActive(): bool
     {
         return $this->status === 'active';

@@ -1,5 +1,4 @@
 import { apiClient } from './client'
-import type { TransitLeg } from './billingConfig'
 
 /** The logged-in transit center, as it sees itself. */
 export interface MyTransitCenter {
@@ -18,6 +17,9 @@ export async function getMyCenter(): Promise<MyTransitCenter> {
   const { data } = await apiClient.get<MyTransitCenter>('/api/transit/center')
   return data
 }
+
+/** The parts of a child's day a transit center can ask the bus to cover: the route flow, not price categories. */
+export type TransitLeg = 'school_to_center' | 'center_to_home' | 'home_to_center' | 'center_to_school'
 
 export type TransitStatusHere = 'pending' | 'active' | null
 

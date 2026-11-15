@@ -40,24 +40,24 @@ class RequestController extends Controller
     {
         $center = $this->center($request);
 
-        return TransitRequest::where('transit_center_id', $center->id)
-            ->where('kind', 'start')
-            ->where('status', 'approved')
-            ->whereHas('extras', fn ($q) => $q->notEndedBy(today()))
+        $plans = TransitRequest::runningPlan(today())
+            ->where('transit_center_id', $center->id)
             ->with(['student:id,full_name,school_name,class_name', 'extras'])
-            ->get()
+            ->get();
+
+        // Children whose stop this center has already asked for, in one query.
+        $stopAsked = TransitRequest::pending()
+            ->where('transit_center_id', $center->id)
+            ->where('kind', 'stop')
+            ->whereIn('student_id', $plans->pluck('student_id'))
+            ->pluck('student_id')
+            ->flip();
+
+        return $plans
             ->map(fn (TransitRequest $plan) => [
-                'request_id' => $plan->id,
+                ...$this->planner->planLine($plan),
                 'student' => $plan->student,
-                'legs' => $plan->legs,
-                'starts_on' => $plan->starts_on?->toDateString(),
-                'ends_on' => $plan->extras->first()?->ends_on?->toDateString(),
-                'monthly_amount' => $plan->approved_amount,
-                'stop_pending' => TransitRequest::where('transit_center_id', $center->id)
-                    ->where('student_id', $plan->student_id)
-                    ->where('kind', 'stop')
-                    ->where('status', 'pending')
-                    ->exists(),
+                'stop_pending' => $stopAsked->has($plan->student_id),
             ])
             ->sortBy('student.full_name')
             ->values();
@@ -149,9 +149,9 @@ class RequestController extends Controller
 
     private function ensureNothingPending(Student $student, int $centerId): void
     {
-        $pending = TransitRequest::where('student_id', $student->id)
+        $pending = TransitRequest::pending()
+            ->where('student_id', $student->id)
             ->where('transit_center_id', $centerId)
-            ->where('status', 'pending')
             ->exists();
 
         abort_if($pending, 422, 'There is already a request waiting for this child. Wait for the operator, or cancel it first.');

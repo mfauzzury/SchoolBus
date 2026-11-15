@@ -3,8 +3,9 @@
 namespace App\Enums;
 
 /**
- * The parts of a child's day a transit center can ask the bus to cover.
- * Each has its own monthly add-on price, set by the operator.
+ * The parts of a child's day a transit center can ask the bus to cover. They
+ * only say which trips run (the child's route flow); the price is one monthly
+ * price per center.
  */
 enum TransitLeg: string
 {
@@ -23,6 +24,12 @@ enum TransitLeg: string
             self::SchoolToCenter, self::CenterToHome => 'dropoff',
             self::HomeToCenter, self::CenterToSchool => 'pickup',
         };
+    }
+
+    /** Whether the child's home stop on the bus has to be chosen for this part. */
+    public function needsHomeStop(): bool
+    {
+        return $this === self::CenterToHome || $this === self::HomeToCenter;
     }
 
     /** @return list<string> */

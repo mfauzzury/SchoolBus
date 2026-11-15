@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Api\Transit;
 
+use App\Http\Controllers\Api\Transit\Concerns\ActsAsTransitCenter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 /**
- * The transit center's own details and the leg prices it will see as an
- * indicative price when asking for a bus.
+ * The transit center's own details and the monthly price it will see as an
+ * estimate when asking for a bus.
  */
 class CenterController extends Controller
 {
+    use ActsAsTransitCenter;
+
     public function show(Request $request)
     {
-        $center = $request->user()->transitCenter;
-        abort_unless($center?->isActive(), 403, 'This transit center is not active.');
+        $center = $this->center($request);
 
         return [
             'id' => $center->id,

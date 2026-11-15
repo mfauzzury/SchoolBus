@@ -35,10 +35,13 @@ class StudentRide extends Model
 
     public function scopeActiveOn(Builder $query, CarbonInterface $date): Builder
     {
-        $day = $date->toDateString();
+        return $query->whereDate('starts_on', '<=', $date->toDateString())->notEndedBy($date);
+    }
 
-        return $query->whereDate('starts_on', '<=', $day)
-            ->where(fn (Builder $q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>=', $day));
+    /** Not ended before this day: rides running now or starting later. */
+    public function scopeNotEndedBy(Builder $query, CarbonInterface $date): Builder
+    {
+        return $query->where(fn (Builder $q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>=', $date->toDateString()));
     }
 
     public function transitRequest(): BelongsTo

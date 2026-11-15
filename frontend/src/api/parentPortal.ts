@@ -1,5 +1,6 @@
 import { apiBaseUrl, apiClient } from './client'
 import type { ParentProfile } from './auth'
+import type { TransitPlanSummary } from './transitPortal'
 
 export interface ParentRouteStop {
   id: number
