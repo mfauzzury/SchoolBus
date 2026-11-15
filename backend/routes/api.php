@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Admin\PaymentAttemptController;
 use App\Http\Controllers\Api\Admin\PlanController;
 use App\Http\Controllers\Api\Admin\SystemController;
 use App\Http\Controllers\Api\Admin\TeamController;
+use App\Http\Controllers\Api\Admin\TransitCenterController as AdminTransitCenterController;
 use App\Http\Controllers\Api\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Driver\AuthController as DriverAuthController;
@@ -109,6 +110,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('operators', [AdminOperatorController::class, 'index']);
         Route::get('operators/options', [AdminOperatorController::class, 'options']);
         Route::get('operators/{operator}', [AdminOperatorController::class, 'show']);
+        Route::get('transit-centers', [AdminTransitCenterController::class, 'index']);
+        Route::get('transit-centers/{transitCenter}', [AdminTransitCenterController::class, 'show']);
         Route::get('transactions', [AdminTransactionController::class, 'index']);
         Route::get('payment-attempts', [PaymentAttemptController::class, 'index']);
         Route::get('transactions/export', [AdminTransactionController::class, 'export'])
@@ -125,6 +128,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::middleware('permission:operators.edit')->group(function () {
             Route::put('operators/{operator}', [AdminOperatorController::class, 'update']);
+            // Transit centers are added and changed by the platform team only.
+            Route::post('transit-centers', [AdminTransitCenterController::class, 'store']);
+            Route::put('transit-centers/{transitCenter}', [AdminTransitCenterController::class, 'update']);
+            Route::post('transit-centers/{transitCenter}/login', [AdminTransitCenterController::class, 'sendLogin']);
             Route::post('operators/{operator}/password-reset', [AdminOperatorController::class, 'sendPasswordReset']);
             Route::get('operators/{operator}/notes', [OperatorNoteController::class, 'index']);
             Route::post('operators/{operator}/notes', [OperatorNoteController::class, 'store']);
@@ -227,7 +234,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('student-applications', [StudentApplicationController::class, 'index']);
             Route::get('student-applications/{studentApplication}', [StudentApplicationController::class, 'show']);
             Route::get('transit-centers', [TransitCenterController::class, 'index']);
-            Route::get('transit-centers/{transitCenter}', [TransitCenterController::class, 'show']);
             Route::get('transit-requests', [TransitRequestController::class, 'index']);
             Route::get('transit-requests/{transitRequest}', [TransitRequestController::class, 'show']);
 
@@ -252,9 +258,6 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::post('staff/{staff}/login', [StaffController::class, 'provisionLogin']);
                 Route::post('student-applications/{studentApplication}/approve', [StudentApplicationController::class, 'approve']);
                 Route::post('student-applications/{studentApplication}/reject', [StudentApplicationController::class, 'reject']);
-                Route::post('transit-centers', [TransitCenterController::class, 'store']);
-                Route::put('transit-centers/{transitCenter}', [TransitCenterController::class, 'update']);
-                Route::post('transit-centers/{transitCenter}/login', [TransitCenterController::class, 'sendLogin']);
                 Route::post('transit-requests/{transitRequest}/approve', [TransitRequestController::class, 'approve']);
                 Route::post('transit-requests/{transitRequest}/reject', [TransitRequestController::class, 'reject']);
             });

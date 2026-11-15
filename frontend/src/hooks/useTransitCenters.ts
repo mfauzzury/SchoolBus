@@ -2,19 +2,27 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createTransitCenter,
   getTransitCenter,
+  listOperatorTransitCenters,
   listTransitCenters,
   sendTransitCenterLogin,
   updateTransitCenter,
   type TransitCenterInput,
 } from '@/api/transitCenters'
 
-export function useTransitCenters() {
-  return useQuery({ queryKey: ['transit-centers'], queryFn: listTransitCenters })
+/** The operator's own centers (look only). */
+export function useOperatorTransitCenters() {
+  return useQuery({ queryKey: ['transit-centers', 'operator'], queryFn: listOperatorTransitCenters })
+}
+
+// ---- platform team ----
+
+export function useTransitCenters(operatorId?: number) {
+  return useQuery({ queryKey: ['transit-centers', 'admin', operatorId ?? 'all'], queryFn: () => listTransitCenters(operatorId) })
 }
 
 export function useTransitCenter(id?: number) {
   return useQuery({
-    queryKey: ['transit-centers', id],
+    queryKey: ['transit-centers', 'admin', 'detail', id],
     queryFn: () => getTransitCenter(id as number),
     enabled: id !== undefined,
   })

@@ -35,7 +35,6 @@ import { BillDetail } from '@/pages/operator/BillDetail'
 import { Settings } from '@/pages/operator/Settings'
 import { BillingSettings } from '@/pages/operator/BillingSettings'
 import { TransitCenters } from '@/pages/operator/TransitCenters'
-import { TransitCenterFormPage } from '@/pages/operator/TransitCenterForm'
 import { TransitRequestsPage } from '@/pages/operator/TransitRequests'
 import { TransitRequestReview } from '@/pages/operator/TransitRequestReview'
 import { TransitLayout } from '@/layouts/TransitLayout'
@@ -69,6 +68,8 @@ import { AdminPlans } from '@/pages/admin/Plans'
 import { AdminPlanEdit } from '@/pages/admin/PlanEdit'
 import { AdminTeam } from '@/pages/admin/Team'
 import { AdminTeamAdd } from '@/pages/admin/TeamAdd'
+import { AdminTransitCenters } from '@/pages/admin/TransitCenters'
+import { AdminTransitCenterForm } from '@/pages/admin/TransitCenterForm'
 import { AdminActivityLog } from '@/pages/admin/ActivityLog'
 
 function App() {
@@ -118,8 +119,6 @@ function App() {
             <Route path="/operator/buses" element={<Buses />} />
             <Route path="/operator/staff" element={<Staff />} />
             <Route path="/operator/transit-centers" element={<TransitCenters />} />
-            <Route path="/operator/transit-centers/new" element={<TransitCenterFormPage />} />
-            <Route path="/operator/transit-centers/:id" element={<TransitCenterFormPage />} />
             <Route path="/operator/transit-requests" element={<TransitRequestsPage />} />
             <Route path="/operator/transit-requests/:id" element={<TransitRequestReview />} />
             <Route path="/operator/settings/routes" element={<Navigate to="/operator/routes" replace />} />
@@ -175,6 +174,9 @@ function App() {
             <Route path="/admin/parents" element={<AdminParentsReport />} />
             <Route path="/admin/team" element={<AdminTeam />} />
             <Route path="/admin/team/new" element={<AdminTeamAdd />} />
+            <Route path="/admin/transit-centers" element={<AdminTransitCenters />} />
+            <Route path="/admin/transit-centers/new" element={<AdminTransitCenterForm />} />
+            <Route path="/admin/transit-centers/:id" element={<AdminTransitCenterForm />} />
             <Route path="/admin/activity" element={<AdminActivityLog />} />
           </Route>
         </Route>

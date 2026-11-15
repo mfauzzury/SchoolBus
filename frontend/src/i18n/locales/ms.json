@@ -792,7 +792,8 @@
       "announcements": "Pengumuman",
       "system": "Sistem",
       "messages": "Mesej",
-      "parents": "Ibu bapa"
+      "parents": "Ibu bapa",
+      "transitCenters": "Pusat transit"
     },
     "dashboard": {
       "welcome": "Selamat datang, {{name}}",
@@ -973,7 +974,10 @@
         "email_template_updated": "Mengubah templat e-mel",
         "email_template_reset": "Menetapkan semula templat e-mel ke ayat asal",
         "brand_updated": "Mengubah jenama platform",
-        "brand_reset": "Menetapkan semula sebahagian jenama platform"
+        "brand_reset": "Menetapkan semula sebahagian jenama platform",
+          "transit_center_created": "Menambah pusat transit",
+          "transit_center_updated": "Mengubah pusat transit",
+          "transit_center_login_sent": "Menghantar log masuk pusat transit"
         }
       },
       "notes": {
@@ -1477,6 +1481,17 @@
           "error": "Ujian tidak dapat dijalankan. Simpan kelayakan dahulu dan cuba lagi."
         }
       }
+    },
+    "transitCenters": {
+      "title": "Pusat transit",
+      "intro": "Pusat tuisyen dan jagaan yang boleh memohon bas daripada pengendali untuk kanak-kanak mereka. Hanya pasukan platform boleh menambahnya.",
+      "searchPlaceholder": "Cari ikut pusat, pengendali, telefon atau e-mel",
+      "operator": "Pengendali bas",
+      "allOperators": "Semua pengendali",
+      "chooseOperator": "Pilih pengendali bas",
+      "operatorHint": "Pusat hanya boleh memohon bas daripada pengendali ini. Ini tidak boleh diubah kemudian.",
+      "operatorFixed": "Pusat kekal dengan pengendali yang dipilih semasa ditambah.",
+      "addHelp": "Selepas simpan, hantar log masuk kepada pusat supaya ia boleh memohon bas."
     }
   },
   "operator": {
@@ -1487,7 +1502,7 @@
       "addHelp": "Selepas simpan, hantar log masuk kepada pusat supaya ia boleh memohon bas.",
       "addButton": "Simpan",
       "back": "Pusat transit",
-      "searchPlaceholder": "Cari ikut nama, telefon atau e-mel",
+      "searchPlaceholder": "Cari ikut nama, telefon atau alamat",
       "empty": "Belum ada pusat transit.",
       "name": "Nama pusat",
       "contact": "Hubungi",
@@ -1507,7 +1522,8 @@
       "sendLogin": "Hantar log masuk",
       "resendLogin": "Hantar log masuk sekali lagi",
       "loginEmailed": "Selesai. Minta pusat menyemak e-melnya.",
-      "loginError": "Tidak dapat menghantar log masuk. Sila cuba lagi."
+      "loginError": "Tidak dapat menghantar log masuk. Sila cuba lagi.",
+      "addedByPlatform": "Untuk menambah pusat atau mengubah butirannya, hubungi pasukan platform."
     },
     "dashboard": {
       "welcome": "Selamat datang, {{name}} — {{company}}",

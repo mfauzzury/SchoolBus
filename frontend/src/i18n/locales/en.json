@@ -792,7 +792,8 @@
       "announcements": "Announcements",
       "system": "System",
       "messages": "Messages",
-      "parents": "Parents"
+      "parents": "Parents",
+      "transitCenters": "Transit centers"
     },
     "dashboard": {
       "welcome": "Welcome, {{name}}",
@@ -974,7 +975,10 @@
         "email_template_updated": "Edited an email template",
         "email_template_reset": "Reset an email template to its original wording",
         "brand_updated": "Changed the platform brand",
-        "brand_reset": "Reset part of the platform brand"
+        "brand_reset": "Reset part of the platform brand",
+          "transit_center_created": "Added a transit center",
+          "transit_center_updated": "Edited a transit center",
+          "transit_center_login_sent": "Sent a transit center its login"
         }
       },
       "notes": {
@@ -1479,6 +1483,17 @@
           "error": "The test couldn't run. Save the credentials first and try again."
         }
       }
+    },
+    "transitCenters": {
+      "title": "Transit centers",
+      "intro": "Tuition and daycare centers that can ask an operator for a bus for their children. Only the platform team adds them.",
+      "searchPlaceholder": "Search by center, operator, phone or email",
+      "operator": "Bus operator",
+      "allOperators": "All operators",
+      "chooseOperator": "Choose the bus operator",
+      "operatorHint": "The center can only ask this operator for buses. This cannot be changed later.",
+      "operatorFixed": "A center stays with the operator it was added for.",
+      "addHelp": "After saving, send the center a login so it can ask for buses."
     }
   },
   "operator": {
@@ -1489,7 +1504,7 @@
       "addHelp": "After saving, send the center a login so it can ask for buses.",
       "addButton": "Save",
       "back": "Transit centers",
-      "searchPlaceholder": "Search by name, phone or email",
+      "searchPlaceholder": "Search by name, phone or address",
       "empty": "No transit centers yet.",
       "name": "Center name",
       "contact": "Contact",
@@ -1509,7 +1524,8 @@
       "sendLogin": "Send login",
       "resendLogin": "Send login again",
       "loginEmailed": "Done. Ask the center to check its email.",
-      "loginError": "Could not send the login. Please try again."
+      "loginError": "Could not send the login. Please try again.",
+      "addedByPlatform": "To add a center or change its details, contact the platform team."
     },
     "dashboard": {
       "welcome": "Welcome, {{name}} — {{company}}",
