@@ -50,7 +50,7 @@ class TransitBillingTest extends TestCase
         TransitCenter::create([
             'tenant_id' => $this->tenant->id, 'user_id' => $this->centerUser->id, 'name' => 'Bright Kids TC',
             'phone' => '03-555 0000', 'email' => $this->centerUser->email, 'status' => 'active',
-            'leg_prices' => ['school_to_center' => 90],
+            'monthly_price' => 90,
         ]);
 
         $elder = $this->createBillableStudent($this->tenant);

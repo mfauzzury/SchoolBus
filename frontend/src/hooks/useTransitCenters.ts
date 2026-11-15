@@ -7,7 +7,7 @@ import {
   listTransitCenters,
   sendTransitCenterLogin,
   updateTransitCenter,
-  updateTransitCenterPrices,
+  updateTransitCenterPrice,
   type TransitCenterInput,
 } from '@/api/transitCenters'
 
@@ -24,10 +24,10 @@ export function useOperatorTransitCenter(id?: number) {
   })
 }
 
-export function useUpdateTransitCenterPrices(id: number) {
+export function useUpdateTransitCenterPrice(id: number) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (prices: Parameters<typeof updateTransitCenterPrices>[1]) => updateTransitCenterPrices(id, prices),
+    mutationFn: (monthlyPrice: number | null) => updateTransitCenterPrice(id, monthlyPrice),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['transit-centers'] }),
   })
 }

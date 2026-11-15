@@ -21,9 +21,9 @@ class TransitCenterDemoSeederTest extends TestCase
 
         $centers = TransitCenter::withoutGlobalScopes()->where('tenant_id', $tenant->id)->orderBy('id')->get();
         $this->assertCount(3, $centers);
-        $this->assertSame(40.0, $centers[0]->resolvedLegPrices()['school_to_center']);
-        $this->assertNull($centers[1]->resolvedLegPrices()['home_to_center']);
-        $this->assertNull($centers[2]->resolvedLegPrices()['school_to_center']);
+        $this->assertSame('100.00', $centers[0]->monthly_price);
+        $this->assertSame('75.00', $centers[1]->monthly_price);
+        $this->assertNull($centers[2]->monthly_price);
 
         // Two have a login that works as a transit center; the third is left for the platform to send one.
         $this->assertSame(2, $centers->whereNotNull('user_id')->count());
@@ -34,11 +34,11 @@ class TransitCenterDemoSeederTest extends TestCase
         $this->assertNull($centers[2]->user_id);
 
         // Running it again adds nothing and keeps prices the operator has since changed.
-        $centers[0]->update(['leg_prices' => ['school_to_center' => 99]]);
+        $centers[0]->update(['monthly_price' => 99]);
         $this->seed(TransitCenterDemoSeeder::class);
 
         $this->assertSame(3, TransitCenter::withoutGlobalScopes()->count());
         $this->assertSame(2, User::role('transit_center')->count());
-        $this->assertSame(99.0, $centers[0]->fresh()->resolvedLegPrices()['school_to_center']);
+        $this->assertSame('99.00', $centers[0]->fresh()->monthly_price);
     }
 }

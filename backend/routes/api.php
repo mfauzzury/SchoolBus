@@ -259,7 +259,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::post('staff/{staff}/login', [StaffController::class, 'provisionLogin']);
                 Route::post('student-applications/{studentApplication}/approve', [StudentApplicationController::class, 'approve']);
                 Route::post('student-applications/{studentApplication}/reject', [StudentApplicationController::class, 'reject']);
-                Route::put('transit-centers/{transitCenter}/prices', [TransitCenterController::class, 'updatePrices']);
+                Route::put('transit-centers/{transitCenter}/price', [TransitCenterController::class, 'updatePrice']);
                 Route::post('transit-requests/{transitRequest}/approve', [TransitRequestController::class, 'approve']);
                 Route::post('transit-requests/{transitRequest}/reject', [TransitRequestController::class, 'reject']);
             });

@@ -1,5 +1,4 @@
 import { apiClient } from './client'
-import type { TransitPrices } from './billingConfig'
 
 /** A transit center as its operator sees it: to look at only. */
 export interface OperatorTransitCenter {
@@ -9,12 +8,12 @@ export interface OperatorTransitCenter {
   phone: string
   address: string | null
   status: 'active' | 'inactive'
-  /** Monthly add-on for each part of the day; null = not set yet. */
-  leg_prices: TransitPrices
+  /** What this center is charged per child each month; null = not set yet. */
+  monthly_price: number | null
 }
 
 /** A transit center as the platform team manages it. */
-export interface TransitCenter extends Omit<OperatorTransitCenter, 'leg_prices'> {
+export interface TransitCenter extends Omit<OperatorTransitCenter, 'monthly_price'> {
   operator: { id: number; company_name: string } | null
   email: string
   /** True once a login has been sent; the center sets its own password from the email. */
@@ -43,13 +42,10 @@ export async function getOperatorTransitCenter(id: number): Promise<OperatorTran
   return data
 }
 
-/** Sets this center's prices. A price left out keeps its value; null clears it. */
-export async function updateTransitCenterPrices(
-  id: number,
-  legPrices: Partial<TransitPrices>,
-): Promise<OperatorTransitCenter> {
-  const { data } = await apiClient.put<OperatorTransitCenter>(`/api/operator/transit-centers/${id}/prices`, {
-    leg_prices: legPrices,
+/** Sets this center's monthly price; null clears it. */
+export async function updateTransitCenterPrice(id: number, monthlyPrice: number | null): Promise<OperatorTransitCenter> {
+  const { data } = await apiClient.put<OperatorTransitCenter>(`/api/operator/transit-centers/${id}/price`, {
+    monthly_price: monthlyPrice,
   })
   return data
 }

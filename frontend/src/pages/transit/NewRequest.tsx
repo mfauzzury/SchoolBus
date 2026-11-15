@@ -120,9 +120,8 @@ function RequestForm({ studentId, onBack }: { studentId: number; onBack: () => v
     return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
   }
 
-  const prices = center.transit_prices
-  const unpriced = legs.some((leg) => prices[leg] === null)
-  const total = legs.reduce((sum, leg) => sum + (prices[leg] ?? 0), 0)
+  // One price per center, whichever parts of the day the bus covers.
+  const price = center.monthly_price
   const needsLeaveTime = legs.some((leg) => LEAVES_CENTER_LEGS.includes(leg))
   const apiMessage = isAxiosError(create.error) ? create.error.response?.data?.message : undefined
 
@@ -148,14 +147,9 @@ function RequestForm({ studentId, onBack }: { studentId: number; onBack: () => v
     <div className="flex flex-col gap-2">
       <p className="text-sm font-medium">{title}</p>
       {group.map((leg) => (
-        <label key={leg} className="flex items-center justify-between gap-3 rounded-md border p-3 text-sm">
-          <span className="flex items-center gap-2">
-            <Checkbox checked={legs.includes(leg)} onCheckedChange={(on) => toggle(leg, on)} />
-            {t(`transit.legs.${leg}`)}
-          </span>
-          <span className="text-muted-foreground">
-            {prices[leg] === null ? t('transit.portal.askOperator') : `RM ${formatMoney(prices[leg] as number)}`}
-          </span>
+        <label key={leg} className="flex items-center gap-2 rounded-md border p-3 text-sm">
+          <Checkbox checked={legs.includes(leg)} onCheckedChange={(on) => toggle(leg, on)} />
+          {t(`transit.legs.${leg}`)}
         </label>
       ))}
     </div>
@@ -256,9 +250,9 @@ function RequestForm({ studentId, onBack }: { studentId: number; onBack: () => v
           <div className="flex items-baseline justify-between">
             <span className="text-sm">{t('transit.request.estimate')}</span>
             <span className="text-xl font-semibold">
-              {unpriced || legs.length === 0
+              {price === null || legs.length === 0
                 ? t('transit.portal.askOperator')
-                : `RM ${formatMoney(total)} / ${t('transit.portal.month')}`}
+                : `RM ${formatMoney(price)} / ${t('transit.portal.month')}`}
             </span>
           </div>
           <p className="text-xs text-muted-foreground">{t('transit.request.estimateHint')}</p>

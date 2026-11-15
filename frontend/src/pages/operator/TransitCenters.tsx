@@ -11,7 +11,6 @@ import { useIsOperatorAdmin } from '@/hooks/useAuth'
 import { useOperatorTransitCenters } from '@/hooks/useTransitCenters'
 import { usePagination } from '@/hooks/usePagination'
 import { useListView } from '@/hooks/useListView'
-import { TRANSIT_LEGS } from '@/api/billingConfig'
 import { cn, formatMoney } from '@/lib/utils'
 
 /**
@@ -93,17 +92,14 @@ export function TransitCenters() {
                   </TableCell>
                   <TableCell className="text-sm">{center.address || '—'}</TableCell>
                   <TableCell>
-                    <div className="flex flex-col gap-0.5 text-sm">
-                      {TRANSIT_LEGS.filter((leg) => center.leg_prices[leg] !== null).map((leg) => (
-                        <span key={leg} className="flex justify-between gap-3 whitespace-nowrap">
-                          <span className="text-muted-foreground">{t(`transit.legsShort.${leg}`)}</span>
-                          <span>RM {formatMoney(center.leg_prices[leg] as number)}</span>
-                        </span>
-                      ))}
-                      {TRANSIT_LEGS.every((leg) => center.leg_prices[leg] === null) && (
-                        <span className="text-muted-foreground">{t('operator.transitCenters.pricesNotSet')}</span>
-                      )}
-                    </div>
+                    {center.monthly_price === null ? (
+                      <span className="text-sm text-muted-foreground">{t('operator.transitCenters.pricesNotSet')}</span>
+                    ) : (
+                      <span className="text-sm whitespace-nowrap">
+                        RM {formatMoney(center.monthly_price)}{' '}
+                        <span className="text-muted-foreground">/ {t('transit.portal.month')}</span>
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant={center.status === 'active' ? 'success' : 'outline'}>

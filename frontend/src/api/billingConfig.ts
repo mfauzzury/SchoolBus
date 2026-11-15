@@ -11,9 +11,6 @@ export interface BillingConfig {
 
 export type TransitLeg = 'school_to_center' | 'center_to_home' | 'home_to_center' | 'center_to_school'
 
-/** A transit center's monthly add-on for each part of the day; null = not set yet. */
-export type TransitPrices = Record<TransitLeg, number | null>
-
 export const TRANSIT_LEGS: TransitLeg[] = ['school_to_center', 'center_to_home', 'home_to_center', 'center_to_school']
 
 export async function getBillingConfig(): Promise<BillingConfig> {

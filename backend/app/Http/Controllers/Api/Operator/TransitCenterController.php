@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Operator;
 
-use App\Enums\TransitLeg;
 use App\Http\Controllers\Controller;
 use App\Models\TransitCenter;
 use Illuminate\Http\Request;
@@ -10,7 +9,7 @@ use Illuminate\Http\Request;
 /**
  * The transit centers that work with this operator. Centers are added and
  * changed by the platform team (Admin\TransitCenterController); what the
- * operator does here is set what each center is charged for each part of the day.
+ * operator does here is set what each center is charged per month.
  */
 class TransitCenterController extends Controller
 {
@@ -25,23 +24,19 @@ class TransitCenterController extends Controller
     }
 
     /**
-     * Sets this center's monthly add-on per part of the day. Prices sent
-     * replace the saved ones; a price left out keeps its saved value, and
-     * null clears one. The center sees these as an estimate; the operator
-     * still sets the final price when approving each request.
+     * Sets what this center is charged per child each month, whichever parts
+     * of the day the bus covers. The center sees it as an estimate; the
+     * operator still sets the final price when approving each request. Null
+     * clears it.
      */
-    public function updatePrices(Request $request, TransitCenter $transitCenter)
+    public function updatePrice(Request $request, TransitCenter $transitCenter)
     {
         $data = $request->validate([
-            'leg_prices' => 'required|array:'.implode(',', TransitLeg::values()),
-            'leg_prices.*' => 'nullable|numeric|min:0|max:99999',
+            'monthly_price' => 'present|nullable|numeric|min:0|max:99999',
         ]);
 
         $transitCenter->update([
-            'leg_prices' => array_replace(
-                $transitCenter->resolvedLegPrices(),
-                array_map(fn ($price) => $price === null ? null : round((float) $price, 2), $data['leg_prices']),
-            ),
+            'monthly_price' => $data['monthly_price'] === null ? null : round((float) $data['monthly_price'], 2),
         ]);
 
         return $this->present($transitCenter->fresh());
@@ -56,7 +51,7 @@ class TransitCenterController extends Controller
             'phone' => $center->phone,
             'address' => $center->address,
             'status' => $center->status,
-            'leg_prices' => $center->resolvedLegPrices(),
+            'monthly_price' => $center->monthly_price === null ? null : (float) $center->monthly_price,
         ];
     }
 }

@@ -1,5 +1,5 @@
 import { apiClient } from './client'
-import type { TransitLeg, TransitPrices } from './billingConfig'
+import type { TransitLeg } from './billingConfig'
 
 /** The logged-in transit center, as it sees itself. */
 export interface MyTransitCenter {
@@ -10,8 +10,8 @@ export interface MyTransitCenter {
   email: string
   address: string | null
   operator: { company_name: string; contact_phone: string | null; email: string | null }
-  /** Indicative monthly price per leg, set by the bus operator. */
-  transit_prices: TransitPrices
+  /** What the bus operator charges a child per month for going via this center; null = not set yet. */
+  monthly_price: number | null
 }
 
 export async function getMyCenter(): Promise<MyTransitCenter> {

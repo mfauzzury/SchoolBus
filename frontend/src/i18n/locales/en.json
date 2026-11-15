@@ -5,8 +5,8 @@
       "home": "Home",
       "welcome": "Welcome, {{name}}",
       "intro": "{{operator}} is your bus operator. Here you can ask them to carry your children to and from your center.",
-      "prices": "Bus prices",
-      "pricesHint": "Extra per child per month, added to the parent's bus bill. The operator confirms the final price.",
+      "prices": "Monthly fee",
+      "pricesHint": "Extra per child per month, added to the parent's bus bill, whichever parts of the day the bus covers. The operator confirms the final price.",
       "askOperator": "Ask the operator",
       "month": "month",
       "operator": "Your bus operator",
@@ -94,12 +94,6 @@
       "end": "End plan",
       "endHelp": "After the last day the child goes back to the usual trip, and the extra charge stops from the next month. The center and the parent will see this.",
       "endConfirm": "End plan"
-    },
-    "legsShort": {
-      "school_to_center": "School → center",
-      "center_to_home": "Center → home",
-      "home_to_center": "Home → center",
-      "center_to_school": "Center → school"
     }
   },
   "common": {
@@ -1532,9 +1526,13 @@
       "loginEmailed": "Done. Ask the center to check its email.",
       "loginError": "Could not send the login. Please try again.",
       "addedByPlatform": "To add a center or change its details, contact the platform team.",
-      "setPrices": "Set prices",
-      "pricesTitle": "Monthly prices",
-      "pricesNotSet": "Not set"
+      "setPrices": "Set price",
+      "pricesNotSet": "Not set",
+      "priceTitle": "Monthly price",
+      "priceLabel": "Price per child per month",
+      "priceDescription": "What this center is charged for each child the bus brings to or from it, each month. It is one price, whichever parts of the day the bus covers.",
+      "priceHint": "The center sees this as an estimate. You can change the price when you approve each request.",
+      "priceError": "The price cannot be less than zero."
     },
     "dashboard": {
       "welcome": "Welcome, {{name}} — {{company}}",
@@ -1961,11 +1959,8 @@
       "accountHolder": "Account holder",
       "saveChanges": "Save changes",
       "saveError": "Could not save changes. Try again.",
-      "transitPricesDescription": "Extra monthly fee for each part of the day a transit center asks the bus to cover.",
       "transitAfterSchool": "After school",
       "transitBeforeSchool": "Before school",
-      "transitPricesHint": "Centers see these as an estimate. You can change the price when you approve each request.",
-      "transitPricesError": "Prices cannot be less than zero.",
       "discountRates": "Discount rates",
       "discountRatesDescription": "Percentage off the monthly fee for a parent's second and later children. Not applied to a child with a custom fee.",
       "siblingDiscount": "Sibling discount",

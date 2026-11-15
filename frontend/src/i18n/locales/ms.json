@@ -5,8 +5,8 @@
       "home": "Utama",
       "welcome": "Selamat datang, {{name}}",
       "intro": "{{operator}} ialah pengendali bas anda. Di sini anda boleh memohon mereka membawa kanak-kanak anda ke dan dari pusat anda.",
-      "prices": "Harga bas",
-      "pricesHint": "Tambahan bagi setiap kanak-kanak sebulan, dimasukkan ke dalam bil bas ibu bapa. Pengendali mengesahkan harga akhir.",
+      "prices": "Yuran bulanan",
+      "pricesHint": "Tambahan bagi setiap kanak-kanak sebulan, dimasukkan ke dalam bil bas ibu bapa, walau bahagian hari mana pun yang bas lakukan. Pengendali mengesahkan harga akhir.",
       "askOperator": "Tanya pengendali",
       "month": "bulan",
       "operator": "Pengendali bas anda",
@@ -94,12 +94,6 @@
       "end": "Tamatkan pelan",
       "endHelp": "Selepas hari terakhir kanak-kanak kembali ke perjalanan biasa, dan caj tambahan berhenti mulai bulan berikutnya. Pusat dan ibu bapa akan melihat ini.",
       "endConfirm": "Tamatkan pelan"
-    },
-    "legsShort": {
-      "school_to_center": "Sekolah → pusat",
-      "center_to_home": "Pusat → rumah",
-      "home_to_center": "Rumah → pusat",
-      "center_to_school": "Pusat → sekolah"
     }
   },
   "common": {
@@ -1531,8 +1525,12 @@
       "loginError": "Tidak dapat menghantar log masuk. Sila cuba lagi.",
       "addedByPlatform": "Untuk menambah pusat atau mengubah butirannya, hubungi pasukan platform.",
       "setPrices": "Tetapkan harga",
-      "pricesTitle": "Harga bulanan",
-      "pricesNotSet": "Belum ditetapkan"
+      "pricesNotSet": "Belum ditetapkan",
+      "priceTitle": "Harga bulanan",
+      "priceLabel": "Harga bagi setiap kanak-kanak sebulan",
+      "priceDescription": "Caj bagi pusat ini untuk setiap kanak-kanak yang dibawa bas ke atau dari pusat, setiap bulan. Satu harga sahaja, walau bahagian hari mana pun yang bas lakukan.",
+      "priceHint": "Pusat melihat ini sebagai anggaran. Anda boleh ubah harga semasa meluluskan setiap permohonan.",
+      "priceError": "Harga tidak boleh kurang daripada sifar."
     },
     "dashboard": {
       "welcome": "Selamat datang, {{name}} — {{company}}",
@@ -1957,11 +1955,8 @@
       "accountHolder": "Pemegang akaun",
       "saveChanges": "Simpan perubahan",
       "saveError": "Tidak dapat menyimpan perubahan. Cuba lagi.",
-      "transitPricesDescription": "Yuran bulanan tambahan bagi setiap bahagian hari yang dimohon oleh pusat transit.",
       "transitAfterSchool": "Selepas sekolah",
       "transitBeforeSchool": "Sebelum sekolah",
-      "transitPricesHint": "Pusat melihat harga ini sebagai anggaran. Anda boleh ubah harga semasa meluluskan setiap permohonan.",
-      "transitPricesError": "Harga tidak boleh kurang daripada sifar.",
       "discountRates": "Kadar diskaun",
       "discountRatesDescription": "Peratusan potongan yuran bulanan untuk anak kedua dan seterusnya. Tidak digunakan untuk anak dengan yuran khas.",
       "siblingDiscount": "Diskaun adik-beradik",

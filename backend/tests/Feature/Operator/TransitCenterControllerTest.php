@@ -40,7 +40,7 @@ class TransitCenterControllerTest extends TestCase
         ]);
     }
 
-    public function test_the_operator_sets_each_centers_own_price_for_each_part_of_the_day(): void
+    public function test_the_operator_sets_one_monthly_price_for_each_center(): void
     {
         $tenant = $this->createTenant();
         $admin = $this->createOperatorAdmin($tenant);
@@ -49,39 +49,33 @@ class TransitCenterControllerTest extends TestCase
 
         $this->actingAs($admin)->getJson('/api/operator/transit-centers')
             ->assertOk()
-            ->assertJsonPath('0.leg_prices.school_to_center', null);
+            ->assertJsonPath('0.monthly_price', null);
 
-        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$bright->id}/prices", [
-            'leg_prices' => ['school_to_center' => 40, 'center_to_home' => 60],
-        ])->assertOk()
-            ->assertJsonPath('leg_prices.school_to_center', 40)
-            ->assertJsonPath('leg_prices.center_to_home', 60)
-            ->assertJsonPath('leg_prices.home_to_center', null);
+        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$bright->id}/price", ['monthly_price' => 100])
+            ->assertOk()
+            ->assertJsonPath('monthly_price', 100);
 
-        // Another center of the same operator keeps its own prices.
-        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$smart->id}/prices", [
-            'leg_prices' => ['school_to_center' => 25.5],
-        ])->assertOk()->assertJsonPath('leg_prices.school_to_center', 25.5);
-        $this->assertSame(40.0, $bright->fresh()->resolvedLegPrices()['school_to_center']);
+        // Another center of the same operator keeps its own price.
+        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$smart->id}/price", ['monthly_price' => 75.5])
+            ->assertOk()
+            ->assertJsonPath('monthly_price', 75.5);
+        $this->assertSame('100.00', $bright->fresh()->monthly_price);
 
-        // A price left out keeps its value; null clears one.
-        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$bright->id}/prices", [
-            'leg_prices' => ['home_to_center' => 45, 'center_to_home' => null],
-        ])->assertOk()
-            ->assertJsonPath('leg_prices.school_to_center', 40)
-            ->assertJsonPath('leg_prices.home_to_center', 45)
-            ->assertJsonPath('leg_prices.center_to_home', null);
+        // Null clears it.
+        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$bright->id}/price", ['monthly_price' => null])
+            ->assertOk()
+            ->assertJsonPath('monthly_price', null);
     }
 
-    public function test_prices_must_be_known_legs_and_not_negative(): void
+    public function test_the_price_must_be_sent_and_not_negative(): void
     {
         $tenant = $this->createTenant();
         $admin = $this->createOperatorAdmin($tenant);
         $center = $this->center($tenant);
 
-        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$center->id}/prices", ['leg_prices' => ['to_the_moon' => 1]])->assertUnprocessable();
-        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$center->id}/prices", ['leg_prices' => ['school_to_center' => -5]])->assertUnprocessable();
-        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$center->id}/prices", [])->assertUnprocessable();
+        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$center->id}/price", ['monthly_price' => -5])->assertUnprocessable();
+        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$center->id}/price", ['monthly_price' => 'abc'])->assertUnprocessable();
+        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$center->id}/price", [])->assertUnprocessable();
     }
 
     public function test_only_the_owner_sets_prices_and_only_for_its_own_centers(): void
@@ -92,9 +86,9 @@ class TransitCenterControllerTest extends TestCase
         $theirs = $this->center($this->createTenant(), 'Not mine');
         $admin = $this->createOperatorAdmin($tenant);
 
-        $this->actingAs($staff)->putJson("/api/operator/transit-centers/{$mine->id}/prices", ['leg_prices' => ['school_to_center' => 1]])->assertForbidden();
+        $this->actingAs($staff)->putJson("/api/operator/transit-centers/{$mine->id}/price", ['monthly_price' => 1])->assertForbidden();
         $this->actingAs($staff)->getJson("/api/operator/transit-centers/{$mine->id}")->assertOk();
-        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$theirs->id}/prices", ['leg_prices' => ['school_to_center' => 1]])->assertNotFound();
+        $this->actingAs($admin)->putJson("/api/operator/transit-centers/{$theirs->id}/price", ['monthly_price' => 1])->assertNotFound();
     }
 
     public function test_the_billing_settings_no_longer_carry_transit_prices(): void

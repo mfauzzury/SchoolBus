@@ -26,27 +26,6 @@ class TransitPlanner
     public function __construct(private readonly InvoiceGenerator $invoices) {}
 
     /**
-     * The price the center sees before sending a request: its own price for
-     * each leg added up. Null when any chosen leg has no price yet.
-     *
-     * @param  list<string>  $legs
-     */
-    public function indicativeAmount(TransitCenter $center, array $legs): ?float
-    {
-        $prices = $center->resolvedLegPrices();
-        $total = 0.0;
-
-        foreach ($legs as $leg) {
-            if (($prices[$leg] ?? null) === null) {
-                return null;
-            }
-            $total += $prices[$leg];
-        }
-
-        return round($total, 2);
-    }
-
-    /**
      * Approved start requests from this center whose plan is still running
      * (or starts later) for the child.
      *

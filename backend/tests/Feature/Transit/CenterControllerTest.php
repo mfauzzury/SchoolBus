@@ -25,23 +25,21 @@ class CenterControllerTest extends TestCase
             'phone' => '012-345 6789',
             'email' => $user->email,
             'status' => 'active',
-            'leg_prices' => ['school_to_center' => 40, 'center_to_home' => 60],
+            'monthly_price' => 100,
             ...$centerOverrides,
         ]);
 
         return [$user, $center];
     }
 
-    public function test_a_center_sees_its_details_and_the_leg_prices(): void
+    public function test_a_center_sees_its_details_and_its_monthly_price(): void
     {
         [$user] = $this->centerLogin();
 
         $this->actingAs($user)->getJson('/api/transit/center')
             ->assertOk()
             ->assertJsonPath('name', 'Bright Kids TC')
-            ->assertJsonPath('transit_prices.school_to_center', 40)
-            ->assertJsonPath('transit_prices.center_to_home', 60)
-            ->assertJsonPath('transit_prices.center_to_school', null);
+            ->assertJsonPath('monthly_price', 100);
 
         $this->actingAs($user)->getJson('/api/me')
             ->assertOk()

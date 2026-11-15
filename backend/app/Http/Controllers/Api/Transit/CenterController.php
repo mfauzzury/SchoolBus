@@ -24,7 +24,8 @@ class CenterController extends Controller
             'email' => $center->email,
             'address' => $center->address,
             'operator' => $center->busOperator->only(['company_name', 'contact_phone', 'email']),
-            'transit_prices' => $center->resolvedLegPrices(),
+            // What the operator charges a child per month for going via this center; null = not set yet.
+            'monthly_price' => $center->monthly_price === null ? null : (float) $center->monthly_price,
         ];
     }
 }

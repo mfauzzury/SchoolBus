@@ -28,23 +28,23 @@ class TransitCenterDemoSeeder extends Seeder
 
         $centers = [
             [
-                // Every part of the day priced, with a login.
+                // Priced, with a login.
                 'name' => 'Pusat Tuisyen Bright Kids',
                 'contact_person' => 'Puan Siti Rahmah',
                 'phone' => '03-5513 2200',
                 'email' => 'brightkids@transit.test',
                 'address' => 'No 1, Jalan Melati 2, Taman Melati, 53100 Kuala Lumpur',
-                'leg_prices' => ['school_to_center' => 40, 'center_to_home' => 60, 'home_to_center' => 35, 'center_to_school' => 35],
+                'monthly_price' => 100,
                 'login' => true,
             ],
             [
-                // Only the after-school parts priced, with a login.
+                // Priced, with a login.
                 'name' => 'Taska & Pusat Jagaan Ceria Hati',
                 'contact_person' => 'Kak Rosnah',
                 'phone' => '012-334 5566',
                 'email' => 'ceriahati@transit.test',
                 'address' => 'No 12, Jalan Melati 5, Taman Melati, 53100 Kuala Lumpur',
-                'leg_prices' => ['school_to_center' => 30, 'center_to_home' => 45],
+                'monthly_price' => 75,
                 'login' => true,
             ],
             [
@@ -54,7 +54,7 @@ class TransitCenterDemoSeeder extends Seeder
                 'phone' => '017-889 2211',
                 'email' => 'cemerlang@transit.test',
                 'address' => 'Lot 5, Bandar Baru Fasa 2, 47500 Subang Jaya',
-                'leg_prices' => null,
+                'monthly_price' => null,
                 'login' => false,
             ],
         ];

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useMyCenter } from '@/hooks/useTransitPortal'
-import { TRANSIT_LEGS } from '@/api/billingConfig'
 import { cn, formatMoney } from '@/lib/utils'
 
 /** Start page for a transit center: who its bus operator is and what each leg costs. */
@@ -35,18 +34,12 @@ export function TransitHome() {
             <CardTitle className="text-base">{t('transit.portal.prices')}</CardTitle>
             <p className="text-sm text-muted-foreground">{t('transit.portal.pricesHint')}</p>
           </CardHeader>
-          <CardContent className="flex flex-col divide-y">
-            {TRANSIT_LEGS.map((leg) => {
-              const price = center.transit_prices[leg]
-              return (
-                <div key={leg} className="flex items-center justify-between py-2 text-sm">
-                  <span>{t(`transit.legs.${leg}`)}</span>
-                  <span className="font-medium">
-                    {price === null ? t('transit.portal.askOperator') : `RM ${formatMoney(price)} / ${t('transit.portal.month')}`}
-                  </span>
-                </div>
-              )
-            })}
+          <CardContent>
+            <p className="text-xl font-semibold">
+              {center.monthly_price === null
+                ? t('transit.portal.askOperator')
+                : `RM ${formatMoney(center.monthly_price)} / ${t('transit.portal.month')}`}
+            </p>
           </CardContent>
         </Card>
 

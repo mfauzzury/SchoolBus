@@ -35,7 +35,7 @@ import { BillDetail } from '@/pages/operator/BillDetail'
 import { Settings } from '@/pages/operator/Settings'
 import { BillingSettings } from '@/pages/operator/BillingSettings'
 import { TransitCenters } from '@/pages/operator/TransitCenters'
-import { TransitCenterPrices } from '@/pages/operator/TransitCenterPrices'
+import { TransitCenterPrice } from '@/pages/operator/TransitCenterPrice'
 import { TransitRequestReview } from '@/pages/operator/TransitRequestReview'
 import { TransitLayout } from '@/layouts/TransitLayout'
 import { TransitHome } from '@/pages/transit/Home'
@@ -119,7 +119,7 @@ function App() {
             <Route path="/operator/buses" element={<Buses />} />
             <Route path="/operator/staff" element={<Staff />} />
             <Route path="/operator/transit-centers" element={<TransitCenters />} />
-            <Route path="/operator/transit-centers/:id" element={<TransitCenterPrices />} />
+            <Route path="/operator/transit-centers/:id" element={<TransitCenterPrice />} />
             {/* The list moved into a tab of Applications; this keeps old emails and bookmarks working. */}
             <Route path="/operator/transit-requests" element={<Navigate to="/operator/applications?tab=transit" replace />} />
             <Route path="/operator/transit-requests/:id" element={<TransitRequestReview />} />

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\TransitLeg;
 use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,12 +18,12 @@ class TransitCenter extends Model
         'phone',
         'email',
         'address',
-        'leg_prices',
+        'monthly_price',
         'status',
     ];
 
     protected $casts = [
-        'leg_prices' => 'array',
+        'monthly_price' => 'decimal:2',
     ];
 
     public function user(): BelongsTo
@@ -35,25 +34,6 @@ class TransitCenter extends Model
     public function busOperator(): BelongsTo
     {
         return $this->belongsTo(BusOperator::class, 'tenant_id');
-    }
-
-    /**
-     * The monthly add-on for each part of the day, as this center sees it as
-     * an estimate. Null = the operator hasn't set that price yet.
-     *
-     * @return array<string, ?float>
-     */
-    public function resolvedLegPrices(): array
-    {
-        $saved = $this->leg_prices ?? [];
-        $prices = [];
-
-        foreach (TransitLeg::values() as $leg) {
-            $value = $saved[$leg] ?? null;
-            $prices[$leg] = $value === null ? null : (float) $value;
-        }
-
-        return $prices;
     }
 
     public function isActive(): bool
