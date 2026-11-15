@@ -9,7 +9,6 @@ export interface OperatorTransitCenter {
   phone: string
   address: string | null
   status: 'active' | 'inactive'
-  has_login: boolean
   /** Monthly add-on for each part of the day; null = not set yet. */
   leg_prices: TransitPrices
 }
@@ -19,6 +18,7 @@ export interface TransitCenter extends Omit<OperatorTransitCenter, 'leg_prices'>
   operator: { id: number; company_name: string } | null
   email: string
   /** True once a login has been sent; the center sets its own password from the email. */
+  has_login: boolean
   last_login_at: string | null
 }
 

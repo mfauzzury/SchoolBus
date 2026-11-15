@@ -56,7 +56,6 @@ class TransitCenterController extends Controller
             'phone' => $center->phone,
             'address' => $center->address,
             'status' => $center->status,
-            'has_login' => $center->user_id !== null,
             'leg_prices' => $center->resolvedLegPrices(),
         ];
     }

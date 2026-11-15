@@ -73,7 +73,6 @@ export function TransitCenters() {
                 <TableHead>{t('operator.transitCenters.contact')}</TableHead>
                 <TableHead>{t('operator.transitCenters.address')}</TableHead>
                 <TableHead>{t('operator.routes.fare')}</TableHead>
-                <TableHead>{t('operator.transitCenters.login')}</TableHead>
                 <SortableHead sortKey="status" sort={view.sort} onSort={view.toggleSort}>
                   {t('operator.transitCenters.status')}
                 </SortableHead>
@@ -105,13 +104,6 @@ export function TransitCenters() {
                         <span className="text-muted-foreground">{t('operator.transitCenters.pricesNotSet')}</span>
                       )}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    {center.has_login ? (
-                      <Badge variant="success">{t('operator.transitCenters.loginSent')}</Badge>
-                    ) : (
-                      <Badge variant="outline">{t('operator.transitCenters.noLogin')}</Badge>
-                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant={center.status === 'active' ? 'success' : 'outline'}>

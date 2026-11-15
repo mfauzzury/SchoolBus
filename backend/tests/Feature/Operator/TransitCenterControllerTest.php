@@ -24,7 +24,7 @@ class TransitCenterControllerTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonPath('0.name', 'Bright Kids TC')
-            ->assertJsonPath('0.has_login', false)
+            ->assertJsonMissingPath('0.has_login')
             ->assertJsonMissingPath('0.email');
 
         $this->actingAs($admin)->postJson('/api/operator/transit-centers', ['name' => 'X'])->assertMethodNotAllowed();
