@@ -12,7 +12,6 @@ import {
   ReceiptText,
   Route,
   School,
-  Shuffle,
   Wallet,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -63,13 +62,8 @@ export function OperatorLayout() {
           to: '/operator/applications',
           label: t('nav.applications'),
           icon: ClipboardList,
-          badge: pendingApplications?.length ?? 0,
-        },
-        {
-          to: '/operator/transit-requests',
-          label: t('nav.transitRequests'),
-          icon: Shuffle,
-          badge: pendingTransit?.length ?? 0,
+          // New children and transit center requests both wait here.
+          badge: (pendingApplications?.length ?? 0) + (pendingTransit?.length ?? 0),
         },
         { to: '/operator/transit-centers', label: t('nav.transitCenters'), icon: School },
       ],

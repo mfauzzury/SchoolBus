@@ -1724,7 +1724,7 @@
       "monthNotSet": "Tidak ditetapkan"
     },
     "applications": {
-      "title": "Permohonan Pelajar",
+      "title": "Permohonan",
       "status": "Status",
       "statusPending": "Menunggu",
       "statusApproved": "Diluluskan",
@@ -1758,7 +1758,9 @@
       "firstBillNextMonth": "Mula bil bulan depan",
       "firstBillHint": "Bil meliputi sebulan kalendar penuh dan dikeluarkan pada 1 hb.",
       "firstMonthAmount": "Jumlah untuk bulan ini (RM)",
-      "monthlyFee": "Yuran bulanan"
+      "monthlyFee": "Yuran bulanan",
+      "tabChildren": "Anak baharu",
+      "tabTransit": "Transit"
     },
     "finances": {
       "title": "Kewangan",

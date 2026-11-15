@@ -409,7 +409,7 @@ export function TransitRequestReview() {
 
   return (
     <div className="flex flex-col gap-6">
-      <BackLink to="/operator/transit-requests">{t('operator.transitRequests.title')}</BackLink>
+      <BackLink to="/operator/applications?tab=transit">{t('operator.applications.title')}</BackLink>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
         <Card>

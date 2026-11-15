@@ -1726,7 +1726,7 @@
       "monthNotSet": "Not set"
     },
     "applications": {
-      "title": "Student Applications",
+      "title": "Applications",
       "status": "Status",
       "statusPending": "Pending",
       "statusApproved": "Approved",
@@ -1760,7 +1760,9 @@
       "firstBillNextMonth": "Start billing next month",
       "firstBillHint": "Bills cover a whole calendar month and go out on the 1st.",
       "firstMonthAmount": "Amount for this month (RM)",
-      "monthlyFee": "Monthly fee"
+      "monthlyFee": "Monthly fee",
+      "tabChildren": "New children",
+      "tabTransit": "Transit"
     },
     "finances": {
       "title": "Finances",

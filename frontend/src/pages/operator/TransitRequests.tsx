@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -16,8 +16,8 @@ import { cn } from '@/lib/utils'
 const ALL = 'all'
 const STATUSES = ['pending', 'approved', 'rejected', 'cancelled'] as const
 
-/** Requests from transit centers, oldest waiting first. */
-export function TransitRequestsPage() {
+/** Requests from transit centers, oldest waiting first. A tab of the Applications page. */
+export function TransitRequestsTab() {
   const { t } = useTranslation()
   const [status, setStatus] = useState<string>('pending')
   const { data: requests, isLoading } = useTransitRequests(status === ALL ? undefined : status)
@@ -31,11 +31,8 @@ export function TransitRequestsPage() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t('operator.transitRequests.title')}</CardTitle>
-        <p className="text-sm text-muted-foreground">{t('operator.transitRequests.intro')}</p>
-      </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        <p className="text-sm text-muted-foreground">{t('operator.transitRequests.intro')}</p>
         <div className="flex flex-col gap-1.5">
           <Label>{t('transit.requests.status')}</Label>
           <Select items={statusItems} value={status} onValueChange={(v) => setStatus(v ?? ALL)}>

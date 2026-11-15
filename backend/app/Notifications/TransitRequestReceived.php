@@ -32,7 +32,7 @@ class TransitRequestReceived extends PlatformNotification
             ->subject($this->subjectLine())
             ->greeting('Salam '.self::plain($this->operator).',')
             ->line($ms.' Sila hubungi ibu bapa sebelum meluluskan.')
-            ->action('Buka permohonan / Open requests', self::url('/operator/transit-requests'))
+            ->action('Buka permohonan / Open applications', self::url('/operator/applications?tab=transit'))
             ->line($en.' Please check with the parent before approving.')
             ->salutation(self::brand());
     }
