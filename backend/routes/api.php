@@ -279,6 +279,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::middleware('role:transit_center')->prefix('transit')->group(function () {
             Route::get('center', [TransitCenterSelfController::class, 'show']);
+            Route::get('center/stats', [TransitCenterSelfController::class, 'stats']);
             Route::get('students', [TransitPortalStudentController::class, 'index']);
             Route::get('students/{student}', [TransitPortalStudentController::class, 'show']);
             Route::get('children', [TransitPortalRequestController::class, 'children']);
