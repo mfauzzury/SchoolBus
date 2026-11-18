@@ -70,10 +70,12 @@ class RequestController extends Controller
 
         $data = $request->validate([
             'student_id' => ['required', Rule::exists('students', 'id')->where('tenant_id', $tenantId)->where('enrollment_status', 'active')],
-            'legs' => 'required|array|min:1',
+            // A center only says which child. The operator decides the bus, the stops, the
+            // first day and the price when approving, so these are optional.
+            'legs' => 'nullable|array|min:1',
             'legs.*' => ['required', 'distinct', Rule::in(TransitLeg::values())],
             'center_after_stop_id' => ['nullable', 'integer'],
-            'starts_on' => 'required|date|after_or_equal:today',
+            'starts_on' => 'nullable|date|after_or_equal:today',
             'leave_center_at' => 'nullable|date_format:H:i',
             'note' => 'nullable|string|max:1000',
         ]);
@@ -90,11 +92,13 @@ class RequestController extends Controller
             'transit_center_id' => $center->id,
             'student_id' => $student->id,
             'kind' => 'start',
-            'legs' => array_values($data['legs']),
+            // A center sits between school and home, so by default the bus brings the child
+            // from school to the center and then home.
+            'legs' => array_values($data['legs'] ?? [TransitLeg::SchoolToCenter->value, TransitLeg::CenterToHome->value]),
             'center_after_stop_id' => $data['center_after_stop_id'] ?? null,
             'leave_center_at' => $data['leave_center_at'] ?? null,
             'note' => $data['note'] ?? null,
-            'starts_on' => $data['starts_on'],
+            'starts_on' => $data['starts_on'] ?? today()->addDay()->toDateString(),
             'indicative_amount' => $center->monthly_price,
             'status' => 'pending',
         ]);

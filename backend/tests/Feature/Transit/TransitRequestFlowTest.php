@@ -173,6 +173,19 @@ class TransitRequestFlowTest extends TestCase
         $this->assertSame(0, StudentRide::count());
     }
 
+    public function test_a_center_only_has_to_name_the_child_and_the_operator_decides_the_rest(): void
+    {
+        $this->actingAs($this->centerUser)
+            ->postJson('/api/transit/requests', ['student_id' => $this->abu->id])
+            ->assertCreated()
+            ->assertJsonPath('status', 'pending')
+            ->assertJsonPath('legs', ['school_to_center', 'center_to_home'])
+            ->assertJsonPath('starts_on', today()->addDay()->toDateString())
+            ->assertJsonPath('indicative_amount', '100.00');
+
+        Notification::assertSentOnDemand(TransitRequestReceived::class);
+    }
+
     public function test_each_center_has_its_own_price_whichever_parts_of_the_day_are_asked_for(): void
     {
         [$otherUser] = $this->centerFor($this->tenant, 'Smart Tuition', 75);
@@ -237,6 +250,30 @@ class TransitRequestFlowTest extends TestCase
 
         $this->actingAs($this->centerUser)->getJson('/api/transit/children')
             ->assertOk()->assertJsonCount(1)->assertJsonPath('0.student.full_name', 'Abu Bakar');
+    }
+
+    public function test_the_start_page_counts_children_by_school_age_and_gender_without_names(): void
+    {
+        $this->abu->update(['school_name' => 'SK Taman Abu', 'gender' => 'male', 'date_of_birth' => today()->subYears(9)->subDay()]);
+
+        // Waiting only: not on the bus yet.
+        $id = $this->ask()->json('id');
+        $this->actingAs($this->centerUser)->getJson('/api/transit/center/stats')
+            ->assertOk()
+            ->assertJsonPath('students', 0)
+            ->assertJsonPath('waiting', 1)
+            ->assertJsonPath('by_school', []);
+
+        $this->actingAs($this->admin)->postJson("/api/operator/transit-requests/{$id}/approve", $this->approvePayload())->assertOk();
+
+        $this->actingAs($this->centerUser)->getJson('/api/transit/center/stats')
+            ->assertOk()
+            ->assertJsonPath('students', 1)
+            ->assertJsonPath('waiting', 0)
+            ->assertJsonPath('by_school', [['name' => 'SK Taman Abu', 'count' => 1]])
+            ->assertJsonPath('by_age', [['age' => 9, 'count' => 1]])
+            ->assertJsonPath('by_gender', ['male' => 1, 'female' => 0, 'unknown' => 0])
+            ->assertJsonMissingPath('students.0.full_name');
     }
 
     public function test_a_second_child_reuses_the_centers_stop(): void

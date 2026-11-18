@@ -39,10 +39,7 @@ import { TransitCenterPrice } from '@/pages/operator/TransitCenterPrice'
 import { TransitRequestReview } from '@/pages/operator/TransitRequestReview'
 import { TransitLayout } from '@/layouts/TransitLayout'
 import { TransitHome } from '@/pages/transit/Home'
-import { TransitNewRequest } from '@/pages/transit/NewRequest'
-import { TransitChildren } from '@/pages/transit/Children'
-import { TransitStopRequest } from '@/pages/transit/StopRequest'
-import { TransitRequests } from '@/pages/transit/Requests'
+import { TransitStudents } from '@/pages/transit/Students'
 import { ParentDashboard } from '@/pages/parent/Dashboard'
 import { ParentTrack } from '@/pages/parent/Track'
 import { ParentInvoices } from '@/pages/parent/Invoices'
@@ -132,10 +129,7 @@ function App() {
         <Route element={<ProtectedRoute role="transit" />}>
           <Route element={<TransitLayout />}>
             <Route path="/transit/home" element={<TransitHome />} />
-            <Route path="/transit/children" element={<TransitChildren />} />
-            <Route path="/transit/children/:studentId/stop" element={<TransitStopRequest />} />
-            <Route path="/transit/new" element={<TransitNewRequest />} />
-            <Route path="/transit/requests" element={<TransitRequests />} />
+            <Route path="/transit/students" element={<TransitStudents />} />
           </Route>
         </Route>
 
