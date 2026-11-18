@@ -18,6 +18,20 @@ export async function getMyCenter(): Promise<MyTransitCenter> {
   return data
 }
 
+/** Counts for the start page: who the bus carries to the center now. No names, no fees. */
+export interface TransitStats {
+  students: number
+  waiting: number
+  by_school: { name: string | null; count: number }[]
+  by_age: { age: number; count: number }[]
+  by_gender: { male: number; female: number; unknown: number }
+}
+
+export async function getTransitStats(): Promise<TransitStats> {
+  const { data } = await apiClient.get<TransitStats>('/api/transit/center/stats')
+  return data
+}
+
 /** The parts of a child's day a transit center can ask the bus to cover: the route flow, not price categories. */
 export type TransitLeg = 'school_to_center' | 'center_to_home' | 'home_to_center' | 'center_to_school'
 
@@ -80,22 +94,13 @@ export interface MyTransitRequest {
   reviewed_at: string | null
 }
 
+/** A center only names the child; the operator decides the bus, days and price. */
 export interface TransitRequestInput {
   student_id: number
-  legs: TransitLeg[]
-  center_after_stop_id: number | null
-  starts_on: string
-  leave_center_at: string | null
-  note: string | null
 }
 
 export async function searchTransitStudents(q: string): Promise<TransitStudentSummary[]> {
   const { data } = await apiClient.get<TransitStudentSummary[]>('/api/transit/students', { params: { q } })
-  return data
-}
-
-export async function getTransitStudent(id: number): Promise<TransitStudent> {
-  const { data } = await apiClient.get<TransitStudent>(`/api/transit/students/${id}`)
   return data
 }
 
@@ -111,15 +116,6 @@ export async function listMyTransitRequests(): Promise<MyTransitRequest[]> {
 
 export async function createTransitRequest(input: TransitRequestInput): Promise<MyTransitRequest> {
   const { data } = await apiClient.post<MyTransitRequest>('/api/transit/requests', input)
-  return data
-}
-
-export async function createTransitStopRequest(input: {
-  student_id: number
-  ends_on: string
-  note: string | null
-}): Promise<MyTransitRequest> {
-  const { data } = await apiClient.post<MyTransitRequest>('/api/transit/requests/stop', input)
   return data
 }
 

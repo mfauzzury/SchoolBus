@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import { ClipboardList, House, PlusCircle, Users } from 'lucide-react'
+import { House, Users } from 'lucide-react'
 import { useMyTransitRequests } from '@/hooks/useTransitPortal'
 import { useTranslation } from 'react-i18next'
 import { useMe, useLogout } from '@/hooks/useAuth'
@@ -18,9 +18,7 @@ export function TransitLayout() {
       title: t('transit.portal.groupCenter'),
       items: [
         { to: '/transit/home', label: t('transit.portal.home'), icon: House },
-        { to: '/transit/children', label: t('transit.children.title'), icon: Users },
-        { to: '/transit/new', label: t('transit.portal.askForBus'), icon: PlusCircle },
-        { to: '/transit/requests', label: t('transit.portal.requests'), icon: ClipboardList, badge: waiting },
+        { to: '/transit/students', label: t('transit.students.title'), icon: Users, badge: waiting },
       ],
     },
   ]
